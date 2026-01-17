@@ -1,4 +1,4 @@
-name: main-ci
+name: Default
 
 on:
   workflow_dispatch:
