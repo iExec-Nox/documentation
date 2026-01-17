@@ -95,25 +95,14 @@ export default defineConfig({
         activeMatch: '^/get-started/',
       },
       {
-        text: 'Guides',
-        link: '/guides/build-iapp/build-&-test',
-        activeMatch: '^/guides/',
-      },
-      {
         text: 'References',
-        link: '/references/dataProtector',
+        link: '/references/js-sdk',
         activeMatch: '^/references/',
       },
       {
         text: 'Protocol',
-        link: '/protocol/proof-of-contribution',
+        link: '/protocol/nox-long-term-vision',
         activeMatch: '^/protocol/',
-      },
-      {
-        component: 'ChainSelector',
-        props: {
-          className: 'w-48',
-        },
       },
     ],
     outline: {
@@ -136,8 +125,7 @@ export default defineConfig({
     ],
 
     editLink: {
-      pattern:
-        'https://github.com/iExecBlockchainComputing/documentation/blob/main/:path',
+      pattern: 'https://github.com/iExec-Nox/documentation/blob/main/:path',
       text: 'Suggest changes to this page',
     },
 

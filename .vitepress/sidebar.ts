@@ -43,12 +43,12 @@ export function getSidebar() {
     ],
     '/references/': [
       {
-        text: 'Handle SDK',
-        link: '/references/handle-sdk',
+        text: 'JS SDK',
+        link: '/references/js-sdk',
         items: [
           {
             text: 'Getting Started',
-            link: '/references/handle-sdk/getting-started',
+            link: '/references/js-sdk/getting-started',
           },
           {
             text: 'Methods',
@@ -56,21 +56,21 @@ export function getSidebar() {
             items: [
               {
                 text: 'encryptInput',
-                link: '/references/handle-sdk/methods/encryptInput',
+                link: '/references/js-sdk/methods/encryptInput',
               },
               {
                 text: 'decrypt',
-                link: '/references/handle-sdk/methods/decrypt',
+                link: '/references/js-sdk/methods/decrypt',
               },
               {
                 text: 'viewACL',
-                link: '/references/handle-sdk/methods/viewACL',
+                link: '/references/js-sdk/methods/viewACL',
               },
             ],
           },
           {
             text: 'Advanced Configuration',
-            link: '/references/handle-sdk/advanced-configuration',
+            link: '/references/js-sdk/advanced-configuration',
           },
         ],
       },
