@@ -1,0 +1,27 @@
+name: main-ci
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
+      - name: Install dependencies
+        run: |
+          node -v
+          npm -v
+          npm ci --no-fund
+
+      - name: Check Prettier
+        run: npm run check-format

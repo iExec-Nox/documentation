@@ -1,0 +1,14 @@
+.env
+**/tailwind-output.css
+.vercel
+**/.vitepress/cache
+**/.vitepress/.temp
+**/.vitepress/dist
+
+**/.vscode
+node_modules
+auto-imports.d.ts
+components.d.ts
+
+#mac
+.DS_Store
