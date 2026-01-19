@@ -14,7 +14,7 @@ hero:
   actions:
     - theme: brand
       text: Get Started
-      link: /guides/welcome
+      link: /overview/introduction
     - theme: alt
       text: Hello World Tutorial
       link: /overview/hello-world
