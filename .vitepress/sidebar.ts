@@ -12,7 +12,6 @@ export function getSidebar() {
           { text: 'Support', link: '/overview/support' },
           { text: 'Manifesto', link: '/overview/manifesto' },
           { text: 'Release Notes', link: '/overview/release-notes' },
-          { text: 'Contributing', link: '/overview/contributing' },
           { text: 'Status', link: '/overview/status' },
           { text: 'Use Cases', link: '/overview/use-cases' },
         ],
