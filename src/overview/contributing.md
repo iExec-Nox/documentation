@@ -231,5 +231,3 @@ By contributing to Nox, you agree that your contributions will be licensed under
 ---
 
 Thank you for contributing to Nox! Together, we're building the future of confidential computing. 🚀
-For detailed documentation contribution guidelines, see [CONTRIBUTING.md](/CONTRIBUTING.md) in the documentation repository.
-
