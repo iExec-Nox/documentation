@@ -2,12 +2,27 @@ import type { DefaultTheme } from 'vitepress';
 
 export function getSidebar() {
   return {
-    '/get-started/': [
+    '/overview/': [
       {
         text: 'OVERVIEW',
         items: [
-          { text: 'Welcome', link: '/get-started/welcome' },
-          { text: 'HelloWorld', link: '/get-started/helloworld' },
+          { text: 'Introduction', link: '/overview/introduction' },
+          { text: 'Hello World', link: '/overview/hello-world' },
+          { text: 'Developer Resources', link: '/overview/developer' },
+          { text: 'Support', link: '/overview/support' },
+          { text: 'Manifesto', link: '/overview/manifesto' },
+          { text: 'Release Notes', link: '/overview/release-notes' },
+          { text: 'Contributing', link: '/overview/contributing' },
+          { text: 'Status', link: '/overview/status' },
+          { text: 'Use Cases', link: '/overview/use-cases' },
+        ],
+      },
+    ],
+    '/guides/': [
+      {
+        text: 'GUIDES',
+        items: [
+          { text: 'Welcome', link: '/guides/welcome' },
         ],
       },
       {
@@ -15,11 +30,11 @@ export function getSidebar() {
         items: [
           {
             text: 'Hardhat',
-            link: '/get-started/build-confidential-smart-contracts/hardhat',
+            link: '/guides/build-confidential-smart-contracts/hardhat',
           },
           {
             text: 'Foundry',
-            link: '/get-started/build-confidential-smart-contracts/foundry',
+            link: '/guides/build-confidential-smart-contracts/foundry',
           },
         ],
       },
@@ -28,15 +43,15 @@ export function getSidebar() {
         items: [
           {
             text: 'ERC7984 Token',
-            link: '/get-started/build-confidential-tokens/erc7984-token',
+            link: '/guides/build-confidential-tokens/erc7984-token',
           },
           {
             text: 'ERC7984ERC20Wrapper',
-            link: '/get-started/build-confidential-tokens/erc7984erc20wrapper',
+            link: '/guides/build-confidential-tokens/erc7984erc20wrapper',
           },
           {
             text: 'Swap',
-            link: '/get-started/build-confidential-tokens/swap',
+            link: '/guides/build-confidential-tokens/swap',
           },
         ],
       },

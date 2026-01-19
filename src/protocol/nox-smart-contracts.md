@@ -1,6 +1,6 @@
 ---
 title: Nox Smart Contracts
-description: Nox smart contracts documentation
+description: Core smart contracts of Nox protocol
 ---
 
 TODO

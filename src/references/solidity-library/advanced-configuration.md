@@ -1,6 +1,6 @@
 ---
 title: Advanced Configuration
-description: Advanced configuration for Solidity Library
+description: Advanced configuration for Nox Solidity Library
 ---
 
 TODO

@@ -1,6 +1,6 @@
 ---
 title: Getting Started
-description: Getting started with JS SDK
+description: Getting started with Nox JS SDK
 ---
 
 TODO

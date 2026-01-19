@@ -1,6 +1,6 @@
 ---
 title: Global Architecture Overview
-description: Overview of Nox global architecture
+description: Overview of Nox architecture
 ---
 
 TODO

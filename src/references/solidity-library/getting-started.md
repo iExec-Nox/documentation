@@ -1,6 +1,6 @@
 ---
 title: Getting Started
-description: Getting started with Solidity Library
+description: Getting started with Nox Solidity Library
 ---
 
 TODO

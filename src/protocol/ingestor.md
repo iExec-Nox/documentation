@@ -1,6 +1,6 @@
 ---
 title: Ingestor
-description: Nox Ingestor component documentation
+description: Data Ingestor Service
 ---
 
 TODO

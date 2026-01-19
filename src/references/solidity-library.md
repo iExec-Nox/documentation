@@ -1,6 +1,6 @@
 ---
 title: Solidity Library
-description: Solidity Library reference documentation
+description: Solidity library for confidential smart contracts
 ---
 
 TODO

@@ -1,6 +1,6 @@
 ---
 title: Gateway
-description: Nox Gateway component documentation
+description: Nox Gateway Service
 ---
 
 TODO

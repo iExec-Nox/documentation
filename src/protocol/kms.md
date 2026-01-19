@@ -1,6 +1,6 @@
 ---
 title: KMS
-description: Key Management System documentation
+description: Key Management Service
 ---
 
 TODO

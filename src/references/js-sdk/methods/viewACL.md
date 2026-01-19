@@ -1,6 +1,6 @@
 ---
 title: viewACL
-description: View Access Control List method
+description: View Access Control List permissions
 ---
 
 TODO

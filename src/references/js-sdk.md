@@ -1,6 +1,6 @@
 ---
 title: JS SDK
-description: JS SDK reference documentation
+description: JavaScript SDK for Nox
 ---
 
 TODO

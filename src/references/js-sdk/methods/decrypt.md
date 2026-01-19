@@ -1,6 +1,6 @@
 ---
 title: decrypt
-description: Decrypt data method
+description: Decrypt confidential data
 ---
 
 TODO

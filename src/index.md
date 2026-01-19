@@ -14,10 +14,10 @@ hero:
   actions:
     - theme: brand
       text: Get Started
-      link: /get-started/welcome
+      link: /guides/welcome
     - theme: alt
       text: Hello World Tutorial
-      link: /get-started/helloworld
+      link: /overview/hello-world
 
 features:
   - icon:
@@ -35,7 +35,7 @@ features:
     details:
       Deploy your first confidential smart contract in minutes. One import, one
       function call — privacy becomes native.
-    link: /get-started/helloworld
+    link: /overview/hello-world
   - icon:
       <svg class="_stroke" width="38" height="36" viewBox="0 0 38 36"
       fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M5.16675
@@ -55,7 +55,7 @@ features:
     details:
       Add privacy to your contracts with simple Solidity primitives. No
       specialized wallets, no off-chain steps — just native composability.
-    link: /get-started/build-confidential-smart-contracts/hardhat
+    link: /guides/build-confidential-smart-contracts/hardhat
   - icon:
       <svg class="_stroke" width="37" height="36" viewBox="0 0 37 36"
       fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M7.8335 9C7.8335
@@ -73,7 +73,7 @@ features:
       Build ERC-7984 compliant confidential tokens with hidden balances and
       private transfers. Wrap existing ERC20s or create native confidential
       assets.
-    link: /get-started/build-confidential-tokens/erc7984-token
+    link: /guides/build-confidential-tokens/erc7984-token
   - icon:
       <svg class="_stroke" width="36" height="36" viewBox="0 0 36 36"
       fill="none" xmlns="http://www.w3.org/2000/svg"> <rect x="4" y="4"

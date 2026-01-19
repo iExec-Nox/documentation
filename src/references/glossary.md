@@ -1,6 +1,6 @@
 ---
 title: Glossary
-description: Nox terms glossary
+description: Glossary of terms used in Nox
 ---
 
 TODO
