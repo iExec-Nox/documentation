@@ -8,19 +8,28 @@ export function getSidebar() {
         items: [
           { text: 'Introduction', link: '/overview/introduction' },
           { text: 'Hello World', link: '/overview/hello-world' },
-          { text: 'Developer Resources', link: '/overview/developer' },
-          { text: 'Support', link: '/overview/support' },
-          { text: 'Manifesto', link: '/overview/manifesto' },
-          { text: 'Release Notes', link: '/overview/release-notes' },
-          { text: 'Status', link: '/overview/status' },
+          {
+            text: 'Developer',
+            collapsed: true,
+            items: [
+              { text: 'Support', link: '/overview/support' },
+              { text: 'Manifesto', link: '/overview/manifesto' },
+              { text: 'Release Note', link: '/overview/release-notes' },
+              { text: 'Status', link: '/overview/status' },
+            ],
+          },
           { text: 'Use Cases', link: '/overview/use-cases' },
         ],
       },
     ],
     '/guides/': [
       {
-        text: 'BUILD CONFIDENTIAL SMART CONTRACTS',
+        text: 'Build confidential smart contract',
         items: [
+          {
+            text: 'Intro',
+            link: '/guides/build-confidential-smart-contracts/intro',
+          },
           {
             text: 'Hardhat',
             link: '/guides/build-confidential-smart-contracts/hardhat',
@@ -32,18 +41,22 @@ export function getSidebar() {
         ],
       },
       {
-        text: 'BUILD CONFIDENTIAL TOKENS',
+        text: 'Build Confidential Token',
         items: [
           {
-            text: 'ERC7984 Token',
+            text: 'Intro',
+            link: '/guides/build-confidential-tokens/intro',
+          },
+          {
+            text: 'ERC7984',
             link: '/guides/build-confidential-tokens/erc7984-token',
           },
           {
-            text: 'ERC7984ERC20Wrapper',
+            text: 'ERC20 to ERC7984',
             link: '/guides/build-confidential-tokens/erc7984erc20wrapper',
           },
           {
-            text: 'Swap',
+            text: 'Demo',
             link: '/guides/build-confidential-tokens/swap',
           },
         ],
