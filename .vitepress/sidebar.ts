@@ -24,7 +24,7 @@ export function getSidebar() {
     ],
     '/guides/': [
       {
-        text: 'Build confidential smart contract',
+        text: 'BUILD CONFIDENTIAL SMART CONTRACT',
         items: [
           {
             text: 'Intro',
@@ -41,7 +41,7 @@ export function getSidebar() {
         ],
       },
       {
-        text: 'Build Confidential Token',
+        text: 'BUILD CONFIDENTIAL TOKEN',
         items: [
           {
             text: 'Intro',
@@ -96,7 +96,7 @@ export function getSidebar() {
         ],
       },
       {
-        text: 'Solidity Library',
+        text: 'SOLIDITY LIBRARY',
         link: '/references/solidity-library',
         items: [
           {
