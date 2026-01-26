@@ -24,7 +24,7 @@ export function getSidebar() {
     ],
     '/guides/': [
       {
-        text: 'BUILD CONFIDENTIAL SMART CONTRACT',
+        text: 'BUILD CONFIDENTIAL SMART CONTRACTS',
         items: [
           {
             text: 'Intro',
