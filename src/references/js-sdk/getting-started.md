@@ -5,29 +5,36 @@ description: Getting started with Nox JS SDK
 
 ## Installation
 
-Install the Nox JS SDK using npm:
+::: code-group
 
-```bash
+```bash [npm]
 npm install @iexec/handles
 ```
 
-Or with yarn:
-
-```bash
+```bash [yarn]
 yarn add @iexec/handles
 ```
+
+```bash [pnpm]
+pnpm add @iexec/handles
+```
+
+```bash [bun]
+bun add @iexec/handles
+```
+
+:::
 
 ## Prerequisites
 
 - Node.js 18+ or Bun
-- A wallet library (Ethers.js or Viem)
-- A wallet with funds for on-chain operations (encryption is free, but smart contract interactions require gas)
+
 
 ## Initialization
 
-### Using Ethers.js
+::: code-group
 
-```typescript
+```typescript [Ethers.js]
 import { createEthersHandleClient } from "@iexec/handles";
 import { ethers } from "ethers";
 
@@ -45,9 +52,7 @@ const signer = await provider.getSigner();
 const handlesClient = createEthersHandleClient(signer);
 ```
 
-### Using Viem
-
-```typescript
+```typescript [Viem]
 import { createViemHandleClient } from "@iexec/handles";
 import { createWalletClient, http } from "viem";
 import { privateKeyToAccount } from "viem/accounts";
@@ -66,6 +71,8 @@ const walletClient = createWalletClient({
 // Initialize the SDK
 const handlesClient = createViemHandleClient(walletClient);
 ```
+
+:::
 
 ## Basic Usage
 
