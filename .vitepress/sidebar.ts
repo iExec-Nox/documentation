@@ -12,7 +12,6 @@ export function getSidebar() {
             text: 'Developer',
             collapsed: true,
             items: [
-              { text: 'Support', link: '/overview/support' },
               { text: 'Manifesto', link: '/overview/manifesto' },
               { text: 'Release Note', link: '/overview/release-notes' },
               { text: 'Status', link: '/overview/status' },
