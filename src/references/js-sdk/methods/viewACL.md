@@ -17,9 +17,19 @@ viewACL(
 
 ## Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `handle` | `string` | The handle to query ACL information for. |
+```typescript
+// No additional imports needed - handle is a string
+```
+
+### handle
+
+**Type:** `string`
+
+The handle to query ACL information for.
+
+```typescript
+const acl = await handlesClient.viewACL(handle);
+```
 
 ## Returns
 

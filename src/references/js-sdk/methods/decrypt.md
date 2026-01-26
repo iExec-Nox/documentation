@@ -17,9 +17,23 @@ decrypt(
 
 ## Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `handle` | `string \| string[]` | The handle(s) to decrypt. Can be a single handle or an array of handles. |
+```typescript
+// No additional imports needed - handle is a string or string array
+```
+
+### handle
+
+**Type:** `string | string[]`
+
+The handle(s) to decrypt. Can be a single handle or an array of handles.
+
+```typescript
+// Single handle
+const { value, solidityType } = await handlesClient.decrypt(handle);
+
+// Multiple handles
+const results = await handlesClient.decrypt([handle1, handle2, handle3]);
+```
 
 ## Returns
 
