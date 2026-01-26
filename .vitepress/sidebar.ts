@@ -10,7 +10,6 @@ export function getSidebar() {
           { text: 'Hello World', link: '/overview/hello-world' },
           {
             text: 'Developer',
-            collapsed: true,
             items: [
               { text: 'Manifesto', link: '/overview/manifesto' },
               { text: 'Release Note', link: '/overview/release-notes' },
