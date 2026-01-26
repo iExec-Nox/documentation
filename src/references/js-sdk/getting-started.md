@@ -3,6 +3,17 @@ title: Getting Started
 description: Getting started with Nox JS SDK
 ---
 
+## Overview
+
+The Nox JS SDK provides a simple interface for encrypting and decrypting confidential data on the blockchain. It enables developers to create encrypted handles that can be used in smart contracts while keeping the underlying data private.
+
+## Prerequisites
+
+Before using the Nox JS SDK, make sure you have:
+
+📦 **Node.js** 18+ or Bun
+[Download →](https://nodejs.org/en/)
+
 ## Installation
 
 ::: code-group
@@ -24,11 +35,6 @@ bun add @iexec/handles
 ```
 
 :::
-
-## Prerequisites
-
-- Node.js 18+ or Bun
-
 
 ## Initialization
 

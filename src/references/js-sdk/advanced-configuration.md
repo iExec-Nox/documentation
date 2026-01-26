@@ -3,70 +3,46 @@ title: Advanced Configuration
 description: Advanced configuration for Nox JS SDK
 ---
 
-## Overview
+The `createEthersHandleClient` and `createViemHandleClient` constructors accept configuration options object. As these options are very specific, you won't need to use them for a standard usage of `@iexec/handles`.
 
-The Nox JS SDK supports advanced configuration options for customizing Gateway URLs, smart contract addresses, and other protocol parameters.
-
-## Configuration Options
-
-### Basic Configuration
-
-When creating a client, you can optionally provide a configuration object:
+## Parameters
 
 ```typescript
-import { createEthersHandleClient } from "@iexec/handles";
+import { type HandleClientConfig } from "@iexec/handles";
+```
 
-const config = {
+### gatewayUrl
+
+The Gateway endpoint URL for gRPC communication. The SDK communicates with the Gateway using gRPC for optimal performance.
+
+```typescript
+const handlesClient = createEthersHandleClient(signer, {
   gatewayUrl: "https://gateway.nox.example.com",
-  smartContractAddress: "0x...",
+});
+```
+
+If not provided, the default Gateway URL provided by iExec will be used for your network.
+
+### smartContractAddress
+
+The Ethereum contract address for the TEEComputeManager contract.
+
+```typescript
+const handlesClient = createEthersHandleClient(signer, {
+  smartContractAddress: "0xYourTEEComputeManagerAddress",
+});
+```
+
+If not provided, the default contract address provided by iExec will be used based on the chain ID.
+
+### chainId
+
+The chain ID for the network. The SDK automatically detects the network from your provider/signer, but you can explicitly set it.
+
+```typescript
+const handlesClient = createEthersHandleClient(signer, {
   chainId: 421614, // Arbitrum Sepolia
-};
-
-const handlesClient = createEthersHandleClient(signer, config);
-```
-
-### Configuration Type
-
-```typescript
-type HandleClientConfig = {
-  gatewayUrl?: string;           // Gateway endpoint URL
-  smartContractAddress?: string; // TEEComputeManager contract address
-  chainId?: number;              // Chain ID for the network
-  timeout?: number;              // Request timeout in milliseconds
-  retries?: number;              // Number of retry attempts
-};
-```
-
-## Gateway Configuration
-
-### Custom Gateway URL
-
-By default, the SDK uses the Gateway URL configured for your network. You can override this:
-
-```typescript
-const config = {
-  gatewayUrl: "https://custom-gateway.example.com",
-};
-
-const handlesClient = createEthersHandleClient(signer, config);
-```
-
-### Gateway Endpoints
-
-The SDK communicates with the Gateway using gRPC for optimal performance. The Gateway URL should point to the gRPC endpoint.
-
-## Network Configuration
-
-### Supported Networks
-
-The SDK automatically detects the network from your provider/signer, but you can explicitly set it:
-
-```typescript
-const config = {
-  chainId: 421614, // Arbitrum Sepolia
-};
-
-const handlesClient = createEthersHandleClient(signer, config);
+});
 ```
 
 Supported networks:
@@ -74,46 +50,68 @@ Supported networks:
 - **Arbitrum One** (chainId: 42161)
 - **Hardhat Local** (chainId: 31337)
 
-### Smart Contract Addresses
+If not provided, the chain ID will be automatically detected from your provider/signer.
 
-Contract addresses are automatically resolved based on the chain ID. To use custom addresses:
+### timeout
 
-```typescript
-const config = {
-  smartContractAddress: "0xYourTEEComputeManagerAddress",
-  aclAddress: "0xYourACLAddress", // Optional
-  registryAddress: "0xYourRegistryAddress", // Optional
-};
-
-const handlesClient = createEthersHandleClient(signer, config);
-```
-
-## Request Configuration
-
-### Timeout Settings
-
-Configure request timeouts for Gateway communication:
+Request timeout in milliseconds for Gateway communication.
 
 ```typescript
-const config = {
+const handlesClient = createEthersHandleClient(signer, {
   timeout: 30000, // 30 seconds
-};
-
-const handlesClient = createEthersHandleClient(signer, config);
+});
 ```
 
-### Retry Configuration
+If not provided, the default timeout provided by iExec will be used.
 
-Configure automatic retries for failed requests:
+### retries
+
+Number of retry attempts for failed requests.
 
 ```typescript
-const config = {
+const handlesClient = createEthersHandleClient(signer, {
   retries: 3, // Retry up to 3 times on failure
-  retryDelay: 1000, // Wait 1 second between retries
-};
-
-const handlesClient = createEthersHandleClient(signer, config);
+});
 ```
+
+If not provided, the default retry configuration provided by iExec will be used.
+
+### retryDelay
+
+Delay in milliseconds between retry attempts.
+
+```typescript
+const handlesClient = createEthersHandleClient(signer, {
+  retries: 3,
+  retryDelay: 1000, // Wait 1 second between retries
+});
+```
+
+If not provided, the default retry delay provided by iExec will be used.
+
+### aclAddress
+
+The Ethereum contract address for the ACL (Access Control List) contract. Optional.
+
+```typescript
+const handlesClient = createEthersHandleClient(signer, {
+  aclAddress: "0xYourACLAddress",
+});
+```
+
+If not provided, the default ACL contract address provided by iExec will be used based on the chain ID.
+
+### registryAddress
+
+The Ethereum contract address for the Registry contract. Optional.
+
+```typescript
+const handlesClient = createEthersHandleClient(signer, {
+  registryAddress: "0xYourRegistryAddress",
+});
+```
+
+If not provided, the default Registry contract address provided by iExec will be used based on the chain ID.
 
 ## Environment Variables
 
@@ -131,7 +129,7 @@ NOX_TIMEOUT=30000
 const handlesClient = createEthersHandleClient(signer);
 ```
 
-## Custom Signer Configuration
+## Advanced Usage Examples
 
 ### Ethers.js Advanced Setup
 
@@ -179,33 +177,6 @@ const config = {
 };
 
 const handlesClient = createViemHandleClient(walletClient, config);
-```
-
-## Error Handling Configuration
-
-### Custom Error Handlers
-
-```typescript
-const handlesClient = createEthersHandleClient(signer, {
-  onError: (error, context) => {
-    console.error("SDK Error:", error);
-    console.error("Context:", context);
-    // Custom error handling logic
-  },
-});
-```
-
-## Logging Configuration
-
-### Enable Debug Logging
-
-```typescript
-const config = {
-  debug: true, // Enable debug logging
-  logLevel: "debug", // 'info', 'warn', 'error', 'debug'
-};
-
-const handlesClient = createEthersHandleClient(signer, config);
 ```
 
 ## Best Practices
