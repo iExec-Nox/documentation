@@ -5,7 +5,9 @@ description: Decrypt confidential data
 
 ## Overview
 
-The `decrypt` method retrieves the plaintext value from an encrypted handle. It uses proxy re-encryption to securely decrypt data without exposing it to the Gateway or KMS.
+The `decrypt` method retrieves the plaintext value from an encrypted handle. It
+uses proxy re-encryption to securely decrypt data without exposing it to the
+Gateway or KMS.
 
 ## Syntax
 
@@ -39,8 +41,8 @@ const results = await handlesClient.decrypt([handle1, handle2, handle3]);
 
 ```typescript
 type HandleViewResult<T> = {
-  value: T;              // Decrypted value (type inferred from handle)
-  solidityType: string;  // Solidity type of the value
+  value: T; // Decrypted value (type inferred from handle)
+  solidityType: string; // Solidity type of the value
 };
 ```
 
@@ -51,15 +53,15 @@ For array inputs, returns an array of results.
 ::: code-group
 
 ```typescript [Basic Usage]
-import { createEthersHandleClient } from "@iexec/handles";
+import { createEthersHandleClient } from '@iexec/handles';
 
 const handlesClient = createEthersHandleClient(signer);
 
 // Decrypt a single handle
 const { value, solidityType } = await handlesClient.decrypt(handle);
 
-console.log("Decrypted value:", value);
-console.log("Type:", solidityType);
+console.log('Decrypted value:', value);
+console.log('Type:', solidityType);
 ```
 
 ```typescript [Decrypting Multiple Handles]
@@ -86,14 +88,14 @@ const total = value + 1000n;
 try {
   const { value } = await handlesClient.decrypt(handle);
 } catch (error) {
-  if (error.message.includes("not authorized")) {
+  if (error.message.includes('not authorized')) {
     console.error("You don't have permission to decrypt this handle");
-  } else if (error.message.includes("expired")) {
-    console.error("Decryption request expired");
-  } else if (error.message.includes("signature")) {
-    console.error("Invalid Gateway signature");
+  } else if (error.message.includes('expired')) {
+    console.error('Decryption request expired');
+  } else if (error.message.includes('signature')) {
+    console.error('Invalid Gateway signature');
   } else {
-    console.error("Decryption failed:", error);
+    console.error('Decryption failed:', error);
   }
 }
 ```
@@ -104,21 +106,26 @@ try {
 
 `decrypt` performs the following operations:
 
-1. **Generates Ephemeral Key Pair**: Creates a temporary public/private key pair for this decryption operation
-2. **Signs EIP-712 Payload**: Constructs and signs an EIP-712 payload containing:
+1. **Generates Ephemeral Key Pair**: Creates a temporary public/private key pair
+   for this decryption operation
+2. **Signs EIP-712 Payload**: Constructs and signs an EIP-712 payload
+   containing:
    - Handle to decrypt
    - Ephemeral public key
    - Timestamp (anti-replay protection)
    - Chain ID
 3. **Requests Re-encryption**: Sends signed request to Gateway via gRPC
-4. **Gateway Verifies**: Gateway verifies signature, checks ACL permissions, and coordinates with KMS
-5. **Proxy Re-encryption**: KMS re-encrypts ciphertext under ephemeral public key (without decrypting)
-6. **Client Decryption**: SDK decrypts the re-encrypted ciphertext using ephemeral private key
+4. **Gateway Verifies**: Gateway verifies signature, checks ACL permissions, and
+   coordinates with KMS
+5. **Proxy Re-encryption**: KMS re-encrypts ciphertext under ephemeral public
+   key (without decrypting)
+6. **Client Decryption**: SDK decrypts the re-encrypted ciphertext using
+   ephemeral private key
 7. **Cleanup**: Ephemeral private key is cleared from memory
 
-::: info Gasless Operation
-Decryption uses EIP-712 signatures for authentication and doesn't require gas. The signature proves identity without on-chain transactions.
-:::
+::: info Gasless Operation Decryption uses EIP-712 signatures for authentication
+and doesn't require gas. The signature proves identity without on-chain
+transactions. :::
 
 ## EIP-712 Payload Structure
 
@@ -140,27 +147,34 @@ The SDK automatically constructs and signs this payload:
 ### Ephemeral Keys
 
 Each decryption uses a unique ephemeral key pair:
-- **Forward Secrecy**: Even if a key is compromised, it only affects that single decryption
+
+- **Forward Secrecy**: Even if a key is compromised, it only affects that single
+  decryption
 - **One-Time Use**: Keys are generated per request and cleared after use
 - **No Key Reuse**: Prevents correlation attacks
 
 ### Permission Verification
 
-- **On-Chain ACL Check**: Gateway verifies permissions via smart contract before processing
-- **No Information Leakage**: Unauthorized requests are rejected without revealing handle existence
+- **On-Chain ACL Check**: Gateway verifies permissions via smart contract before
+  processing
+- **No Information Leakage**: Unauthorized requests are rejected without
+  revealing handle existence
 - **Owner/Viewer Support**: Both owners and viewers (via ACL) can decrypt
 
 ### Signature Verification
 
-- **Gateway Signature**: SDK verifies Gateway signature on response using Registry
+- **Gateway Signature**: SDK verifies Gateway signature on response using
+  Registry
 - **KMS Signature**: Gateway verifies KMS signature before forwarding
 - **Tamper Detection**: Invalid signatures cause immediate rejection
 
 ## Performance Considerations
 
-- **Batch Decryption**: Decrypt multiple handles in a single call for better performance
+- **Batch Decryption**: Decrypt multiple handles in a single call for better
+  performance
 - **Caching**: Consider caching decrypted values when appropriate
-- **Network Latency**: First decryption may be slower due to Gateway/KMS coordination
+- **Network Latency**: First decryption may be slower due to Gateway/KMS
+  coordination
 
 ## Use Cases
 
@@ -188,7 +202,8 @@ const { value } = await auditorClient.decrypt(handle);
 
 ## Related
 
-- [encryptInput](/references/js-sdk/methods/encryptInput) - Create encrypted handles
+- [encryptInput](/references/js-sdk/methods/encryptInput) - Create encrypted
+  handles
 - [viewACL](/references/js-sdk/methods/viewACL) - Check decryption permissions
 - [Gateway](/protocol/gateway) - Gateway service documentation
 - [KMS](/protocol/kms) - Key Management Service documentation

@@ -5,14 +5,16 @@ description: Getting started with Nox JS SDK
 
 ## Overview
 
-The Nox JS SDK provides a simple interface for encrypting and decrypting confidential data on the blockchain. It enables developers to create encrypted handles that can be used in smart contracts while keeping the underlying data private.
+The Nox JS SDK provides a simple interface for encrypting and decrypting
+confidential data on the blockchain. It enables developers to create encrypted
+handles that can be used in smart contracts while keeping the underlying data
+private.
 
 ## Prerequisites
 
 Before using the Nox JS SDK, make sure you have:
 
-📦 **Node.js** 18+ or Bun
-[Download →](https://nodejs.org/en/)
+📦 **Node.js** 18+ or Bun [Download →](https://nodejs.org/en/)
 
 ## Installation
 
@@ -41,11 +43,13 @@ bun add @iexec/handles
 ::: code-group
 
 ```typescript [Ethers.js]
-import { createEthersHandleClient } from "@iexec/handles";
-import { ethers } from "ethers";
+import { createEthersHandleClient } from '@iexec/handles';
+import { ethers } from 'ethers';
 
 // Create a provider
-const provider = new ethers.JsonRpcProvider("https://sepolia-rollup.arbitrum.io/rpc");
+const provider = new ethers.JsonRpcProvider(
+  'https://sepolia-rollup.arbitrum.io/rpc'
+);
 
 // Create a signer (using a private key)
 const signer = new ethers.Wallet(PRIVATE_KEY, provider);
@@ -59,10 +63,10 @@ const handlesClient = createEthersHandleClient(signer);
 ```
 
 ```typescript [Viem]
-import { createViemHandleClient } from "@iexec/handles";
-import { createWalletClient, http } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-import { arbitrumSepolia } from "viem/chains";
+import { createViemHandleClient } from '@iexec/handles';
+import { createWalletClient, http } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
+import { arbitrumSepolia } from 'viem/chains';
 
 // Create account
 const account = privateKeyToAccount(PRIVATE_KEY);
@@ -90,11 +94,11 @@ Encrypt a value to create a handle:
 // Encrypt a uint256 value
 const { handle, inputProof } = await handlesClient.encryptInput(
   100_000_000n,
-  "uint256"
+  'uint256'
 );
 
-console.log("Handle:", handle);
-console.log("Input Proof:", inputProof);
+console.log('Handle:', handle);
+console.log('Input Proof:', inputProof);
 ```
 
 The `inputProof` can be used to verify the handle on-chain in smart contracts.
@@ -107,13 +111,12 @@ Decrypt a handle to retrieve the original value:
 // Decrypt the handle
 const { value, solidityType } = await handlesClient.decrypt(handle);
 
-console.log("Decrypted value:", value);
-console.log("Type:", solidityType); // "uint256"
+console.log('Decrypted value:', value);
+console.log('Type:', solidityType); // "uint256"
 ```
 
-::: info Note
-Decryption requires EIP-712 signature authentication but doesn't consume gas. The SDK handles signature generation automatically.
-:::
+::: info Note Decryption requires EIP-712 signature authentication but doesn't
+consume gas. The SDK handles signature generation automatically. :::
 
 ### View ACL Permissions
 
@@ -122,9 +125,9 @@ Check who has access to a handle:
 ```typescript
 const acl = await handlesClient.viewACL(handle);
 
-console.log("Owner:", acl.owner);
-console.log("Allowed addresses:", acl.allowedAddresses);
-console.log("Publicly decryptable:", acl.publiclyDecryptable);
+console.log('Owner:', acl.owner);
+console.log('Allowed addresses:', acl.allowedAddresses);
+console.log('Publicly decryptable:', acl.publiclyDecryptable);
 ```
 
 ## Supported Types
@@ -138,8 +141,8 @@ The SDK supports various Solidity types:
 ## Complete Example
 
 ```typescript
-import { createEthersHandleClient } from "@iexec/handles";
-import { ethers } from "ethers";
+import { createEthersHandleClient } from '@iexec/handles';
+import { ethers } from 'ethers';
 
 async function main() {
   // Initialize
@@ -151,7 +154,7 @@ async function main() {
   const balance = 1_000_000_000n; // 1 token with 9 decimals
   const { handle, inputProof } = await handlesClient.encryptInput(
     balance,
-    "uint256"
+    'uint256'
   );
 
   console.log(`Encrypted balance handle: ${handle}`);
@@ -173,4 +176,5 @@ main().catch(console.error);
 - Learn about [encryptInput](/references/js-sdk/methods/encryptInput) method
 - Explore [decrypt](/references/js-sdk/methods/decrypt) functionality
 - Check [viewACL](/references/js-sdk/methods/viewACL) for access control
-- Configure advanced options in [Advanced Configuration](/references/js-sdk/advanced-configuration)
+- Configure advanced options in
+  [Advanced Configuration](/references/js-sdk/advanced-configuration)

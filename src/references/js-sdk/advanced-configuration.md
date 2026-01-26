@@ -3,25 +3,29 @@ title: Advanced Configuration
 description: Advanced configuration for Nox JS SDK
 ---
 
-The `createEthersHandleClient` and `createViemHandleClient` constructors accept configuration options object. As these options are very specific, you won't need to use them for a standard usage of `@iexec/handles`.
+The `createEthersHandleClient` and `createViemHandleClient` constructors accept
+configuration options object. As these options are very specific, you won't need
+to use them for a standard usage of `@iexec/handles`.
 
 ## Parameters
 
 ```typescript
-import { type HandleClientConfig } from "@iexec/handles";
+import { type HandleClientConfig } from '@iexec/handles';
 ```
 
 ### gatewayUrl
 
-The Gateway endpoint URL for gRPC communication. The SDK communicates with the Gateway using gRPC for optimal performance.
+The Gateway endpoint URL for gRPC communication. The SDK communicates with the
+Gateway using gRPC for optimal performance.
 
 ```typescript
 const handlesClient = createEthersHandleClient(signer, {
-  gatewayUrl: "https://gateway.nox.example.com",
+  gatewayUrl: 'https://gateway.nox.example.com',
 });
 ```
 
-If not provided, the default Gateway URL provided by iExec will be used for your network.
+If not provided, the default Gateway URL provided by iExec will be used for your
+network.
 
 ### smartContractAddress
 
@@ -29,15 +33,17 @@ The Ethereum contract address for the TEEComputeManager contract.
 
 ```typescript
 const handlesClient = createEthersHandleClient(signer, {
-  smartContractAddress: "0xYourTEEComputeManagerAddress",
+  smartContractAddress: '0xYourTEEComputeManagerAddress',
 });
 ```
 
-If not provided, the default contract address provided by iExec will be used based on the chain ID.
+If not provided, the default contract address provided by iExec will be used
+based on the chain ID.
 
 ### chainId
 
-The chain ID for the network. The SDK automatically detects the network from your provider/signer, but you can explicitly set it.
+The chain ID for the network. The SDK automatically detects the network from
+your provider/signer, but you can explicitly set it.
 
 ```typescript
 const handlesClient = createEthersHandleClient(signer, {
@@ -46,11 +52,13 @@ const handlesClient = createEthersHandleClient(signer, {
 ```
 
 Supported networks:
+
 - **Arbitrum Sepolia** (chainId: 421614)
 - **Arbitrum One** (chainId: 42161)
 - **Hardhat Local** (chainId: 31337)
 
-If not provided, the chain ID will be automatically detected from your provider/signer.
+If not provided, the chain ID will be automatically detected from your
+provider/signer.
 
 ### timeout
 
@@ -91,15 +99,17 @@ If not provided, the default retry delay provided by iExec will be used.
 
 ### aclAddress
 
-The Ethereum contract address for the ACL (Access Control List) contract. Optional.
+The Ethereum contract address for the ACL (Access Control List) contract.
+Optional.
 
 ```typescript
 const handlesClient = createEthersHandleClient(signer, {
-  aclAddress: "0xYourACLAddress",
+  aclAddress: '0xYourACLAddress',
 });
 ```
 
-If not provided, the default ACL contract address provided by iExec will be used based on the chain ID.
+If not provided, the default ACL contract address provided by iExec will be used
+based on the chain ID.
 
 ### registryAddress
 
@@ -107,11 +117,12 @@ The Ethereum contract address for the Registry contract. Optional.
 
 ```typescript
 const handlesClient = createEthersHandleClient(signer, {
-  registryAddress: "0xYourRegistryAddress",
+  registryAddress: '0xYourRegistryAddress',
 });
 ```
 
-If not provided, the default Registry contract address provided by iExec will be used based on the chain ID.
+If not provided, the default Registry contract address provided by iExec will be
+used based on the chain ID.
 
 ## Environment Variables
 
@@ -134,8 +145,8 @@ const handlesClient = createEthersHandleClient(signer);
 ### Ethers.js Advanced Setup
 
 ```typescript
-import { createEthersHandleClient } from "@iexec/handles";
-import { ethers } from "ethers";
+import { createEthersHandleClient } from '@iexec/handles';
+import { ethers } from 'ethers';
 
 // Custom provider configuration
 const provider = new ethers.JsonRpcProvider({
@@ -157,10 +168,10 @@ const handlesClient = createEthersHandleClient(signer, config);
 ### Viem Advanced Setup
 
 ```typescript
-import { createViemHandleClient } from "@iexec/handles";
-import { createWalletClient, http } from "viem";
-import { privateKeyToAccount } from "viem/accounts";
-import { arbitrumSepolia } from "viem/chains";
+import { createViemHandleClient } from '@iexec/handles';
+import { createWalletClient, http } from 'viem';
+import { privateKeyToAccount } from 'viem/accounts';
+import { arbitrumSepolia } from 'viem/chains';
 
 const account = privateKeyToAccount(PRIVATE_KEY);
 
@@ -187,20 +198,23 @@ const handlesClient = createViemHandleClient(walletClient, config);
 // config.ts
 export const getNoxConfig = (chainId: number) => {
   const configs = {
-    421614: { // Arbitrum Sepolia
-      gatewayUrl: "https://gateway-sepolia.nox.example.com",
+    421614: {
+      // Arbitrum Sepolia
+      gatewayUrl: 'https://gateway-sepolia.nox.example.com',
       chainId: 421614,
     },
-    42161: { // Arbitrum One
-      gatewayUrl: "https://gateway-mainnet.nox.example.com",
+    42161: {
+      // Arbitrum One
+      gatewayUrl: 'https://gateway-mainnet.nox.example.com',
       chainId: 42161,
     },
-    31337: { // Hardhat Local
-      gatewayUrl: "http://localhost:8080",
+    31337: {
+      // Hardhat Local
+      gatewayUrl: 'http://localhost:8080',
       chainId: 31337,
     },
   };
-  
+
   return configs[chainId] || configs[421614]; // Default to Sepolia
 };
 
@@ -213,7 +227,7 @@ const handlesClient = createEthersHandleClient(signer, config);
 ### Type Safety
 
 ```typescript
-import type { HandleClientConfig } from "@iexec/handles";
+import type { HandleClientConfig } from '@iexec/handles';
 
 const config: HandleClientConfig = {
   gatewayUrl: process.env.NOX_GATEWAY_URL,
@@ -228,4 +242,5 @@ const handlesClient = createEthersHandleClient(signer, config);
 
 - [Getting Started](/references/js-sdk/getting-started) - Basic setup and usage
 - [Gateway](/protocol/gateway) - Gateway service configuration
-- [Nox Smart Contracts](/protocol/nox-smart-contracts) - Contract addresses by network
+- [Nox Smart Contracts](/protocol/nox-smart-contracts) - Contract addresses by
+  network
