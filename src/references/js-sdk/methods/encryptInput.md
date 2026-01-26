@@ -57,22 +57,11 @@ type EncryptInputResult = {
 };
 ```
 
-## Description
-
-`encryptInput` performs the following operations:
-
-1. **Connects to Gateway**: Establishes a secure TLS connection with the Gateway TEE
-2. **Sends Plaintext**: Transmits the plaintext value, owner address, data type, and chain ID
-3. **Receives Handle**: Gets back a deterministic handle and an EIP-712 signed proof
-4. **Verifies Proof**: Validates the Gateway signature on the proof
-
-The Gateway encrypts the data under the KMS public key, generates a deterministic handle, stores the ciphertext off-chain, and returns a signed proof that can be verified on-chain.
-
 ## Example
 
-### Basic Usage
+::: code-group
 
-```typescript
+```typescript [Basic Usage]
 import { createEthersHandleClient } from "@iexec/handles";
 
 const handlesClient = createEthersHandleClient(signer);
@@ -87,9 +76,7 @@ console.log("Handle:", handle);
 // Output: 0x7a3b5c8d9e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8
 ```
 
-### Different Types
-
-```typescript
+```typescript [Different Types]
 // Encrypt an address
 const { handle: addressHandle } = await handlesClient.encryptInput(
   "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
@@ -115,11 +102,7 @@ const { handle: bytesHandle } = await handlesClient.encryptInput(
 );
 ```
 
-### Using in Smart Contracts
-
-The `inputProof` can be used to verify the handle on-chain:
-
-```typescript
+```typescript [Using in Smart Contracts]
 // Encrypt the value
 const { handle, inputProof } = await handlesClient.encryptInput(
   1000n,
@@ -130,6 +113,19 @@ const { handle, inputProof } = await handlesClient.encryptInput(
 const tx = await contract.verifyInput(handle, inputProof);
 await tx.wait();
 ```
+
+:::
+
+## Description
+
+`encryptInput` performs the following operations:
+
+1. **Connects to Gateway**: Establishes a secure TLS connection with the Gateway TEE
+2. **Sends Plaintext**: Transmits the plaintext value, owner address, data type, and chain ID
+3. **Receives Handle**: Gets back a deterministic handle and an EIP-712 signed proof
+4. **Verifies Proof**: Validates the Gateway signature on the proof
+
+The Gateway encrypts the data under the KMS public key, generates a deterministic handle, stores the ciphertext off-chain, and returns a signed proof that can be verified on-chain.
 
 ## Supported Types
 

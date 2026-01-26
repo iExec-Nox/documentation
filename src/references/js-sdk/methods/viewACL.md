@@ -44,20 +44,11 @@ type HandleACL = {
 };
 ```
 
-## Description
-
-`viewACL` queries the on-chain ACL smart contract to retrieve permission information for a handle. This allows you to:
-
-- Check who owns a handle
-- See which addresses have admin permissions
-- See which addresses have viewer (decrypt-only) permissions
-- Determine if a handle is publicly decryptable
-
 ## Example
 
-### Basic Usage
+::: code-group
 
-```typescript
+```typescript [Basic Usage]
 import { createEthersHandleClient } from "@iexec/handles";
 
 const handlesClient = createEthersHandleClient(signer);
@@ -71,9 +62,7 @@ console.log("Viewers:", acl.viewers);
 console.log("Publicly decryptable:", acl.publiclyDecryptable);
 ```
 
-### Check Permissions
-
-```typescript
+```typescript [Check Permissions]
 const acl = await handlesClient.viewACL(handle);
 const userAddress = await signer.getAddress();
 
@@ -99,9 +88,7 @@ if (isOwner || isAdmin || isViewer) {
 }
 ```
 
-### Permission Management UI
-
-```typescript
+```typescript [Permission Management UI]
 async function displayPermissions(handle: string) {
   const acl = await handlesClient.viewACL(handle);
   
@@ -125,6 +112,17 @@ async function displayPermissions(handle: string) {
   }
 }
 ```
+
+:::
+
+## Description
+
+`viewACL` queries the on-chain ACL smart contract to retrieve permission information for a handle. This allows you to:
+
+- Check who owns a handle
+- See which addresses have admin permissions
+- See which addresses have viewer (decrypt-only) permissions
+- Determine if a handle is publicly decryptable
 
 ## Permission Types
 

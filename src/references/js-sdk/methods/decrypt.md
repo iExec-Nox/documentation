@@ -46,6 +46,60 @@ type HandleViewResult<T> = {
 
 For array inputs, returns an array of results.
 
+## Example
+
+::: code-group
+
+```typescript [Basic Usage]
+import { createEthersHandleClient } from "@iexec/handles";
+
+const handlesClient = createEthersHandleClient(signer);
+
+// Decrypt a single handle
+const { value, solidityType } = await handlesClient.decrypt(handle);
+
+console.log("Decrypted value:", value);
+console.log("Type:", solidityType);
+```
+
+```typescript [Decrypting Multiple Handles]
+// Decrypt multiple handles at once
+const handles = [handle1, handle2, handle3];
+const results = await handlesClient.decrypt(handles);
+
+results.forEach((result, index) => {
+  console.log(`Handle ${index}:`, result.value);
+  console.log(`Type:`, result.solidityType);
+});
+```
+
+```typescript [Type-Safe Usage]
+// TypeScript will infer the type based on the handle
+const { value } = await handlesClient.decrypt(balanceHandle);
+// value is typed as bigint for uint256 handles
+
+// Use in calculations
+const total = value + 1000n;
+```
+
+```typescript [Error Handling]
+try {
+  const { value } = await handlesClient.decrypt(handle);
+} catch (error) {
+  if (error.message.includes("not authorized")) {
+    console.error("You don't have permission to decrypt this handle");
+  } else if (error.message.includes("expired")) {
+    console.error("Decryption request expired");
+  } else if (error.message.includes("signature")) {
+    console.error("Invalid Gateway signature");
+  } else {
+    console.error("Decryption failed:", error);
+  }
+}
+```
+
+:::
+
 ## Description
 
 `decrypt` performs the following operations:
@@ -65,64 +119,6 @@ For array inputs, returns an array of results.
 ::: info Gasless Operation
 Decryption uses EIP-712 signatures for authentication and doesn't require gas. The signature proves identity without on-chain transactions.
 :::
-
-## Example
-
-### Basic Usage
-
-```typescript
-import { createEthersHandleClient } from "@iexec/handles";
-
-const handlesClient = createEthersHandleClient(signer);
-
-// Decrypt a single handle
-const { value, solidityType } = await handlesClient.decrypt(handle);
-
-console.log("Decrypted value:", value);
-console.log("Type:", solidityType);
-```
-
-### Decrypting Multiple Handles
-
-```typescript
-// Decrypt multiple handles at once
-const handles = [handle1, handle2, handle3];
-const results = await handlesClient.decrypt(handles);
-
-results.forEach((result, index) => {
-  console.log(`Handle ${index}:`, result.value);
-  console.log(`Type:`, result.solidityType);
-});
-```
-
-### Type-Safe Usage
-
-```typescript
-// TypeScript will infer the type based on the handle
-const { value } = await handlesClient.decrypt(balanceHandle);
-// value is typed as bigint for uint256 handles
-
-// Use in calculations
-const total = value + 1000n;
-```
-
-### Error Handling
-
-```typescript
-try {
-  const { value } = await handlesClient.decrypt(handle);
-} catch (error) {
-  if (error.message.includes("not authorized")) {
-    console.error("You don't have permission to decrypt this handle");
-  } else if (error.message.includes("expired")) {
-    console.error("Decryption request expired");
-  } else if (error.message.includes("signature")) {
-    console.error("Invalid Gateway signature");
-  } else {
-    console.error("Decryption failed:", error);
-  }
-}
-```
 
 ## EIP-712 Payload Structure
 
