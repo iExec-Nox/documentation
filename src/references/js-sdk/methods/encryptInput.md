@@ -18,10 +18,35 @@ encryptInput(
 
 ## Parameters
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `value` | `number \| bigint \| string \| boolean` | The plaintext value to encrypt. Must match the specified Solidity type. |
-| `solidityType` | `SolidityType` | The Solidity type of the value (e.g., `"uint256"`, `"address"`, `"bool"`). |
+```typescript
+import { type SolidityType } from "@iexec/handles";
+```
+
+### value
+
+**Type:** `number | bigint | string | boolean`
+
+The plaintext value to encrypt. Must match the specified Solidity type.
+
+```typescript
+const { handle, inputProof } = await handlesClient.encryptInput(
+  100_000_000n,
+  "uint256"
+);
+```
+
+### solidityType
+
+**Type:** `SolidityType`
+
+The Solidity type of the value (e.g., `"uint256"`, `"address"`, `"bool"`).
+
+```typescript
+const { handle, inputProof } = await handlesClient.encryptInput(
+  "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb",
+  "address"
+);
+```
 
 ## Returns
 
