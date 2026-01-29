@@ -3,107 +3,139 @@ title: encryptInput
 description: Encrypt input data for confidential computation
 ---
 
-## Overview
+# encryptInput
 
 The `encryptInput` method encrypts a plaintext value and creates a handle that
-references the encrypted data. This is the primary way to create encrypted data
-handles in the Nox protocol.
+references the encrypted data. The returned `inputProof` can be used to verify
+the handle on-chain in smart contracts.
 
-## Syntax
+## Usage
 
-```typescript
-encryptInput(
-  value: number | bigint | string | boolean,
-  solidityType: SolidityType
-): Promise<EncryptInputResult>
+```ts
+import { createEthersHandleClient } from '@iexec-nox/handle';
+import { BrowserProvider } from 'ethers';
+
+const ethersClient = new BrowserProvider(window.ethereum);
+// ---cut---
+const handleClient = await createEthersHandleClient(ethersClient);
+
+const { handle, inputProof } = await handleClient.encryptInput(
+  100_000_000n,
+  'uint256'
+);
 ```
 
 ## Parameters
 
-```typescript
-import { type SolidityType } from '@iexec/handles';
+```ts
+import type { SolidityType } from '@iexec-nox/handle';
 ```
 
-### value
+### value _Required_
 
-**Type:** `number | bigint | string | boolean`
+**Type:** `boolean | string | bigint`
 
-The plaintext value to encrypt. Must match the specified Solidity type.
+The plaintext value to encrypt. The expected JavaScript type depends on the
+`solidityType` parameter:
 
-```typescript
-const { handle, inputProof } = await handlesClient.encryptInput(
-  100_000_000n,
-  'uint256'
+- `bool` &rarr; `boolean`
+- `string` &rarr; `string`
+- `address`, `bytes`, `bytesN` &rarr; `string` (hex-encoded with `0x` prefix)
+- `uintN`, `intN` &rarr; `bigint`
+
+```ts
+import { createEthersHandleClient } from '@iexec-nox/handle';
+import { BrowserProvider } from 'ethers';
+
+const handleClient = await createEthersHandleClient(
+  new BrowserProvider(window.ethereum)
+);
+// ---cut---
+// boolean
+await handleClient.encryptInput(true, 'bool');
+
+// bigint
+await handleClient.encryptInput(1000n, 'uint256');
+
+// address (hex string)
+await handleClient.encryptInput(
+  '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0',
+  'address'
 );
 ```
 
-### solidityType
+### solidityType _Required_
 
 **Type:** `SolidityType`
 
-The Solidity type of the value (e.g., `"uint256"`, `"address"`, `"bool"`).
+The Solidity type of the value to encrypt.
 
-```typescript
-const { handle, inputProof } = await handlesClient.encryptInput(
-  '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
-  'address'
+Supported types:
+
+- **Boolean**: `bool`
+- **Address**: `address`
+- **Dynamic types**: `bytes`, `string`
+- **Unsigned integers**: `uint8`, `uint16`, `uint24`, ... , `uint256`
+- **Signed integers**: `int8`, `int16`, `int24`, ... , `int256`
+- **Fixed-size bytes**: `bytes1`, `bytes2`, ... , `bytes32`
+
+```ts
+import { createEthersHandleClient } from '@iexec-nox/handle';
+import { BrowserProvider } from 'ethers';
+
+const handleClient = await createEthersHandleClient(
+  new BrowserProvider(window.ethereum)
 );
+// ---cut---
+await handleClient.encryptInput(true, 'bool');
+await handleClient.encryptInput(42n, 'uint64');
+await handleClient.encryptInput('Hello, Nox!', 'string');
 ```
 
-## Returns
+## Return Value
 
-```typescript
-type EncryptInputResult = {
-  handle: string; // bytes32 - The handle identifier
-  inputProof: string; // bytes - EIP-712 proof signed by Gateway
+```ts
+import type { Handle, HexString } from '@iexec-nox/handle';
+```
+
+```ts
+import type { Handle, HexString, SolidityType } from '@iexec-nox/handle';
+// ---cut---
+type EncryptInputResult<T extends SolidityType> = {
+  handle: Handle<T>;
+  inputProof: HexString;
 };
 ```
 
-## Example
+### handle
 
-::: code-group
+**Type:** `Handle<T>` (a `0x`-prefixed hex string, 32 bytes)
 
-```typescript [Basic Usage]
-import { createEthersHandleClient } from '@iexec/handles';
+The deterministic handle identifier referencing the encrypted data on-chain.
 
-const handlesClient = createEthersHandleClient(signer);
+### inputProof
 
-// Encrypt a uint256 value
-const { handle, inputProof } = await handlesClient.encryptInput(
-  100_000_000n,
-  'uint256'
+**Type:** `HexString`
+
+An EIP-712 signed proof from the Gateway. Use this proof when calling smart
+contract functions that need to verify the handle was created by a legitimate
+Gateway.
+
+```ts
+import { createEthersHandleClient } from '@iexec-nox/handle';
+import { BrowserProvider } from 'ethers';
+
+const handleClient = await createEthersHandleClient(
+  new BrowserProvider(window.ethereum)
 );
-
-console.log('Handle:', handle);
-// Output: 0x7a3b5c8d9e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8
-```
-
-```typescript [Different Types]
-// Encrypt an address
-const { handle: addressHandle } = await handlesClient.encryptInput(
-  '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb',
-  'address'
-);
-
-// Encrypt a boolean
-const { handle: boolHandle } = await handlesClient.encryptInput(true, 'bool');
-
-// Encrypt a string
-const { handle: stringHandle } = await handlesClient.encryptInput(
-  'Hello, Nox!',
-  'string'
-);
-
-// Encrypt bytes
-const { handle: bytesHandle } = await handlesClient.encryptInput(
-  '0x1234abcd',
-  'bytes'
-);
-```
-
-```typescript [Using in Smart Contracts]
-// Encrypt the value
-const { handle, inputProof } = await handlesClient.encryptInput(
+declare const contract: {
+  verifyInput: (
+    handle: string,
+    inputProof: string
+  ) => Promise<{ wait: () => Promise<void> }>;
+};
+// ---cut---
+const { handle, inputProof } = await handleClient.encryptInput(
   1000n,
   'uint256'
 );
@@ -112,71 +144,3 @@ const { handle, inputProof } = await handlesClient.encryptInput(
 const tx = await contract.verifyInput(handle, inputProof);
 await tx.wait();
 ```
-
-:::
-
-## Description
-
-`encryptInput` performs the following operations:
-
-1. **Connects to Gateway**: Establishes a secure TLS connection with the Gateway
-   TEE
-2. **Sends Plaintext**: Transmits the plaintext value, owner address, data type,
-   and chain ID
-3. **Receives Handle**: Gets back a deterministic handle and an EIP-712 signed
-   proof
-4. **Verifies Proof**: Validates the Gateway signature on the proof
-
-The Gateway encrypts the data under the KMS public key, generates a
-deterministic handle, stores the ciphertext off-chain, and returns a signed
-proof that can be verified on-chain.
-
-## Supported Types
-
-The method supports all standard Solidity types:
-
-- **Unsigned Integers**: `uint8`, `uint16`, `uint24`, `uint32`, `uint40`,
-  `uint48`, `uint56`, `uint64`, `uint72`, `uint80`, `uint88`, `uint96`,
-  `uint104`, `uint112`, `uint120`, `uint128`, `uint136`, `uint144`, `uint152`,
-  `uint160`, `uint168`, `uint176`, `uint184`, `uint192`, `uint200`, `uint208`,
-  `uint216`, `uint224`, `uint232`, `uint240`, `uint248`, `uint256`
-- **Signed Integers**: `int8` through `int256` (same sizes as uint)
-- **Fixed-size Bytes**: `bytes1` through `bytes32`
-- **Dynamic Types**: `bytes`, `string`
-- **Other**: `bool`, `address`
-
-## Security Considerations
-
-- **No Signatures Required**: Encryption uses TLS only, no wallet signature
-  needed
-- **Gateway Verification**: The `inputProof` is signed by the Gateway TEE and
-  can be verified on-chain
-- **Owner Address**: The handle owner is set to the signer's address
-  automatically
-- **Deterministic Handles**: Same input produces the same handle (useful for
-  idempotency)
-
-## Error Handling
-
-```typescript
-try {
-  const { handle, inputProof } = await handlesClient.encryptInput(
-    value,
-    'uint256'
-  );
-} catch (error) {
-  if (error.message.includes('Gateway connection')) {
-    console.error('Failed to connect to Gateway');
-  } else if (error.message.includes('invalid type')) {
-    console.error('Unsupported Solidity type');
-  } else {
-    console.error('Encryption failed:', error);
-  }
-}
-```
-
-## Related
-
-- [decrypt](/references/js-sdk/methods/decrypt) - Decrypt handles
-- [viewACL](/references/js-sdk/methods/viewACL) - View handle permissions
-- [Gateway](/protocol/gateway) - Gateway service documentation

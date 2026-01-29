@@ -3,7 +3,7 @@ title: Getting Started
 description: Getting started with Nox JS SDK
 ---
 
-## Overview
+# Getting Started
 
 The Nox JS SDK provides a simple interface for encrypting and decrypting
 confidential data on the blockchain. It enables developers to create encrypted
@@ -12,74 +12,138 @@ private.
 
 ## Prerequisites
 
-Before using the Nox JS SDK, make sure you have:
-
-📦 **Node.js** 18+ or Bun [Download →](https://nodejs.org/en/)
+- **Node.js** 18+ or Bun
 
 ## Installation
 
 ::: code-group
 
-```bash [npm]
-npm install @iexec/handles
+```sh [npm]
+npm install @iexec-nox/handle
 ```
 
-```bash [yarn]
-yarn add @iexec/handles
+```sh [yarn]
+yarn add @iexec-nox/handle
 ```
 
-```bash [pnpm]
-pnpm add @iexec/handles
+```sh [pnpm]
+pnpm add @iexec-nox/handle
 ```
 
-```bash [bun]
-bun add @iexec/handles
+```sh [bun]
+bun add @iexec-nox/handle
 ```
 
 :::
 
 ## Initialization
 
+The SDK provides three factory functions depending on the wallet library you
+use. All factory functions are **async** and return a `Promise<HandleClient>`.
+
+### With Ethers.js
+
+Use `createEthersHandleClient` with either a `BrowserProvider` (browser wallet)
+or an `AbstractSigner` connected to a `Provider` (e.g. `Wallet`).
+
 ::: code-group
 
-```typescript [Ethers.js]
-import { createEthersHandleClient } from '@iexec/handles';
-import { ethers } from 'ethers';
+```ts [Browser]
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+// ---cut---
+import { createEthersHandleClient } from '@iexec-nox/handle';
+import { BrowserProvider } from 'ethers';
 
-// Create a provider
-const provider = new ethers.JsonRpcProvider(
-  'https://sepolia-rollup.arbitrum.io/rpc'
-);
-
-// Create a signer (using a private key)
-const signer = new ethers.Wallet(PRIVATE_KEY, provider);
-
-// Or use a browser wallet
-const provider = new ethers.BrowserProvider(window.ethereum);
-const signer = await provider.getSigner();
-
-// Initialize the SDK
-const handlesClient = createEthersHandleClient(signer);
+const provider = new BrowserProvider(window.ethereum);
+const handleClient = await createEthersHandleClient(provider);
 ```
 
-```typescript [Viem]
-import { createViemHandleClient } from '@iexec/handles';
+```ts [NodeJS]
+declare const RPC_URL: string;
+declare const PRIVATE_KEY: string;
+// ---cut---
+import { createEthersHandleClient } from '@iexec-nox/handle';
+import { JsonRpcProvider, Wallet } from 'ethers';
+
+const provider = new JsonRpcProvider(RPC_URL);
+const signer = new Wallet(PRIVATE_KEY, provider);
+const handleClient = await createEthersHandleClient(signer);
+```
+
+:::
+
+### With Viem
+
+Use `createViemHandleClient` with a viem `WalletClient`.
+
+::: code-group
+
+```ts [Browser]
+// ---cut---
+import { createViemHandleClient } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+
+const walletClient = createWalletClient({
+  transport: custom(window.ethereum),
+});
+const handleClient = await createViemHandleClient(walletClient);
+```
+
+```ts [NodeJS]
+declare const RPC_URL: string;
+declare const PRIVATE_KEY: `0x${string}`;
+// ---cut---
+import { createViemHandleClient } from '@iexec-nox/handle';
 import { createWalletClient, http } from 'viem';
 import { privateKeyToAccount } from 'viem/accounts';
-import { arbitrumSepolia } from 'viem/chains';
 
-// Create account
-const account = privateKeyToAccount(PRIVATE_KEY);
-
-// Create wallet client
 const walletClient = createWalletClient({
-  account,
-  chain: arbitrumSepolia,
-  transport: http(),
+  account: privateKeyToAccount(PRIVATE_KEY),
+  transport: http(RPC_URL),
 });
+const handleClient = await createViemHandleClient(walletClient);
+```
 
-// Initialize the SDK
-const handlesClient = createViemHandleClient(walletClient);
+:::
+
+### With Auto-Detection
+
+Use `createHandleClient` if you want the SDK to automatically detect whether the
+provided client is from ethers or viem.
+
+::: warning Bundle size `createHandleClient` imports both ethers and viem
+adapters. For a smaller bundle, prefer `createEthersHandleClient` or
+`createViemHandleClient`. :::
+
+::: code-group
+
+```ts [Ethers]
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+// ---cut---
+import { createHandleClient } from '@iexec-nox/handle';
+import { BrowserProvider } from 'ethers';
+
+const provider = new BrowserProvider(window.ethereum);
+const handleClient = await createHandleClient(provider);
+```
+
+```ts [Viem]
+// ---cut---
+import { createHandleClient } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+
+const walletClient = createWalletClient({
+  transport: custom(window.ethereum),
+});
+const handleClient = await createHandleClient(walletClient);
 ```
 
 :::
@@ -90,9 +154,15 @@ const handlesClient = createViemHandleClient(walletClient);
 
 Encrypt a value to create a handle:
 
-```typescript
-// Encrypt a uint256 value
-const { handle, inputProof } = await handlesClient.encryptInput(
+```ts
+import { createEthersHandleClient } from '@iexec-nox/handle';
+import { BrowserProvider } from 'ethers';
+
+const handleClient = await createEthersHandleClient(
+  new BrowserProvider(window.ethereum)
+);
+// ---cut---
+const { handle, inputProof } = await handleClient.encryptInput(
   100_000_000n,
   'uint256'
 );
@@ -107,52 +177,54 @@ The `inputProof` can be used to verify the handle on-chain in smart contracts.
 
 Decrypt a handle to retrieve the original value:
 
-```typescript
-// Decrypt the handle
-const { value, solidityType } = await handlesClient.decrypt(handle);
+```ts
+import { createEthersHandleClient } from '@iexec-nox/handle';
+import type { Handle } from '@iexec-nox/handle';
+import { BrowserProvider } from 'ethers';
+
+const handleClient = await createEthersHandleClient(
+  new BrowserProvider(window.ethereum)
+);
+const { handle } = await handleClient.encryptInput(100n, 'uint256');
+// ---cut---
+const { value, solidityType } = await handleClient.decrypt(handle);
 
 console.log('Decrypted value:', value);
 console.log('Type:', solidityType); // "uint256"
 ```
 
-::: info Note Decryption requires EIP-712 signature authentication but doesn't
-consume gas. The SDK handles signature generation automatically. :::
-
-### View ACL Permissions
-
-Check who has access to a handle:
-
-```typescript
-const acl = await handlesClient.viewACL(handle);
-
-console.log('Owner:', acl.owner);
-console.log('Allowed addresses:', acl.allowedAddresses);
-console.log('Publicly decryptable:', acl.publiclyDecryptable);
-```
+::: tip Gasless operation Decryption requires EIP-712 signature authentication
+but doesn't consume gas. The SDK handles signature generation automatically. :::
 
 ## Supported Types
 
-The SDK supports various Solidity types:
+The SDK supports the following Solidity types:
 
-- **Integers**: `uint8`, `uint16`, `uint32`, `uint64`, `uint128`, `uint256`
-- **Signed Integers**: `int8`, `int16`, `int32`, `int64`, `int128`, `int256`
-- **Other**: `bool`, `address`, `bytes`, `string`, `bytes1` through `bytes32`
+- **Boolean**: `bool`
+- **Address**: `address`
+- **Dynamic types**: `bytes`, `string`
+- **Unsigned integers**: `uint8`, `uint16`, `uint24`, ... , `uint256`
+- **Signed integers**: `int8`, `int16`, `int24`, ... , `int256`
+- **Fixed-size bytes**: `bytes1`, `bytes2`, ... , `bytes32`
 
 ## Complete Example
 
-```typescript
-import { createEthersHandleClient } from '@iexec/handles';
-import { ethers } from 'ethers';
+```ts
+declare const RPC_URL: string;
+declare const PRIVATE_KEY: string;
+// ---cut---
+import { createEthersHandleClient } from '@iexec-nox/handle';
+import { JsonRpcProvider, Wallet } from 'ethers';
 
 async function main() {
   // Initialize
-  const provider = new ethers.JsonRpcProvider(RPC_URL);
-  const signer = new ethers.Wallet(PRIVATE_KEY, provider);
-  const handlesClient = createEthersHandleClient(signer);
+  const provider = new JsonRpcProvider(RPC_URL);
+  const signer = new Wallet(PRIVATE_KEY, provider);
+  const handleClient = await createEthersHandleClient(signer);
 
   // Encrypt a balance
   const balance = 1_000_000_000n; // 1 token with 9 decimals
-  const { handle, inputProof } = await handlesClient.encryptInput(
+  const { handle, inputProof } = await handleClient.encryptInput(
     balance,
     'uint256'
   );
@@ -160,12 +232,8 @@ async function main() {
   console.log(`Encrypted balance handle: ${handle}`);
 
   // Later, decrypt the balance
-  const { value } = await handlesClient.decrypt(handle);
+  const { value } = await handleClient.decrypt(handle);
   console.log(`Decrypted balance: ${value}`);
-
-  // Check permissions
-  const acl = await handlesClient.viewACL(handle);
-  console.log(`Handle owner: ${acl.owner}`);
 }
 
 main().catch(console.error);
@@ -175,6 +243,5 @@ main().catch(console.error);
 
 - Learn about [encryptInput](/references/js-sdk/methods/encryptInput) method
 - Explore [decrypt](/references/js-sdk/methods/decrypt) functionality
-- Check [viewACL](/references/js-sdk/methods/viewACL) for access control
 - Configure advanced options in
   [Advanced Configuration](/references/js-sdk/advanced-configuration)
