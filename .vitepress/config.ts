@@ -90,9 +90,9 @@ export default defineConfig({
     // https://vitepress.dev/reference/default-theme-config
     nav: [
       {
-        text: 'Overview',
-        link: '/overview/introduction',
-        activeMatch: '^/overview/',
+        text: 'Get Started',
+        link: '/getting-started/welcome',
+        activeMatch: '^/getting-started/',
       },
       {
         text: 'Guides',

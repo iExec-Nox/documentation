@@ -2,21 +2,21 @@ import type { DefaultTheme } from 'vitepress';
 
 export function getSidebar() {
   return {
-    '/overview/': [
+    '/getting-started/': [
       {
-        text: 'OVERVIEW',
+        text: 'GET STARTED',
         items: [
-          { text: 'Introduction', link: '/overview/introduction' },
-          { text: 'Hello World', link: '/overview/hello-world' },
+          { text: 'Welcome', link: '/getting-started/welcome' },
+          { text: 'Hello World', link: '/getting-started/hello-world' },
           {
             text: 'Developer',
             items: [
-              { text: 'Manifesto', link: '/overview/manifesto' },
-              { text: 'Release Note', link: '/overview/release-notes' },
-              { text: 'Status', link: '/overview/status' },
+              { text: 'Manifesto', link: '/getting-started/manifesto' },
+              { text: 'Release Note', link: '/getting-started/release-notes' },
+              { text: 'Status', link: '/getting-started/status' },
             ],
           },
-          { text: 'Use Cases', link: '/overview/use-cases' },
+          { text: 'Use Cases', link: '/getting-started/use-cases' },
         ],
       },
     ],
