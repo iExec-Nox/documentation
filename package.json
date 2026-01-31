@@ -24,8 +24,10 @@
     "@iconify/vue": "^5.0.0",
     "@shikijs/vitepress-twoslash": "^3.19.0",
     "@types/react": "^18.3.23",
+    "ethers": "^6.16.0",
     "prettier": "^3.7.4",
     "prettier-plugin-tailwindcss": "^0.6.14",
+    "viem": "^2.45.1",
     "vitepress": "^1.6.3"
   }
 }

@@ -81,10 +81,6 @@ export function getSidebar() {
                 text: 'decrypt',
                 link: '/references/js-sdk/methods/decrypt',
               },
-              {
-                text: 'viewACL',
-                link: '/references/js-sdk/methods/viewACL',
-              },
             ],
           },
           {
