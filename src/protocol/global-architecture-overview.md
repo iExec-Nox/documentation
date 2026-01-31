@@ -1,19 +1,25 @@
 ---
 title: Global Architecture Overview
-description: High-level overview of Nox protocol architecture, components, and data flows
+description:
+  High-level overview of Nox protocol architecture, components, and data flows
 ---
 
 # Global Architecture Overview
 
-Nox is a privacy layer for DeFi that enables confidential smart contract execution through Trusted Execution Environments (TEEs) and distributed key management.
+Nox is a privacy layer for DeFi that enables confidential smart contract
+execution through Trusted Execution Environments (TEEs) and distributed key
+management.
 
 ## Core Principles
 
 The protocol is built on three fundamental principles:
 
-- **Handle-based Data Flow**: Encrypted data is referenced by handles (pointers) that are manipulated on-chain
-- **Systematic Blockchain Monitoring**: Every transaction in every block is monitored to deterministically trigger confidential computations
-- **On-chain Access Control**: Access Control Lists (ACL) are maintained on-chain, explicitly defining who can access which encrypted data
+- **Handle-based Data Flow**: Encrypted data is referenced by handles (pointers)
+  that are manipulated on-chain
+- **Systematic Blockchain Monitoring**: Every transaction in every block is
+  monitored to deterministically trigger confidential computations
+- **On-chain Access Control**: Access Control Lists (ACL) are maintained
+  on-chain, explicitly defining who can access which encrypted data
 
 ## Architecture Components
 
@@ -21,27 +27,46 @@ The protocol is built on three fundamental principles:
 
 **Smart Contracts** manage protocol state and permissions:
 
-- **Compute Manager**: Receives computation requests, emits `ComputeRequested` events, registers handles
-- **ACL Manager**: Verifies access permissions to encrypted data, manages transient permissions
+- **Compute Manager**: Receives computation requests, emits `ComputeRequested`
+  events, registers handles
+- **ACL Manager**: Verifies access permissions to encrypted data, manages
+  transient permissions
 - **Fee Manager**: Collects and distributes fees, handles transaction sponsoring
-- **Governance Manager**: Manages protocol evolution, revokes compromised components
-- **Registry**: Registers TEE components (Runners, KMS nodes, Orchestrators, Handle Gateway, Ingestors), stores public keys and attestations
+- **Governance Manager**: Manages protocol evolution, revokes compromised
+  components
+- **Registry**: Registers TEE components (Runners, KMS nodes, Orchestrators,
+  Handle Gateway, Ingestors), stores public keys and attestations
 
 ### Off-Chain Components
 
-**Runners** - Execute confidential computations in TEEs. They provide valid remote attestation and publish results directly on-chain. Data is re-encrypted specifically for the assigned Runner using their public key.
+**Runners** - Execute confidential computations in TEEs. They provide valid
+remote attestation and publish results directly on-chain. Data is re-encrypted
+specifically for the assigned Runner using their public key.
 
-**Key Management Service (KMS)** - Distributed nodes that collectively hold the system's private key as secret shares. A quorum of t out of n nodes is required to re-encrypt data. No single node can decrypt alone.
+**Key Management Service (KMS)** - Distributed nodes that collectively hold the
+system's private key as secret shares. A quorum of t out of n nodes is required
+to re-encrypt data. No single node can decrypt alone.
 
-**KMS Manager** - Centralized coordinator for the threshold protocol, running in a TEE. Single entry point to KMS nodes, simplifying connection management for Runners.
+**KMS Manager** - Centralized coordinator for the threshold protocol, running in
+a TEE. Single entry point to KMS nodes, simplifying connection management for
+Runners.
 
-**Orchestrator** - Decentralized network of nodes that orchestrate computation requests, dequeue messages, assign computations to Runners, and supervise execution. Can reassign tasks on failure or timeout.
+**Orchestrator** - Decentralized network of nodes that orchestrate computation
+requests, dequeue messages, assign computations to Runners, and supervise
+execution. Can reassign tasks on failure or timeout.
 
-**Handle Gateway** - Single entry point to the Handle↔Cyphertext database. Manages encryption/decryption of user data and signs EIP-712 payloads. Uses RA-TLS for SDK connections. Provides REST interface for easy SDK integration.
+**Handle Gateway** - Single entry point to the Handle↔Cyphertext database.
+Manages encryption/decryption of user data and signs EIP-712 payloads. Uses
+RA-TLS for SDK connections. Provides REST interface for easy SDK integration.
 
-**Ingestor** - Dedicated service (Rust+Alloy) for blockchain monitoring and `ComputeRequested` event detection. Blocks are processed optimistically. Detected requests are queued for Orchestrator processing. Multiple instances can coexist.
+**Ingestor** - Dedicated service (Rust+Alloy) for blockchain monitoring and
+`ComputeRequested` event detection. Blocks are processed optimistically.
+Detected requests are queued for Orchestrator processing. Multiple instances can
+coexist.
 
-**Message Queue** - Buffer between Ingestors and Orchestrator. Decouples blockchain event detection from processing, absorbs load spikes, and ensures ordered request processing.
+**Message Queue** - Buffer between Ingestors and Orchestrator. Decouples
+blockchain event detection from processing, absorbs load spikes, and ensures
+ordered request processing.
 
 ## Data Flow
 
@@ -60,7 +85,8 @@ The protocol is built on three fundamental principles:
 2. **Ingestor** detects event and pushes to message queue
 3. **Orchestrator** dequeues request and assigns to available Runner
 4. **Runner** requests input handles from Handle Gateway
-5. **Handle Gateway** coordinates with KMS for proxy re-encryption to Runner's key
+5. **Handle Gateway** coordinates with KMS for proxy re-encryption to Runner's
+   key
 6. **Runner** decrypts and executes computation in TEE
 7. **Runner** encrypts results and submits to Handle Gateway
 8. **Handle Gateway** stores results and updates database
@@ -83,7 +109,8 @@ The protocol's trust model relies on:
 
 - **TEEs (TDX)**: All sensitive operations execute in hardware-backed enclaves
 - **Remote Attestation**: Cryptographic proof that code runs in authentic TEE
-- **Threshold Cryptography**: Distributed key management eliminates single points of failure
+- **Threshold Cryptography**: Distributed key management eliminates single
+  points of failure
 - **On-chain Registry**: Component registration and attestation verification
 
 ### Access Control
@@ -102,9 +129,12 @@ The protocol's trust model relies on:
 
 ## Key Features
 
-- **Deterministic Execution**: Every block is monitored, every transaction can trigger computations
-- **No Consensus Required**: Unlike market-based systems, focuses on reliable deterministic execution
-- **Algorithm Evolution**: Encryption algorithms can evolve without breaking changes
+- **Deterministic Execution**: Every block is monitored, every transaction can
+  trigger computations
+- **No Consensus Required**: Unlike market-based systems, focuses on reliable
+  deterministic execution
+- **Algorithm Evolution**: Encryption algorithms can evolve without breaking
+  changes
 - **Composability**: Native integration with existing DeFi protocols
 
 ## Learn More
