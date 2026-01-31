@@ -67,6 +67,7 @@ The plaintext value to encrypt. The expected JavaScript type depends on the
 | `address`, `bytes`, `bytesN` | `string`        | `"0x742d…bEb0"` (hex with `0x` prefix) |
 | `uintN`, `intN`              | `bigint`        | `1000n`                                |
 
+<!-- prettier-ignore-start -->
 ```ts twoslash
 declare global {
   interface Window {
@@ -91,11 +92,12 @@ await handleClient.encryptInput(true, 'bool'); // [!code focus]
 await handleClient.encryptInput(1000n, 'uint256'); // [!code focus]
 
 // Encrypt an Ethereum address
-await handleClient.encryptInput( // [!code focus]
+await handleClient.encryptInput(// [!code focus]
   '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0', // [!code focus]
   'address' // [!code focus]
 ); // [!code focus]
 ```
+<!-- prettier-ignore-end -->
 
 ### solidityType <Required />
 

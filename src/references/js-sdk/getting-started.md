@@ -69,11 +69,11 @@ The SDK exposes a dedicated factory function for each supported wallet library.
 Pick the one that matches your stack — each is **async** and returns a
 `Promise<HandleClient>`.
 
-| Factory                      | Wallet library | Accepted client                                       |
-| ---------------------------- | -------------- | ----------------------------------------------------- |
-| `createEthersHandleClient`   | Ethers.js v6   | `BrowserProvider` or `AbstractSigner` with `Provider`  |
-| `createViemHandleClient`     | Viem v2        | `WalletClient`                                        |
-| `createHandleClient`         | Any            | Auto-detects ethers or viem                           |
+| Factory                    | Wallet library | Accepted client                                       |
+| -------------------------- | -------------- | ----------------------------------------------------- |
+| `createEthersHandleClient` | Ethers.js v6   | `BrowserProvider` or `AbstractSigner` with `Provider` |
+| `createViemHandleClient`   | Viem v2        | `WalletClient`                                        |
+| `createHandleClient`       | Any            | Auto-detects ethers or viem                           |
 
 ### With Ethers.js
 
@@ -149,10 +149,12 @@ const handleClient = await createViemHandleClient(walletClient);
 `createHandleClient` inspects the provided client at runtime and delegates to
 the appropriate adapter.
 
-::: warning Bundle size
-This factory imports both the ethers and viem adapters. If you only use one
-library, prefer `createEthersHandleClient` or `createViemHandleClient` to keep
-your bundle smaller.
+::: warning
+
+Bundle size This factory imports both the ethers and viem adapters. If you only
+use one library, prefer `createEthersHandleClient` or `createViemHandleClient`
+to keep your bundle smaller.
+
 :::
 
 ::: code-group

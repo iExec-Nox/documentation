@@ -78,20 +78,24 @@ const { value, solidityType } = await handleClient.decrypt(handle); // [!code fo
 ```
 
 ::: tip Gasless operation
+
 Decryption uses an EIP-712 signature for authentication — it does not submit an
 on-chain transaction and costs no gas.
+
 :::
 
 ::: warning Access control
+
 The connected wallet must be authorized to decrypt the handle. Authorization is
 managed through the on-chain ACL: only the handle owner or addresses explicitly
 granted access can request decryption.
+
 :::
 
 ## Return Value
 
 ```ts twoslash
-import {type DecryptResult } from '@iexec-nox/handle';
+import { type DecryptResult } from '@iexec-nox/handle';
 ```
 
 ### value
@@ -101,12 +105,12 @@ import {type DecryptResult } from '@iexec-nox/handle';
 The decrypted plaintext. The JavaScript type depends on the Solidity type
 encoded in the handle:
 
-| Solidity type                    | JavaScript type | Example                    |
-| -------------------------------- | --------------- | -------------------------- |
-| `bool`                           | `boolean`       | `true`                     |
-| `string`                         | `string`        | `"Hello, Nox!"`            |
-| `address`, `bytes`, `bytesN`     | `string`        | `"0x742d…bEb0"`            |
-| `uintN`, `intN`                  | `bigint`        | `1000n`                    |
+| Solidity type                | JavaScript type | Example         |
+| ---------------------------- | --------------- | --------------- |
+| `bool`                       | `boolean`       | `true`          |
+| `string`                     | `string`        | `"Hello, Nox!"` |
+| `address`, `bytes`, `bytesN` | `string`        | `"0x742d…bEb0"` |
+| `uintN`, `intN`              | `bigint`        | `1000n`         |
 
 ### solidityType
 
