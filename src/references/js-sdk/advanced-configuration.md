@@ -12,12 +12,18 @@ usage of `@iexec-nox/handle`.
 
 ## Usage
 
-```ts
+```ts twoslash
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+// ---cut---
 import { createEthersHandleClient } from '@iexec-nox/handle';
 import { BrowserProvider } from 'ethers';
 
 const signer = new BrowserProvider(window.ethereum);
-// ---cut---
+
 const handleClient = await createEthersHandleClient(signer, {
   gatewayUrl: 'https://gateway.custom.example.com',
   smartContractAddress: '0xYourContractAddress',
@@ -26,45 +32,57 @@ const handleClient = await createEthersHandleClient(signer, {
 
 ## Parameters
 
-```ts
+```ts twoslash
 import type { HandleClientConfig } from '@iexec-nox/handle';
 ```
 
-### gatewayUrl _Optional_
+### gatewayUrl <Optional />
 
 **Type:** `string` (base URL without path or query parameters)
 
 The Gateway endpoint URL. The SDK communicates with the Gateway for encryption
 and decryption operations.
 
-```ts
+```ts twoslash
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+// ---cut---
 import { createEthersHandleClient } from '@iexec-nox/handle';
 import { BrowserProvider } from 'ethers';
 
 const signer = new BrowserProvider(window.ethereum);
-// ---cut---
+
 const handleClient = await createEthersHandleClient(signer, {
-  gatewayUrl: 'https://gateway.custom.example.com',
+  gatewayUrl: 'https://gateway.custom.example.com', // [!code focus]
 });
 ```
 
 If not provided, the default Gateway URL for the detected network will be used.
 
-### smartContractAddress _Optional_
+### smartContractAddress <Optional />
 
 **Type:** `string` (Ethereum address)
 
 The address of the TEEComputeManager smart contract used for signature
 verification.
 
-```ts
+```ts twoslash
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+// ---cut---
 import { createEthersHandleClient } from '@iexec-nox/handle';
 import { BrowserProvider } from 'ethers';
 
 const signer = new BrowserProvider(window.ethereum);
-// ---cut---
+
 const handleClient = await createEthersHandleClient(signer, {
-  smartContractAddress: '0xYourTEEComputeManagerAddress',
+  smartContractAddress: '0xYourTEEComputeManagerAddress', // [!code focus]
 });
 ```
 
@@ -79,7 +97,6 @@ chain ID detected from your provider:
 | Network          | Chain ID |
 | ---------------- | -------- |
 | Arbitrum Sepolia | 421614   |
-| Arbitrum One     | 42161    |
 
 To use an unsupported chain, you must provide both `gatewayUrl` and
 `smartContractAddress`.
@@ -88,10 +105,10 @@ To use an unsupported chain, you must provide both `gatewayUrl` and
 
 ::: code-group
 
-```ts [Ethers.js]
+```ts twoslash [Ethers.js]
 declare const RPC_URL: string;
 declare const PRIVATE_KEY: string;
-declare const GATEWAY_URL: string;
+declare const GATEWAY_URL: `https://${string}`;
 declare const CONTRACT_ADDRESS: `0x${string}`;
 // ---cut---
 import { createEthersHandleClient } from '@iexec-nox/handle';
@@ -106,10 +123,10 @@ const handleClient = await createEthersHandleClient(signer, {
 });
 ```
 
-```ts [Viem]
+```ts twoslash [Viem]
 declare const RPC_URL: string;
 declare const PRIVATE_KEY: `0x${string}`;
-declare const GATEWAY_URL: string;
+declare const GATEWAY_URL: `https://${string}`;
 declare const CONTRACT_ADDRESS: `0x${string}`;
 // ---cut---
 import { createViemHandleClient } from '@iexec-nox/handle';

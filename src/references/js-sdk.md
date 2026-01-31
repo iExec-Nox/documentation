@@ -19,52 +19,6 @@ dealing with the underlying cryptographic complexity.
 - **Gasless Decryption**: Uses EIP-712 signatures for authentication without
   requiring gas
 
-## Installation
-
-::: code-group
-
-```sh [npm]
-npm install @iexec-nox/handle
-```
-
-```sh [yarn]
-yarn add @iexec-nox/handle
-```
-
-```sh [pnpm]
-pnpm add @iexec-nox/handle
-```
-
-```sh [bun]
-bun add @iexec-nox/handle
-```
-
-:::
-
-## Quick Start
-
-```ts
-declare const RPC_URL: string;
-declare const PRIVATE_KEY: string;
-// ---cut---
-import { createEthersHandleClient } from '@iexec-nox/handle';
-import { JsonRpcProvider, Wallet } from 'ethers';
-
-// Initialize with your signer
-const provider = new JsonRpcProvider(RPC_URL);
-const signer = new Wallet(PRIVATE_KEY, provider);
-const handleClient = await createEthersHandleClient(signer);
-
-// Encrypt data
-const { handle, inputProof } = await handleClient.encryptInput(
-  100_000_000n,
-  'uint256'
-);
-
-// Decrypt handle
-const { value } = await handleClient.decrypt(handle);
-```
-
 ## Core Concepts
 
 ### Handles
@@ -82,12 +36,7 @@ is used when verifying handles in smart contracts.
 ### Access Control
 
 Handles are protected by Access Control Lists (ACLs) managed on-chain. Only
-authorized addresses (owners or viewers) can decrypt handles.
-
-## Supported Wallet Libraries
-
-- **Ethers.js**: Use `createEthersHandleClient(signer)`
-- **Viem**: Use `createViemHandleClient(walletClient)`
+authorized addresses (admin or viewers) can decrypt handles.
 
 ## Documentation
 
