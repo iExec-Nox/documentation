@@ -1,19 +1,23 @@
 ---
 title: KMS
-description: Key Management Service for distributed key management and decryption delegation
+description:
+  Key Management Service for distributed key management and decryption
+  delegation
 ---
 
 # Key Management Service (KMS)
 
-The KMS generates and manages the cryptographic keys used for encryption and decryption delegation. It never decrypts data — it only provides the shared secret needed for clients to decrypt locally.
+The KMS generates and manages the cryptographic keys used for encryption and
+decryption delegation. It never decrypts data — it only provides the shared
+secret needed for clients to decrypt locally.
 
 ## Key Concepts
 
-| Term | Description |
-| ---- | ----------- |
-| **G** | Generator point on the elliptic curve (public constant) |
-| **privkey_KMS** | KMS private key (split into shares, never stored whole) |
-| **pubkey_KMS** | KMS public key: `pubkey_KMS = privkey_KMS * G` |
+| Term              | Description                                                          |
+| ----------------- | -------------------------------------------------------------------- |
+| **G**             | Generator point on the elliptic curve (public constant)              |
+| **privkey_KMS**   | KMS private key (split into shares, never stored whole)              |
+| **pubkey_KMS**    | KMS public key: `pubkey_KMS = privkey_KMS * G`                       |
 | **t/n threshold** | At least `t` out of `n` nodes must collaborate to perform operations |
 
 ## How It Works
@@ -67,11 +71,22 @@ flowchart LR
     B9 --> B10
 ```
 
-1. **Gateway encrypts** — The Gateway generates a random ephemeral key `k`, computes the shared secret `k * pubkey_KMS` derives an AES-256 key and encrypts the data with the AES-256 key. The ephemeral public key `K = k * G` is stored with the ciphertext.
+1. **Gateway encrypts** — The Gateway generates a random ephemeral key `k`,
+   computes the shared secret `k * pubkey_KMS` derives an AES-256 key and
+   encrypts the data with the AES-256 key. The ephemeral public key `K = k * G`
+   is stored with the ciphertext.
 
-2. **Gateway requests delegation** — When a User or Runner requests decryption, the Gateway verifies the on-chain ACL. If authorized, the Gateway forwards the request to the KMS. Each KMS node computes `K * share_i` using its secret share and encrypts the result with the client's RSA public key.
+2. **Gateway requests delegation** — When a User or Runner requests decryption,
+   the Gateway verifies the on-chain ACL. If authorized, the Gateway forwards
+   the request to the KMS. Each KMS node computes `K * share_i` using its secret
+   share and encrypts the result with the client's RSA public key.
 
-3. **Client decrypts** — The client collects at least `t` partial results from the KMS nodes, decrypts each with their RSA private key, and reassembles them to recover `K * privkey_KMS`. This equals `k * pubkey_KMS` (the original shared secret) because `K * privkey_KMS = (k * G) * privkey_KMS = k * pubkey_KMS`. The client then derives the AES-256 key using HKDF and decrypts the ciphertext locally.
+3. **Client decrypts** — The client collects at least `t` partial results from
+   the KMS nodes, decrypts each with their RSA private key, and reassembles them
+   to recover `K * privkey_KMS`. This equals `k * pubkey_KMS` (the original
+   shared secret) because
+   `K * privkey_KMS = (k * G) * privkey_KMS = k * pubkey_KMS`. The client then
+   derives the AES-256 key using HKDF and decrypts the ciphertext locally.
 
 ## ECIES Encryption
 
@@ -94,33 +109,36 @@ The AES key is derived from the shared secret using **HKDF (SHA-256)**:
 When a user requests decryption:
 
 1. User generates an **RSA-OAEP 2048** keypair (public exponent 65537)
-2. User exports the public key in **SPKI format** as a hex string (no `0x` prefix)
+2. User exports the public key in **SPKI format** as a hex string (no `0x`
+   prefix)
 3. KMS computes the shared secret `K * privkey_A`
 4. KMS encrypts the shared secret with the user's RSA public key
 5. User decrypts the shared secret locally and derives the AES key
 
-::: warning Security
-The KMS never sees the plaintext. Only the RSA-encrypted shared secret travels over the network.
-:::
+::: warning Security The KMS never sees the plaintext. Only the RSA-encrypted
+shared secret travels over the network. :::
 
 ## Threshold Cryptography
 
 ### What is a Share?
 
-A **share** is a piece of the private key. Individually, a share reveals nothing about the private key. But when `t` shares are combined using Lagrange interpolation, the original secret can be reconstructed.
+A **share** is a piece of the private key. Individually, a share reveals nothing
+about the private key. But when `t` shares are combined using Lagrange
+interpolation, the original secret can be reconstructed.
 
-In practice, shares are never combined directly. Instead, each node computes a **partial result** (`K * share_i`), and these partial results are reassembled to get `K * privkey_KMS` — the private key itself is never reconstructed.
+In practice, shares are never combined directly. Instead, each node computes a
+**partial result** (`K * share_i`), and these partial results are reassembled to
+get `K * privkey_KMS` — the private key itself is never reconstructed.
 
-| Concept | Description |
-| ------- | ----------- |
-| **n** | Total number of KMS nodes |
-| **t** | Minimum shares required (threshold) |
-| **share_i** | Node i's piece of the private key |
-| **DKG** | Distributed Key Generation — setup protocol |
+| Concept     | Description                                 |
+| ----------- | ------------------------------------------- |
+| **n**       | Total number of KMS nodes                   |
+| **t**       | Minimum shares required (threshold)         |
+| **share_i** | Node i's piece of the private key           |
+| **DKG**     | Distributed Key Generation — setup protocol |
 
-::: info Current Status
-MVP uses a single KMS node running in a TEE. The distributed threshold KMS (t/n) is the long-term architecture.
-:::
+::: info Current Status MVP uses a single KMS node running in a TEE. The
+distributed threshold KMS (t/n) is the long-term architecture. :::
 
 ## Learn More
 
