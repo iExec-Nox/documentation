@@ -12,3 +12,5 @@ components.d.ts
 
 #mac
 .DS_Store
+protocol-docs
+.cursor

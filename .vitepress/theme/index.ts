@@ -3,6 +3,8 @@ import type { Theme } from 'vitepress';
 import DefaultTheme from 'vitepress/theme';
 import TwoslashFloatingVue from '@shikijs/vitepress-twoslash/client';
 import Layout from './Layout.vue';
+import Required from './components/Required.vue';
+import Optional from './components/Optional.vue';
 import type { EnhanceAppContext } from 'vitepress';
 import googleAnalytics from 'vitepress-plugin-google-analytics';
 import 'virtual:group-icons.css';
@@ -23,6 +25,8 @@ export default {
   extends: DefaultTheme,
   Layout,
   enhanceApp({ app }: EnhanceAppContext) {
+    app.component('Required', Required);
+    app.component('Optional', Optional);
     app.use(TwoslashFloatingVue as any);
 
     googleAnalytics({
