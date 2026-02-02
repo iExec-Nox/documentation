@@ -52,8 +52,7 @@ const { value, solidityType } = await handleClient.decrypt(handle);
 **Type:** `Handle<T>` (a `0x`-prefixed hex string, 32 bytes)
 
 The handle to decrypt. It must have been created on the **same chain** as the
-one the client is connected to — the SDK checks the chain ID encoded in the
-handle and throws if there is a mismatch.
+one the client is connected to.
 
 ```ts twoslash
 declare global {
@@ -95,7 +94,11 @@ granted access can request decryption.
 ## Return Value
 
 ```ts twoslash
-import { type DecryptResult } from '@iexec-nox/handle';
+import type { JsValue } from '@iexec-nox/handle';
+{
+  value: JsValue<T>;
+  solidityType: T;
+}
 ```
 
 ### value

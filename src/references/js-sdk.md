@@ -27,9 +27,9 @@ A handle is a 32-byte identifier that references encrypted data stored
 off-chain. Handles are deterministic and can be verified on-chain through
 cryptographic proofs.
 
-### Input Proofs
+### Handle Proofs
 
-When encrypting data, the Gateway returns an `inputProof` - a signed EIP-712
+When encrypting data, the Gateway returns a `handleProof` - a signed EIP-712
 payload that proves the handle was created by a legitimate Gateway. This proof
 is used when verifying handles in smart contracts.
 

@@ -5,10 +5,9 @@ description: Advanced configuration for Nox JS SDK
 
 # Advanced Configuration
 
-The `createEthersHandleClient` and `createViemHandleClient` factory functions
-accept an optional configuration object to override network defaults. These
-options are specific to advanced use cases; you won't need them for standard
-usage of `@iexec-nox/handle`.
+You can customize the SDK by passing a configuration object when creating the
+client. These options are for advanced use cases — you won't need them for
+standard usage on supported networks.
 
 ## Usage
 
@@ -66,8 +65,7 @@ If not provided, the default Gateway URL for the detected network will be used.
 
 **Type:** `string` (Ethereum address)
 
-The address of the TEEComputeManager smart contract used for signature
-verification.
+The address of the Nox protocol contract used for handle verification.
 
 ```ts twoslash
 declare global {
