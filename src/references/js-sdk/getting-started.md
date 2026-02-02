@@ -7,8 +7,8 @@ description: Getting started with Nox JS SDK
 
 The Nox JS SDK lets you encrypt values and decrypt handles for use with
 confidential smart contracts, without dealing directly with the Handle Gateway
-or the underlying cryptography. It manages encryption, proof generation,
-EIP-712 signatures, and key exchange transparently.
+or the underlying cryptography. It manages encryption, proof generation, EIP-712
+signatures, and key exchange transparently.
 
 ## How It Works
 

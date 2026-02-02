@@ -17,8 +17,8 @@ the handle was created by a legitimate Gateway.
 3. The Gateway encrypts and stores the data, then returns a deterministic handle
    and a signed EIP-712 proof.
 
-The handle can then be passed to a smart contract alongside the `handleProof` for
-on-chain verification. From that point, the contract works with the handle
+The handle can then be passed to a smart contract alongside the `handleProof`
+for on-chain verification. From that point, the contract works with the handle
 without ever seeing the plaintext.
 
 ## Usage
@@ -175,8 +175,7 @@ await handleClient.encryptInput(
 
 ## Return Value
 
-```ts twoslash
-import type { Handle } from '@iexec-nox/handle';
+```ts
 {
   handle: Handle<T>;
   handleProof: `0x${string}`;

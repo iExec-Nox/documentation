@@ -93,8 +93,7 @@ granted access can request decryption.
 
 ## Return Value
 
-```ts twoslash
-import type { JsValue } from '@iexec-nox/handle';
+```ts
 {
   value: JsValue<T>;
   solidityType: T;
