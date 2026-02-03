@@ -80,7 +80,7 @@ import { BrowserProvider } from 'ethers';
 const signer = new BrowserProvider(window.ethereum);
 
 const handleClient = await createEthersHandleClient(signer, {
-  smartContractAddress: '0xYourTEEComputeManagerAddress', // [!code focus]
+  smartContractAddress: '0x123...abc', // [!code focus]
 });
 ```
 
