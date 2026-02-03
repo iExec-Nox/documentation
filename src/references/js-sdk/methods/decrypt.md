@@ -95,8 +95,8 @@ granted access can request decryption.
 
 ```ts
 {
-  value: JsValue<T>;
-  solidityType: T;
+  value: boolean | string | bigint;
+  solidityType: SolidityType;
 }
 ```
 
