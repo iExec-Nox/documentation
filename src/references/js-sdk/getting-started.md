@@ -5,21 +5,20 @@ description: Getting started with Nox JS SDK
 
 # Getting Started
 
-The Nox JS SDK lets you interact with confidential smart contracts without
-dealing directly with the Handle Gateway or the underlying cryptography. It
-manages encryption, proof generation, EIP-712 signatures, and key exchange
-transparently so you can focus on your application logic.
+The Nox JS SDK lets you encrypt values and decrypt handles for use with
+confidential smart contracts, without dealing directly with the Handle Gateway
+or the underlying cryptography. It manages encryption, proof generation, EIP-712
+signatures, and key exchange transparently.
 
 ## How It Works
 
 Working with confidential data on Nox follows a three-step workflow:
 
-1. **Encrypt** — Your app encrypts a plaintext value (a balance, a vote, a
-   flag…) using [`encryptInput`](/references/js-sdk/methods/encryptInput). The
-   SDK sends the value to the Handle Gateway, which returns a **handle** (a
-   32-byte on-chain identifier pointing to the encrypted data) and an
-   **inputProof** (an EIP-712 signed proof that the handle was created by a
-   legitimate Gateway).
+1. **Encrypt** — You encrypt a plaintext value (a balance, a vote, a flag…)
+   using [`encryptInput`](/references/js-sdk/methods/encryptInput). The SDK
+   sends the value to the Handle Gateway, which returns a **handle** (a 32-byte
+   on-chain identifier pointing to the encrypted data) and a **handleProof** (an
+   EIP-712 signed proof that the handle was created by a legitimate Gateway).
 
 2. **Compute** — Your smart contract receives the handle and proof, verifies
    them, and performs operations on encrypted data. Handles are composable: they
@@ -28,12 +27,9 @@ Working with confidential data on Nox follows a three-step workflow:
 
 3. **Decrypt** — When a user needs to read the actual value,
    [`decrypt`](/references/js-sdk/methods/decrypt) requests decryption from the
-   Gateway. The SDK generates an ephemeral RSA keypair and signs an EIP-712
-   `DataAccessAuthorization` message. If the on-chain ACL authorizes the
-   request, the KMS computes the ECIES shared secret from the stored ephemeral
-   key and encrypts it with the user's RSA public key. The SDK then decrypts the
-   shared secret locally and recovers the plaintext — the value never travels in
-   the clear.
+   Gateway. The SDK signs an EIP-712 authorization message (no gas required). If
+   the on-chain ACL authorizes the request, the plaintext is securely returned
+   to the user — the value never travels in the clear.
 
 ## Prerequisites
 

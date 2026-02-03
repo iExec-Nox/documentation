@@ -48,7 +48,7 @@ declare module '@iexec-nox/handle' {
 
   export type EncryptInputResult<T extends SolidityType> = {
     handle: Handle<T>;
-    inputProof: `0x${string}`;
+    handleProof: `0x${string}`;
   };
 
   export type DecryptResult<T extends SolidityType> = {
@@ -61,8 +61,9 @@ declare module '@iexec-nox/handle' {
   export class HandleClient {
     encryptInput<T extends SolidityType>(
       value: JsValue<T>,
-      solidityType: T
-    ): Promise<{ handle: Handle<T>; inputProof: `0x${string}` }>;
+      solidityType: T,
+      applicationContract: `0x${string}`
+    ): Promise<{ handle: Handle<T>; handleProof: `0x${string}` }>;
 
     decrypt<T extends SolidityType>(
       handle: Handle<T>
