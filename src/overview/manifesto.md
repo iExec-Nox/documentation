@@ -5,4 +5,6 @@ description: The vision and principles behind Nox
 
 # Nox Manifesto
 
-TODO
+::: warning Coming soon
+This page is currently being written. Content will be available shortly.
+:::

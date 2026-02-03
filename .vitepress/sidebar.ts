@@ -109,7 +109,7 @@ export function getSidebar() {
           },
           {
             text: 'Advanced Configuration',
-            link: '/references/handle-sdk/advanced-configuration',
+            link: '/references/solidity-library/advanced-configuration',
           },
         ],
       },
