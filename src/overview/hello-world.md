@@ -4,67 +4,19 @@ description: Build your first confidential smart contract with Nox
 ---
 
 <script setup>
-const counterCode = `// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
-
-import { TEEChainConfig } from '@iexec-nox/tee-contracts/TEEChainConfig.sol';
-import { TEEPrimitive, euint256, externalEuint256 } from '@iexec-nox/tee-contracts/TEEPrimitive.sol';
-
-/**
- * @title ConfidentialCounter
- * @notice A simple counter that stores its value encrypted.
- * @dev The counter value is never exposed on-chain - only encrypted handles are visible.
- */
-contract ConfidentialCounter is TEEChainConfig {
-    /// @notice The encrypted counter value
-    euint256 public counter;
-
-    /// @notice Event emitted when counter is incremented
-    event CounterIncremented(address indexed user);
-
-    /**
-     * @notice Increment the counter by an encrypted amount
-     * @param inputHandle The encrypted increment value (created via SDK)
-     * @param inputProof The proof that the handle is valid
-     */
-    function increment(
-        externalEuint256 inputHandle,
-        bytes calldata inputProof
-    ) external {
-        // Verify the input handle and convert to internal type
-        euint256 incrementValue = TEEPrimitive.fromExternal(inputHandle, inputProof);
-
-        // Add the encrypted increment to the encrypted counter
-        // This computation happens inside the TEE - values are never exposed
-        counter = TEEPrimitive.add(counter, incrementValue);
-
-        // Allow the contract to access the new counter value
-        acl.allowThis(euint256.unwrap(counter));
-
-        emit CounterIncremented(msg.sender);
-    }
-
-    /**
-     * @notice Reset the counter to zero
-     */
-    function reset() external {
-        // Create an encrypted zero value
-        counter = TEEPrimitive.asEuint256(0);
-        acl.allowThis(euint256.unwrap(counter));
-    }
-}`;
+import piggyBankCode from '../contracts/ConfidentialPiggyBank.sol?raw';
 </script>
 
 # Hello World
 
-Build your first confidential smart contract using Nox. This example demonstrates how to create a simple counter that keeps its value private using TEE-based encryption.
+Build your first confidential smart contract using Nox. This example demonstrates how to create a piggy bank that keeps your savings private using TEE-based encryption.
 
 ## Try it in Remix
 
 You can experiment with the contract directly in your browser using Remix IDE:
 
 <ClientOnly>
-  <RemixEmbed :code="counterCode" />
+  <RemixEmbed :code="piggyBankCode" />
 </ClientOnly>
 
 ## Understanding the Code
@@ -72,7 +24,7 @@ You can experiment with the contract directly in your browser using Remix IDE:
 ### 1. Inherit from TEEChainConfig
 
 ```solidity
-contract ConfidentialCounter is TEEChainConfig {
+contract ConfidentialPiggyBank is TEEChainConfig {
 ```
 
 `TEEChainConfig` automatically configures the correct TEE service addresses based on the network you're deploying to (Arbitrum Sepolia, Arbitrum One, etc.).
@@ -80,19 +32,19 @@ contract ConfidentialCounter is TEEChainConfig {
 ### 2. Encrypted State Variables
 
 ```solidity
-euint256 public counter;
+euint256 private balance;
 ```
 
-The `euint256` type represents an encrypted unsigned 256-bit integer. The actual value is stored as an encrypted handle - observers can see the handle exists but cannot read the value.
+The `euint256` type represents an encrypted unsigned 256-bit integer. The actual value is stored as an encrypted handle - observers can see the handle exists but cannot read the value. Your piggy bank balance remains completely private.
 
 ### 3. Working with Encrypted Inputs
 
 ```solidity
-function increment(
+function deposit(
     externalEuint256 inputHandle,
     bytes calldata inputProof
 ) external {
-    euint256 incrementValue = TEEPrimitive.fromExternal(inputHandle, inputProof);
+    euint256 depositAmount = TEEPrimitive.fromExternal(inputHandle, inputProof);
     // ...
 }
 ```
@@ -105,7 +57,7 @@ When users want to pass encrypted values to your contract:
 ### 4. Confidential Computations
 
 ```solidity
-counter = TEEPrimitive.add(counter, incrementValue);
+balance = TEEPrimitive.add(balance, depositAmount);
 ```
 
 All arithmetic operations happen inside the TEE (Trusted Execution Environment). The TEE:
@@ -116,10 +68,23 @@ All arithmetic operations happen inside the TEE (Trusted Execution Environment).
 
 The plaintext values are **never exposed on-chain**.
 
-### 5. Managing Permissions
+### 5. Encrypted Comparisons
 
 ```solidity
-acl.allowThis(euint256.unwrap(counter));
+ebool canWithdraw = TEEPrimitive.le(withdrawAmount, balance);
+balance = TEEPrimitive.select(canWithdraw, newBalance, balance);
+```
+
+You can perform comparisons on encrypted values:
+- `le()` checks if one encrypted value is less than or equal to another
+- `select()` conditionally chooses between two encrypted values based on an encrypted boolean
+- This allows secure logic without revealing the actual values
+
+### 6. Managing Permissions
+
+```solidity
+acl.allowThis(euint256.unwrap(balance));
+acl.allow(euint256.unwrap(balance), viewer);
 ```
 
 The ACL (Access Control List) manages who can access encrypted values:
@@ -129,7 +94,7 @@ The ACL (Access Control List) manages who can access encrypted values:
 
 ## Interacting from the Frontend
 
-Use the Nox SDK to interact with your confidential contract:
+Use the Nox SDK to interact with your confidential piggy bank:
 
 ```typescript
 import { createViemHandleClient } from '@iexec-nox/handles';
@@ -144,15 +109,16 @@ const walletClient = createWalletClient({
 
 const handleClient = createViemHandleClient(walletClient);
 
-// 2. Encrypt a value
-const { handle, inputProof } = await handleClient.encryptInput(42n, 'uint256');
+// 2. Encrypt a deposit amount
+const { handle, inputProof } = await handleClient.encryptInput(100n, 'uint256');
 
-// 3. Call the contract with the encrypted value
-const tx = await contract.increment(handle, inputProof);
+// 3. Deposit into the piggy bank
+const tx = await contract.deposit(handle, inputProof);
 
-// 4. Decrypt the result (requires permission)
-const { value } = await handleClient.decrypt(counterHandle);
-console.log('Counter value:', value);
+// 4. Grant yourself view access and decrypt the balance
+await contract.grantViewAccess(walletClient.account.address);
+const { value } = await handleClient.decrypt(balanceHandle);
+console.log('Piggy bank balance:', value);
 ```
 
 ## Next Steps
