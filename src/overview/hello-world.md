@@ -64,12 +64,7 @@ Build your first confidential smart contract using Nox. This example demonstrate
 You can experiment with the contract directly in your browser using Remix IDE:
 
 <ClientOnly>
-  <RemixEmbed
-    title="ConfidentialCounter.sol"
-    :show-embed="false"
-    height="650px"
-    :code="counterCode"
-  />
+  <RemixEmbed :code="counterCode" />
 </ClientOnly>
 
 ## Understanding the Code
