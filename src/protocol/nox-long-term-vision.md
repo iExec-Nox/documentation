@@ -76,11 +76,15 @@ without breaking compatibility or invalidating existing data, in compliance with
 Handle Gateway TEE, allowing algorithm updates (schemes, key sizes, primitives)
 without client-side modifications, eliminating breaking changes in the SDK.
 
-::: info Algorithm Evolution The Handle Gateway, running in a TEE, retrieves the
+::: info
+
+Algorithm Evolution The Handle Gateway, running in a TEE, retrieves the
 threshold public key from the blockchain and encrypts data under this key,
 generating the ciphertext. This approach centralizes cryptographic logic in the
 Handle Gateway TEE, enabling encryption algorithm evolution without requiring
-SDK changes. :::
+SDK changes.
+
+:::
 
 ## Trust Model Evolution
 
