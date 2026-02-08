@@ -119,7 +119,7 @@ export default withMermaid(
         },
         {
           text: 'Protocol',
-          link: '/protocol/nox-long-term-vision',
+          link: '/protocol/protocol-vision',
           activeMatch: '^/protocol/',
         },
       ],

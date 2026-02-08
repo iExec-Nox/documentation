@@ -143,4 +143,4 @@ The protocol's trust model relies on:
 - [Runner](/protocol/runner) - Computation execution
 - [Gateway](/protocol/gateway) - Handle encryption/decryption
 - [Ingestor](/protocol/ingestor) - Blockchain monitoring
-- [Nox Long-Term Vision](/protocol/nox-long-term-vision) - Strategic direction
+- [Protocol Vision](/protocol/protocol-vision) - Strategic direction
