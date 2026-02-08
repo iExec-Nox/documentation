@@ -1,138 +1,125 @@
 ---
 title: Runner
-description: TEE Runner Service for executing confidential computations in trusted execution environments
+description:
+  Off-chain computation engine for confidential operations on encrypted data
 ---
 
 # Runner
 
-Runners are workers that execute confidential computations in Trusted Execution Environments (TEEs). They provide valid remote attestation and publish results directly on-chain.
+The Runner is a Rust service running in Intel TDX that executes confidential
+computations on encrypted data. It pulls computation requests from a NATS queue,
+decrypts the input handles, performs the operation, re-encrypts the results, and
+stores them back in the [Handle Gateway](/protocol/gateway).
 
-## Overview
+## Role in the Protocol
 
-Runners are responsible for:
+The Runner is the computation engine of the Nox protocol. It is the only
+component that manipulates plaintext values (in memory, never on disk). For
+supported Solidity types, it produces results identical to their on-chain
+equivalents. The off-chain execution model also opens the door to operations not
+natively supported by the EVM (e.g. larger integer types).
 
-- **Executing Confidential Computations**: Processing encrypted data within hardware-backed TEE enclaves
-- **Remote Attestation**: Providing cryptographic proof of authentic TEE execution
-- **Result Publication**: Publishing computation results on-chain
-- **Data Security**: Ensuring data remains encrypted except within the secure TEE
+::: info Current Implementation
 
-## Key Characteristics
+The current implementation runs a **single Runner**. In the long-term
+architecture, multiple Runners will operate in parallel, coordinated by a TDX
+orchestrator that assigns tasks and supervises execution.
 
-- **TEE Execution**: All computations run in hardware-backed enclaves (Intel TDX, AMD SEV, ARM TrustZone)
-- **Diverse Infrastructure**: Support for multiple cloud providers and TEE technologies reduces single points of failure
-- **Proxy Re-Encryption**: Data is re-encrypted specifically for each assigned Runner using their public key
-- **Forward Secrecy**: Even if a TEE is compromised, it can only decrypt data assigned to it after compromise
+:::
 
-## Workflow
+## How It Works
 
-### 1. Registration
+```mermaid
+sequenceDiagram
+    participant NATS as NATS Queue
+    participant R as Runner
+    participant GW as Handle Gateway
+    participant KMS
 
-- Generates a signature keypair within the TEE enclave
-- Registers in the on-chain Registry with TEE attestation
-- Publishes public key for proxy re-encryption
-- Signals availability to the Orchestrator
+    R->>NATS: Pull next event
+    NATS-->>R: TransactionMessage
+    R->>GW: GET /v0/compute/operands (RSA pubkey)
+    GW->>KMS: POST /v0/delegate (K, RSA pubkey)
+    KMS-->>GW: encryptedSharedSecret
+    GW-->>R: ciphertext + encryptedSharedSecret + nonce
+    R->>R: Decrypt inputs (RSA + HKDF + AES-GCM)
+    R->>R: Execute computation
+    R->>R: Encrypt results (ECIES)
+    R->>GW: POST /v0/compute/results
+    R->>NATS: Acknowledge (delete event)
+```
 
-### 2. Task Assignment
+1. **Pull event** from NATS: the Runner fetches the next `TransactionMessage`
+   containing input handles, output handles, and the operation to perform
+2. **Fetch operands** from the Handle Gateway: the Runner sends its RSA public
+   key, and the Gateway handles KMS delegation internally, returning the
+   ciphertext, encrypted shared secret, and nonce for each input handle
+3. **Decrypt** inputs locally (RSA decrypt shared secret, HKDF, AES-GCM)
+4. **Execute** the computation primitive
+5. **Encrypt** results with ECIES using the protocol public key
+6. **Submit** encrypted results to the Handle Gateway
+7. **Acknowledge** the event in NATS (removes it from the queue) and pull the
+   next one
 
-- Receives signed computation requests from the Orchestrator
-- Verifies Orchestrator signature via Registry on-chain
-- Extracts computation metadata:
-  - Input handles (encrypted data references)
-  - Output handles (where results will be stored)
-  - Computation primitive to execute
+### PlaintextToEncrypted (Special Case)
 
-### 3. Data Retrieval
+This operation has no input handles and does not call
+`GET /v0/compute/operands`. The plaintext value and target type are embedded
+directly in the NATS event. The Runner forwards the plaintext to the Handle
+Gateway via `POST /v0/secrets`, which performs the ECIES encryption and stores
+the result.
 
-- Generates ephemeral keypair for this specific task
-- Sends signed request to Handle Gateway for input handles
-- Gateway coordinates with KMS for proxy re-encryption to Runner's ephemeral public key
-- Verifies Gateway signature on response
-- Decrypts ciphertexts using ephemeral private key
+```mermaid
+sequenceDiagram
+    participant NATS as NATS Queue
+    participant R as Runner
+    participant GW as Handle Gateway
 
-### 4. Computation Execution
-
-- Executes the specified computation primitive on decrypted data
-- Plaintext data exists only in isolated TEE memory
-- Performs operations such as:
-  - Addition, subtraction, multiplication
-  - Division, exponentiation, logarithm (advanced primitives)
-  - Transfer operations for confidential tokens
-
-### 5. Result Submission
-
-- Encrypts computation results under KMS threshold public key
-- Signs results with Runner's enclave private key
-- Submits signed results to Orchestrator
-- Orchestrator forwards to Handle Gateway for storage
+    R->>NATS: Pull next event
+    NATS-->>R: TransactionMessage (plaintext + type)
+    R->>GW: POST /v0/secrets (plaintext, type, owner)
+    GW->>GW: ECIES encrypt + store handle
+    GW-->>R: handle + proof
+    R->>NATS: Acknowledge (delete event)
+```
 
 ## Handle Requirements
 
-For a typical **transfer operation**, a computation requires 5 handles:
+Each operation defines its input/output handles:
 
-**Input Handles (3):**
-- 2 handles for initial balances
-- 1 handle for transfer amount
+| Operation            | Inputs | Outputs | Description                        |
+| -------------------- | ------ | ------- | ---------------------------------- |
+| PlaintextToEncrypted | 0      | 1       | Encrypt a plaintext value          |
+| Arithmetic (add…)    | 2      | 1       | Two operands → one result          |
+| Safe arithmetic      | 2      | 2       | Two operands → (success, result)   |
+| Comparisons          | 2      | 1       | Two operands → bool result         |
+| Select               | 3      | 1       | (condition, ifTrue, ifFalse) → one |
+| Transfer             | 3      | 3       | (amount, balFrom, balTo) → 3       |
+| Mint                 | 3      | 2       | (amount, balTo, supply) → 2        |
+| Burn                 | 3      | 3       | (amount, balFrom, supply) → 3      |
 
-**Output Handles (2):**
-- 2 handles for final balances (must not exist in database)
+**Validation rules:**
 
-::: info Handle Validation
-Output handles must not exist in the database before computation. The Runner submits new ciphertexts that will be associated with these handles.
-:::
-
-## Security Model
-
-### Remote Attestation
-
-- **TEE Verification**: Proves code runs in authentic hardware enclave
-- **Code Integrity**: Verifies exact code version via MRENCLAVE/MRSIGNER hash
-- **Key Generation**: Confirms public keys are generated within TEE
-- **Periodic Refresh**: Attestations must be refreshed periodically
-
-### Data Protection
-
-- **Encrypted in Transit**: All data encrypted during transmission
-- **Decrypted Only in TEE**: Plaintext exists only in isolated enclave memory
-- **Ephemeral Keys**: Task-specific keys prevent cross-task data access
-- **No Persistent Storage**: Plaintext never written to disk
-
-### Legitimacy Validation
-
-- **Registry Verification**: Handle Gateway verifies Runner legitimacy via Registry
-- **Signature Verification**: All requests verified using Registry-stored public keys
-- **Access Control**: ACL checks ensure Runner has permission to access handles
-
-## Communication
-
-Runners communicate via **gRPC** with signed messages:
-
-- **Orchestrator ↔ Runner**: Task assignment and result submission
-- **Runner ↔ Handle Gateway**: Data retrieval requests
-- **Runner ↔ KMS Manager**: Proxy re-encryption coordination (via Gateway)
-
-All messages are signed with the Runner's enclave private key and verified on-chain via the Registry.
+- All input handles **must exist** in the Gateway database
+- All output handles **must not exist** in the Gateway database
 
 ## Computation Primitives
 
-Runners execute various computation primitives:
+All arithmetic uses **wrapping semantics**, matching Solidity's `unchecked`
+behavior. On overflow or underflow, values wrap around the type boundary instead
+of reverting. Token operations (Transfer, Mint, Burn) never revert either: they
+silently cap at available balances to prevent leaking information.
 
-- **Basic Operations**: `add()`, `sub()`, `trivialEncrypt()`
-- **Advanced Operations**: `div()`, `exp()`, `log()`, `sqrt()`, `mod()` (for sophisticated DeFi products)
-- **Token Operations**: Transfer, balance updates, swaps
-
-::: tip Performance
-TEE-based execution enables operations that are impossible or extremely costly in pure FHE, making complex DeFi products feasible.
-:::
-
-## Integration Points
-
-- **Orchestrator**: Receives task assignments and submits results
-- **Handle Gateway**: Retrieves encrypted input data and stores encrypted results
-- **KMS**: Coordinates proxy re-encryption for data access
-- **Registry**: Registers Runner and publishes attestation
+For the complete reference of all operations, including Solidity signatures,
+edge cases and examples, see the
+[Computation Primitives](/protocol/computation-primitives) page.
 
 ## Learn More
 
-- [Global Architecture Overview](/protocol/global-architecture-overview) - Understand Runner role in the system
-- [KMS](/protocol/kms) - How Runners interact with key management
-- [Gateway](/protocol/gateway) - Data retrieval and storage
+- [Computation Primitives](/protocol/computation-primitives) - Full reference of
+  all operations with signatures and edge cases
+- [Gateway](/protocol/gateway) - Handle storage and encryption
+- [KMS](/protocol/kms) - Key management and decryption delegation
+- [Nox Smart Contracts](/protocol/nox-smart-contracts) - On-chain computation
+  requests
+- [Global Architecture Overview](/protocol/global-architecture-overview)

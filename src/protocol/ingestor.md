@@ -1,88 +1,91 @@
 ---
 title: Ingestor
-description: Data Ingestor Service
+description:
+  Blockchain monitoring service that bridges on-chain events to the off-chain
+  computation pipeline
 ---
 
-## Overview
+# Ingestor
 
-The Ingestor is a blockchain monitoring service that continuously watches the blockchain for specific events and forwards computation requests to the message queue for processing by the [Orchestrator](/protocol/runner). It runs as a dedicated service (Rust + Alloy) within a Trusted Execution Environment (TEE) and plays a critical role in bridging on-chain events with off-chain computation infrastructure.
+The Ingestor is a Rust service running in Intel TDX that continuously monitors
+the blockchain for events emitted by the `TEEComputeManager` contract and
+publishes them to a NATS JetStream queue for processing by the
+[Runner](/protocol/runner).
 
-## Core Functions
+## Role in the Protocol
 
-The Ingestor serves as the event detection layer of the Nox protocol:
+The Ingestor bridges on-chain and off-chain worlds: it detects computation
+requests emitted as Solidity events and forwards them as structured messages to
+the message queue. It is the starting point of every off-chain computation.
 
-1. **Blockchain Monitoring**: Continuously monitors all transactions in every block
-2. **Event Detection**: Identifies and processes relevant blockchain events
-3. **Request Forwarding**: Signs and forwards computation requests to the message queue
+## How It Works
 
-## Blockchain Monitoring
+```mermaid
+sequenceDiagram
+    participant BC as Blockchain
+    participant I as Ingestor
+    participant NATS as NATS JetStream
 
-The Ingestor performs continuous blockchain monitoring:
+    BC->>I: New block produced
+    I->>I: Filter TEEComputeManager logs
+    I->>I: Group events by tx hash
+    I->>NATS: Publish TransactionMessage
+    I->>I: Persist block number (crash recovery)
+```
 
-- **Real-time Block Processing**: Analyzes every transaction in every new block as it arrives
-- **Optimistic Processing**: Processes blocks optimistically without waiting for confirmations, enabling low-latency event detection
-- **Event Detection**: Identifies specific events including:
-  - `ComputeRequested` events emitted by the TEEComputeManager
-  - `TrivialEncrypt` events
-  - Other protocol-relevant events
+1. **Poll blocks**: the Ingestor reads new blocks from the blockchain RPC in
+   batches, with a configurable polling interval.
 
-## Event Processing
+2. **Parse events**: contract logs are parsed using Alloy's `sol!` macro for
+   compile-time type safety. Each event is mapped to a strongly-typed Rust
+   struct.
 
-When an event is detected, the Ingestor:
+3. **Group by transaction**: events from the same transaction are grouped into a
+   single `TransactionMessage` and ordered by `log_index`, preserving on-chain
+   execution order.
 
-1. **Parses Event Metadata**: Extracts relevant information from the detected event:
-   - Input handles (encrypted data references)
-   - Output handles (where results should be stored)
-   - Computation primitive (the operation to perform)
+4. **Publish to NATS**: the message is published to NATS JetStream with a
+   checksum-based message ID for deduplication (prevents duplicate processing on
+   restarts).
 
-2. **Signs Payload**: Creates a signed payload using its enclave private key, ensuring authenticity and integrity
+5. **Persist state**: the last processed block number is saved to disk, allowing
+   the Ingestor to resume from where it left off after a restart.
 
-3. **Queues Request**: Pushes the signed request into the message queue for processing by the Orchestrator
+## Monitored Events
 
-## Chain Reorganization Handling
+The Ingestor listens for **all events** emitted by the `TEEComputeManager`
+contract. Each event corresponds to a computation primitive (arithmetic,
+comparisons, token operations, etc.). See
+[Computation Primitives](/protocol/computation-primitives) for the full list.
 
-The Ingestor manages blockchain reorganizations (reorgs):
+## Message Format
 
-- **Orphan Handle Cleanup**: Regularly purges orphaned handles from the database when chain reorganizations occur
-- **Work Table Maintenance**: Maintains a work table to track ongoing computations and handle state transitions
+```rust
+TransactionMessage {
+    chain_id: u32,
+    caller: Address,
+    block_number: u64,
+    transaction_hash: String,
+    events: Vec<TransactionEvent>,  // ordered by log_index
+}
+```
 
-## Multi-Instance Architecture
+Each `TransactionEvent` contains the operation type and the associated handles
+(input and output).
 
-Multiple Ingestor instances can coexist in the network:
+## Key Design Choices
 
-- **Horizontal Scaling**: Enables distributed event detection across multiple nodes
-- **Redundancy**: Provides fault tolerance and high availability
-- **Load Distribution**: Distributes the monitoring workload across instances
+- **Optimistic processing**: blocks are processed as soon as they appear,
+  without waiting for confirmations. This enables low-latency event detection.
+- **Deduplication**: NATS message IDs based on content checksums prevent
+  duplicate processing when the Ingestor restarts and re-reads recent blocks.
+- **Stateless scaling**: multiple Ingestor instances can run in parallel for
+  redundancy. NATS deduplication ensures each event is processed only once.
 
-## Message Queue Integration
+## Learn More
 
-The Ingestor communicates with the message queue:
-
-- **Decoupled Architecture**: Separates event detection from computation processing
-- **Buffering**: Absorbs traffic spikes and ensures ordered request processing
-- **Reliability**: Provides a reliable buffer between blockchain events and computation execution
-
-The Orchestrator verifies each message's signature using the Ingestor's public key registered in the Registry before processing requests.
-
-## TEE Execution
-
-The Ingestor runs within a TEE:
-
-- **Attestation**: Must be registered and attested in the Registry before participating in the network
-- **Security**: Executes in a hardware-isolated environment, protecting its signing keys
-- **Integrity**: Ensures that event detection and payload signing occur in a trusted environment
-
-## Integration Points
-
-The Ingestor integrates with several protocol components:
-
-- **Smart Contracts**: Monitors events from TEEComputeManager and other protocol contracts
-- **Message Queue**: Forwards signed computation requests for processing
-- **Registry**: Uses Registry for component authentication and signature verification
-- **Database**: Maintains work tables and handles orphan cleanup
-
-## Related Documentation
-
-- [Runner](/protocol/runner) - TEE Runner Service that executes computations
-- [Gateway](/protocol/gateway) - Handle Gateway that manages encrypted data storage
-- [Global Architecture Overview](/protocol/global-architecture-overview) - System architecture and workflow
+- [Runner](/protocol/runner) - Processes the computation requests
+- [Gateway](/protocol/gateway) - Stores encrypted handle data
+- [Nox Smart Contracts](/protocol/nox-smart-contracts) - Emits the monitored
+  events
+- [Global Architecture Overview](/protocol/global-architecture-overview)

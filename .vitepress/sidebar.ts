@@ -139,6 +139,10 @@ export function getSidebar() {
             link: '/protocol/runner',
           },
           {
+            text: 'Computation Primitives',
+            link: '/protocol/computation-primitives',
+          },
+          {
             text: 'Gateway',
             link: '/protocol/gateway',
           },
