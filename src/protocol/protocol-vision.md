@@ -15,15 +15,15 @@ long-term architecture evolves the protocol along three axes:
   keys and decentralizing operations
 - **Horizontal scaling**: support multiple Runners, multiple chains, and
   increasing throughput
-- **Privacy depth**: combine TEE, threshold cryptography, MPC, and zero-knowledge
-  proofs, each applied where it provides the best tradeoff
+- **Privacy depth**: combine TEE, threshold cryptography, MPC, and
+  zero-knowledge proofs, each applied where it provides the best tradeoff
 
 ## Distributed Key Management
 
-The protocol private key is the most sensitive asset in Nox: whoever holds it can
-decrypt every handle in the system. In the MVP, a single KMS node holds this key.
-The target architecture eliminates this single point of trust using **threshold
-cryptography**.
+The protocol private key is the most sensitive asset in Nox: whoever holds it
+can decrypt every handle in the system. In the MVP, a single KMS node holds this
+key. The target architecture eliminates this single point of trust using
+**threshold cryptography**.
 
 The private key is split into **n shares** using
 [Shamir's Secret Sharing](https://en.wikipedia.org/wiki/Shamir%27s_secret_sharing)
@@ -43,9 +43,9 @@ flow), see the [KMS](/protocol/kms) page.
 
 ## Remote Attestation and Chain of Trust
 
-Before the protocol can allow third parties to operate components, it needs a way
-to verify that each component runs legitimate, unmodified code inside a genuine
-hardware enclave. This is the role of **remote attestation** (RA).
+Before the protocol can allow third parties to operate components, it needs a
+way to verify that each component runs legitimate, unmodified code inside a
+genuine hardware enclave. This is the role of **remote attestation** (RA).
 
 Every component (Runner, KMS node, Gateway, Ingestor) runs inside an **Intel TDX
 enclave**. Before joining the protocol, each component must:
@@ -80,8 +80,8 @@ sequenceDiagram
 ```
 
 This creates an unbroken **chain of trust**: from hardware attestation, through
-on-chain registration, to runtime communication. No component can participate
-in the protocol without first proving its integrity, and every message between
+on-chain registration, to runtime communication. No component can participate in
+the protocol without first proving its integrity, and every message between
 components is cryptographically linked to that proof.
 
 ## Decentralized Operations
@@ -99,14 +99,14 @@ staked tokens.
 
 The on-chain **Registry** manages the full lifecycle of each component:
 
-| Aspect             | Mechanism                                                |
-| ------------------ | -------------------------------------------------------- |
-| **Identity**       | Public key registered alongside attestation proof        |
-| **Attestation**    | Verified on-chain before the component can participate   |
-| **Stake**          | RLC deposit required, locked for the duration of service |
-| **Liveness**       | Monitored by the Orchestrator, timeout triggers reassignment |
-| **Slashing**       | Triggered by provable misbehavior or prolonged downtime  |
-| **Governance**     | Protocol governance can revoke compromised components    |
+| Aspect          | Mechanism                                                    |
+| --------------- | ------------------------------------------------------------ |
+| **Identity**    | Public key registered alongside attestation proof            |
+| **Attestation** | Verified on-chain before the component can participate       |
+| **Stake**       | RLC deposit required, locked for the duration of service     |
+| **Liveness**    | Monitored by the Orchestrator, timeout triggers reassignment |
+| **Slashing**    | Triggered by provable misbehavior or prolonged downtime      |
+| **Governance**  | Protocol governance can revoke compromised components        |
 
 Each component type (Runner, Ingestor, KMS node, Gateway) can be operated by
 independent parties, making the protocol progressively decentralized as more
@@ -145,8 +145,8 @@ request is eventually processed.
 
 The handle structure already encodes a **4-byte chain ID** (bytes 26-29),
 ensuring that handles are bound to a specific chain and cannot be reused across
-chains. This makes multichain support a deployment concern rather than a protocol
-redesign.
+chains. This makes multichain support a deployment concern rather than a
+protocol redesign.
 
 Extending Nox to a new chain requires:
 
@@ -165,12 +165,12 @@ The long-term architecture combines four complementary privacy technologies,
 each applied where it provides the best tradeoff between performance, trust
 assumptions, and cost:
 
-| Technology                    | Where it applies      | Why                                                              |
-| ----------------------------- | --------------------- | ---------------------------------------------------------------- |
-| **TEE (Intel TDX)**           | Runner, Gateway, Ingestor | Fast computation on encrypted data in hardware-isolated enclaves |
-| **Threshold cryptography**    | KMS                   | Distributed key management with no single point of trust         |
-| **MPC (Multi-Party Computation)** | KMS              | Collaborative computation across multiple nodes without reconstructing secrets |
-| **ZK (Zero-Knowledge Proofs)** | On-chain verification | Gas-efficient proof verification, replacing costly on-chain checks |
+| Technology                        | Where it applies          | Why                                                                            |
+| --------------------------------- | ------------------------- | ------------------------------------------------------------------------------ |
+| **TEE (Intel TDX)**               | Runner, Gateway, Ingestor | Fast computation on encrypted data in hardware-isolated enclaves               |
+| **Threshold cryptography**        | KMS                       | Distributed key management with no single point of trust                       |
+| **MPC (Multi-Party Computation)** | KMS                       | Collaborative computation across multiple nodes without reconstructing secrets |
+| **ZK (Zero-Knowledge Proofs)**    | On-chain verification     | Gas-efficient proof verification, replacing costly on-chain checks             |
 
 These technologies reinforce each other:
 
@@ -182,12 +182,12 @@ These technologies reinforce each other:
   ever reconstructing the full key
 - **ZK proofs** optimize on-chain costs: instead of performing expensive
   verification logic on-chain, the protocol can submit compact proofs that are
-  cheap to verify, allowing throughput to scale without proportionally increasing
-  gas fees
+  cheap to verify, allowing throughput to scale without proportionally
+  increasing gas fees
 
 ## Learn More
 
 - [KMS](/protocol/kms) - Cryptographic protocol and threshold architecture
 - [Runner](/protocol/runner) - Computation engine
-- [Global Architecture Overview](/protocol/global-architecture-overview) -
-  Full component descriptions and data flows
+- [Global Architecture Overview](/protocol/global-architecture-overview) - Full
+  component descriptions and data flows
