@@ -48,17 +48,17 @@ Wrapping addition. On overflow, the result wraps around the type boundary.
 - **Unsigned:** `(a + b) mod 2^N`
 - **Signed:** wraps from positive MAX to negative MIN on overflow
 
-| Example (Uint8)  | Result | Reason                     |
-| ----------------- | ------ | -------------------------- |
-| `200 + 100`       | `44`   | Overflows, wraps around    |
-| `255 + 1`         | `0`    | Overflows to zero          |
-| `100 + 50`        | `150`  | No overflow                |
+| Example (Uint8) | Result | Reason                  |
+| --------------- | ------ | ----------------------- |
+| `200 + 100`     | `44`   | Overflows, wraps around |
+| `255 + 1`       | `0`    | Overflows to zero       |
+| `100 + 50`      | `150`  | No overflow             |
 
-| Example (Int8)   | Result | Reason                       |
-| ----------------- | ------ | ---------------------------- |
-| `100 + 100`       | `-56`  | Overflows, wraps to negative |
-| `127 + 1`         | `-128` | Overflows to MIN             |
-| `-50 + 30`        | `-20`  | No overflow                  |
+| Example (Int8) | Result | Reason                       |
+| -------------- | ------ | ---------------------------- |
+| `100 + 100`    | `-56`  | Overflows, wraps to negative |
+| `127 + 1`      | `-128` | Overflows to MIN             |
+| `-50 + 30`     | `-20`  | No overflow                  |
 
 ### Sub
 
@@ -71,17 +71,17 @@ Wrapping subtraction. On underflow, the result wraps around the type boundary.
 - **Unsigned:** wraps from 0 to MAX when the result would be negative
 - **Signed:** wraps from negative MIN to positive MAX on underflow
 
-| Example (Uint8)  | Result | Reason                     |
-| ----------------- | ------ | -------------------------- |
-| `0 - 1`           | `255`  | Underflows, wraps to MAX   |
-| `10 - 200`        | `66`   | Underflows, wraps around   |
-| `100 - 30`        | `70`   | No underflow               |
+| Example (Uint8) | Result | Reason                   |
+| --------------- | ------ | ------------------------ |
+| `0 - 1`         | `255`  | Underflows, wraps to MAX |
+| `10 - 200`      | `66`   | Underflows, wraps around |
+| `100 - 30`      | `70`   | No underflow             |
 
-| Example (Int8)   | Result | Reason                        |
-| ----------------- | ------ | ----------------------------- |
-| `-128 - 1`        | `127`  | Underflows, wraps to MAX      |
-| `-100 - 100`      | `56`   | Underflows, wraps to positive |
-| `50 - 30`         | `20`   | No underflow                  |
+| Example (Int8) | Result | Reason                        |
+| -------------- | ------ | ----------------------------- |
+| `-128 - 1`     | `127`  | Underflows, wraps to MAX      |
+| `-100 - 100`   | `56`   | Underflows, wraps to positive |
+| `50 - 30`      | `20`   | No underflow                  |
 
 ### Mul
 
@@ -94,17 +94,17 @@ Wrapping multiplication. On overflow, the result wraps around the type boundary.
 - **Unsigned:** `(a * b) mod 2^N`
 - **Signed:** wraps on overflow, same modular behavior
 
-| Example (Uint8)  | Result | Reason                     |
-| ----------------- | ------ | -------------------------- |
-| `3 * 100`         | `44`   | Overflows, wraps around    |
-| `16 * 16`         | `0`    | Overflows to zero          |
-| `10 * 5`          | `50`   | No overflow                |
+| Example (Uint8) | Result | Reason                  |
+| --------------- | ------ | ----------------------- |
+| `3 * 100`       | `44`   | Overflows, wraps around |
+| `16 * 16`       | `0`    | Overflows to zero       |
+| `10 * 5`        | `50`   | No overflow             |
 
-| Example (Int8)   | Result | Reason                       |
-| ----------------- | ------ | ---------------------------- |
-| `-1 * -128`       | `-128` | Overflows, wraps back to MIN |
-| `10 * 20`         | `-56`  | Overflows, wraps to negative |
-| `-5 * 3`          | `-15`  | No overflow                  |
+| Example (Int8) | Result | Reason                       |
+| -------------- | ------ | ---------------------------- |
+| `-1 * -128`    | `-128` | Overflows, wraps back to MIN |
+| `10 * 20`      | `-56`  | Overflows, wraps to negative |
+| `-5 * 3`       | `-15`  | No overflow                  |
 
 ### Div
 
@@ -118,18 +118,18 @@ returns a deterministic value instead.
 - **Unsigned:** division by zero returns `MAX` (all bits set)
 - **Signed:** division by zero returns `-1`; `MIN / -1` wraps back to `MIN`
 
-| Example (Uint8)  | Result | Reason                     |
-| ----------------- | ------ | -------------------------- |
-| `10 / 0`          | `255`  | Division by zero → MAX     |
-| `7 / 2`           | `3`    | Truncated toward zero      |
-| `255 / 256`       | `0`    | Truncated toward zero      |
+| Example (Uint8) | Result | Reason                 |
+| --------------- | ------ | ---------------------- |
+| `10 / 0`        | `255`  | Division by zero → MAX |
+| `7 / 2`         | `3`    | Truncated toward zero  |
+| `255 / 256`     | `0`    | Truncated toward zero  |
 
-| Example (Int8)   | Result | Reason                       |
-| ----------------- | ------ | ---------------------------- |
-| `10 / 0`          | `-1`   | Division by zero → -1        |
-| `-128 / -1`       | `-128` | Overflow, wraps back to MIN  |
-| `7 / 2`           | `3`    | Truncated toward zero        |
-| `-7 / 2`          | `-3`   | Truncated toward zero        |
+| Example (Int8) | Result | Reason                      |
+| -------------- | ------ | --------------------------- |
+| `10 / 0`       | `-1`   | Division by zero → -1       |
+| `-128 / -1`    | `-128` | Overflow, wraps back to MIN |
+| `7 / 2`        | `3`    | Truncated toward zero       |
+| `-7 / 2`       | `-3`   | Truncated toward zero       |
 
 ## Safe Arithmetic
 
@@ -150,16 +150,16 @@ Wrapping addition with overflow detection.
 - **Unsigned:** `success = false` when `a + b > MAX`
 - **Signed:** `success = false` when the result crosses the type boundary
 
-| Example (Uint8)         | success | result | Reason              |
-| ----------------------- | ------- | ------ | ------------------- |
-| `SafeAdd(200, 100)`     | `false` | `44`   | Overflow            |
-| `SafeAdd(255, 1)`       | `false` | `0`    | Overflow to zero    |
-| `SafeAdd(100, 50)`      | `true`  | `150`  | No overflow         |
+| Example (Uint8)     | success | result | Reason           |
+| ------------------- | ------- | ------ | ---------------- |
+| `SafeAdd(200, 100)` | `false` | `44`   | Overflow         |
+| `SafeAdd(255, 1)`   | `false` | `0`    | Overflow to zero |
+| `SafeAdd(100, 50)`  | `true`  | `150`  | No overflow      |
 
-| Example (Int8)          | success | result | Reason              |
-| ----------------------- | ------- | ------ | ------------------- |
-| `SafeAdd(127, 1)`       | `false` | `-128` | Overflow to MIN     |
-| `SafeAdd(-50, 30)`      | `true`  | `-20`  | No overflow         |
+| Example (Int8)     | success | result | Reason          |
+| ------------------ | ------- | ------ | --------------- |
+| `SafeAdd(127, 1)`  | `false` | `-128` | Overflow to MIN |
+| `SafeAdd(-50, 30)` | `true`  | `-20`  | No overflow     |
 
 ### SafeSub
 
@@ -172,16 +172,16 @@ Wrapping subtraction with underflow detection.
 - **Unsigned:** `success = false` when `a - b < 0`
 - **Signed:** `success = false` when the result crosses the type boundary
 
-| Example (Uint8)         | success | result | Reason              |
-| ----------------------- | ------- | ------ | ------------------- |
-| `SafeSub(0, 1)`         | `false` | `255`  | Underflow to MAX    |
-| `SafeSub(3, 10)`        | `false` | `249`  | Underflow           |
-| `SafeSub(10, 3)`        | `true`  | `7`    | No underflow        |
+| Example (Uint8)  | success | result | Reason           |
+| ---------------- | ------- | ------ | ---------------- |
+| `SafeSub(0, 1)`  | `false` | `255`  | Underflow to MAX |
+| `SafeSub(3, 10)` | `false` | `249`  | Underflow        |
+| `SafeSub(10, 3)` | `true`  | `7`    | No underflow     |
 
-| Example (Int8)          | success | result | Reason              |
-| ----------------------- | ------- | ------ | ------------------- |
-| `SafeSub(-128, 1)`      | `false` | `127`  | Underflow to MAX    |
-| `SafeSub(50, 30)`       | `true`  | `20`   | No underflow        |
+| Example (Int8)     | success | result | Reason           |
+| ------------------ | ------- | ------ | ---------------- |
+| `SafeSub(-128, 1)` | `false` | `127`  | Underflow to MAX |
+| `SafeSub(50, 30)`  | `true`  | `20`   | No underflow     |
 
 ### SafeMul
 
@@ -194,17 +194,17 @@ Wrapping multiplication with overflow detection.
 - **Unsigned:** `success = false` when `a * b > MAX`
 - **Signed:** `success = false` when the result crosses the type boundary
 
-| Example (Uint8)         | success | result | Reason              |
-| ----------------------- | ------- | ------ | ------------------- |
-| `SafeMul(3, 100)`       | `false` | `44`   | Overflow            |
-| `SafeMul(16, 16)`       | `false` | `0`    | Overflow to zero    |
-| `SafeMul(10, 5)`        | `true`  | `50`   | No overflow         |
+| Example (Uint8)   | success | result | Reason           |
+| ----------------- | ------- | ------ | ---------------- |
+| `SafeMul(3, 100)` | `false` | `44`   | Overflow         |
+| `SafeMul(16, 16)` | `false` | `0`    | Overflow to zero |
+| `SafeMul(10, 5)`  | `true`  | `50`   | No overflow      |
 
-| Example (Int8)          | success | result | Reason              |
-| ----------------------- | ------- | ------ | ------------------- |
-| `SafeMul(-1, -128)`     | `false` | `-128` | Overflow to MIN     |
-| `SafeMul(10, 20)`       | `false` | `-56`  | Overflow            |
-| `SafeMul(-5, 3)`        | `true`  | `-15`  | No overflow         |
+| Example (Int8)      | success | result | Reason          |
+| ------------------- | ------- | ------ | --------------- |
+| `SafeMul(-1, -128)` | `false` | `-128` | Overflow to MIN |
+| `SafeMul(10, 20)`   | `false` | `-56`  | Overflow        |
+| `SafeMul(-5, 3)`    | `true`  | `-15`  | No overflow     |
 
 ### SafeDiv
 
@@ -217,22 +217,22 @@ Integer division with error detection. The result is the same as core Div.
 - **Unsigned:** `success = false` when dividing by zero
 - **Signed:** `success = false` when dividing by zero or `MIN / -1`
 
-| Example (Uint8)         | success | result | Reason              |
-| ----------------------- | ------- | ------ | ------------------- |
-| `SafeDiv(10, 0)`        | `false` | `255`  | Division by zero    |
-| `SafeDiv(7, 2)`         | `true`  | `3`    | Truncated to zero   |
+| Example (Uint8)  | success | result | Reason            |
+| ---------------- | ------- | ------ | ----------------- |
+| `SafeDiv(10, 0)` | `false` | `255`  | Division by zero  |
+| `SafeDiv(7, 2)`  | `true`  | `3`    | Truncated to zero |
 
-| Example (Int8)          | success | result | Reason              |
-| ----------------------- | ------- | ------ | ------------------- |
-| `SafeDiv(10, 0)`        | `false` | `-1`   | Division by zero    |
-| `SafeDiv(-128, -1)`     | `false` | `-128` | Signed overflow     |
-| `SafeDiv(-7, 2)`        | `true`  | `-3`   | Truncated to zero   |
+| Example (Int8)      | success | result | Reason            |
+| ------------------- | ------- | ------ | ----------------- |
+| `SafeDiv(10, 0)`    | `false` | `-1`   | Division by zero  |
+| `SafeDiv(-128, -1)` | `false` | `-128` | Signed overflow   |
+| `SafeDiv(-7, 2)`    | `true`  | `-3`   | Truncated to zero |
 
 ## Comparisons
 
-Compare two encrypted values and return an encrypted boolean. Each takes 2
-input handles and produces 1 Bool output handle. Comparison semantics depend on
-the type: unsigned for `UintN`, signed for `IntN`.
+Compare two encrypted values and return an encrypted boolean. Each takes 2 input
+handles and produces 1 Bool output handle. Comparison semantics depend on the
+type: unsigned for `UintN`, signed for `IntN`.
 
 ### Eq
 
@@ -242,10 +242,10 @@ function eq(euint256 lhs, euint256 rhs) returns (ebool);
 
 Returns `true` when `a == b`.
 
-| Example (Uint8)         | Result  | Reason                     |
-| ----------------------- | ------- | -------------------------- |
-| `Eq(42, 42)`            | `true`  | Equal values               |
-| `Eq(0, 255)`            | `false` | Different values           |
+| Example (Uint8) | Result  | Reason           |
+| --------------- | ------- | ---------------- |
+| `Eq(42, 42)`    | `true`  | Equal values     |
+| `Eq(0, 255)`    | `false` | Different values |
 
 ### Ne
 
@@ -255,10 +255,10 @@ function ne(euint256 lhs, euint256 rhs) returns (ebool);
 
 Returns `true` when `a != b`.
 
-| Example (Uint8)         | Result  | Reason                     |
-| ----------------------- | ------- | -------------------------- |
-| `Ne(42, 42)`            | `false` | Equal values               |
-| `Ne(0, 255)`            | `true`  | Different values           |
+| Example (Uint8) | Result  | Reason           |
+| --------------- | ------- | ---------------- |
+| `Ne(42, 42)`    | `false` | Equal values     |
+| `Ne(0, 255)`    | `true`  | Different values |
 
 ### Lt
 
@@ -268,15 +268,15 @@ function lt(euint256 lhs, euint256 rhs) returns (ebool);
 
 Returns `true` when `a < b`.
 
-| Example (Uint8)         | Result  | Reason                     |
-| ----------------------- | ------- | -------------------------- |
-| `Lt(10, 200)`           | `true`  | 10 < 200 (unsigned)        |
-| `Lt(200, 10)`           | `false` | 200 < 10 is false          |
+| Example (Uint8) | Result  | Reason              |
+| --------------- | ------- | ------------------- |
+| `Lt(10, 200)`   | `true`  | 10 < 200 (unsigned) |
+| `Lt(200, 10)`   | `false` | 200 < 10 is false   |
 
-| Example (Int8)          | Result  | Reason                     |
-| ----------------------- | ------- | -------------------------- |
-| `Lt(-56, 10)`           | `true`  | -56 < 10 (signed)          |
-| `Lt(127, -128)`         | `false` | 127 < -128 is false        |
+| Example (Int8)  | Result  | Reason              |
+| --------------- | ------- | ------------------- |
+| `Lt(-56, 10)`   | `true`  | -56 < 10 (signed)   |
+| `Lt(127, -128)` | `false` | 127 < -128 is false |
 
 ### Le
 
@@ -286,10 +286,10 @@ function le(euint256 lhs, euint256 rhs) returns (ebool);
 
 Returns `true` when `a <= b`.
 
-| Example (Uint8)         | Result  | Reason                     |
-| ----------------------- | ------- | -------------------------- |
-| `Le(10, 10)`            | `true`  | Equal values               |
-| `Le(200, 10)`           | `false` | 200 <= 10 is false         |
+| Example (Uint8) | Result  | Reason             |
+| --------------- | ------- | ------------------ |
+| `Le(10, 10)`    | `true`  | Equal values       |
+| `Le(200, 10)`   | `false` | 200 <= 10 is false |
 
 ### Gt
 
@@ -299,15 +299,15 @@ function gt(euint256 lhs, euint256 rhs) returns (ebool);
 
 Returns `true` when `a > b`.
 
-| Example (Uint8)         | Result  | Reason                     |
-| ----------------------- | ------- | -------------------------- |
-| `Gt(200, 10)`           | `true`  | 200 > 10 (unsigned)        |
-| `Gt(10, 200)`           | `false` | 10 > 200 is false          |
+| Example (Uint8) | Result  | Reason              |
+| --------------- | ------- | ------------------- |
+| `Gt(200, 10)`   | `true`  | 200 > 10 (unsigned) |
+| `Gt(10, 200)`   | `false` | 10 > 200 is false   |
 
-| Example (Int8)          | Result  | Reason                     |
-| ----------------------- | ------- | -------------------------- |
-| `Gt(10, -56)`           | `true`  | 10 > -56 (signed)          |
-| `Gt(-128, 127)`         | `false` | -128 > 127 is false        |
+| Example (Int8)  | Result  | Reason              |
+| --------------- | ------- | ------------------- |
+| `Gt(10, -56)`   | `true`  | 10 > -56 (signed)   |
+| `Gt(-128, 127)` | `false` | -128 > 127 is false |
 
 ### Ge
 
@@ -317,15 +317,15 @@ function ge(euint256 lhs, euint256 rhs) returns (ebool);
 
 Returns `true` when `a >= b`.
 
-| Example (Uint8)         | Result  | Reason                     |
-| ----------------------- | ------- | -------------------------- |
-| `Ge(10, 10)`            | `true`  | Equal values               |
-| `Ge(10, 200)`           | `false` | 10 >= 200 is false         |
+| Example (Uint8) | Result  | Reason             |
+| --------------- | ------- | ------------------ |
+| `Ge(10, 10)`    | `true`  | Equal values       |
+| `Ge(10, 200)`   | `false` | 10 >= 200 is false |
 
 ## Select
 
-Conditional selection based on an encrypted boolean. No computation is
-performed on the values. Takes 3 input handles and produces 1 output handle.
+Conditional selection based on an encrypted boolean. No computation is performed
+on the values. Takes 3 input handles and produces 1 output handle.
 
 ```solidity
 function select(ebool cond, euint256 ifTrue, euint256 ifFalse) returns (euint256);
@@ -333,10 +333,10 @@ function select(ebool cond, euint256 ifTrue, euint256 ifFalse) returns (euint256
 
 Returns `ifTrue` when `cond` is `true`, `ifFalse` otherwise.
 
-| Example                          | Result | Reason              |
-| -------------------------------- | ------ | ------------------- |
-| `Select(true, 42, 100)`         | `42`   | Condition is true   |
-| `Select(false, 42, 100)`        | `100`  | Condition is false  |
+| Example                  | Result | Reason             |
+| ------------------------ | ------ | ------------------ |
+| `Select(true, 42, 100)`  | `42`   | Condition is true  |
+| `Select(false, 42, 100)` | `100`  | Condition is false |
 
 ## Token Operations
 
@@ -384,9 +384,9 @@ function mint(euint256 amount, euint256 balanceTo, euint256 totalSupply)
 | balanceTo   | newTotalSupply |
 | totalSupply |                |
 
-| Example                                    | newBalanceTo | newTotalSupply |
-| ------------------------------------------ | ------------ | -------------- |
-| Mint 50, balance 200, supply 1000          | 250          | 1050           |
+| Example                           | newBalanceTo | newTotalSupply |
+| --------------------------------- | ------------ | -------------- |
+| Mint 50, balance 200, supply 1000 | 250          | 1050           |
 
 ### Burn
 
@@ -404,10 +404,10 @@ function burn(euint256 amount, euint256 balanceFrom, euint256 totalSupply)
 | balanceFrom | newTotalSupply |
 | totalSupply | burntAmount    |
 
-| Example                                    | burntAmount | newBalanceFrom | newTotalSupply |
-| ------------------------------------------ | ----------- | -------------- | -------------- |
-| Burn 50, balance 100, supply 1000          | 50          | 50             | 950            |
-| Burn 100, balance 60, supply 1000          | 60          | 0              | 940            |
+| Example                           | burntAmount | newBalanceFrom | newTotalSupply |
+| --------------------------------- | ----------- | -------------- | -------------- |
+| Burn 50, balance 100, supply 1000 | 50          | 50             | 950            |
+| Burn 100, balance 60, supply 1000 | 60          | 0              | 940            |
 
 ## Learn More
 

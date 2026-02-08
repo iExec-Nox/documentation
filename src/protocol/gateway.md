@@ -150,8 +150,8 @@ AES-256 key via HKDF, and decrypts the ciphertext locally.
 ### `GET /v0/compute/operands`
 
 Returns the cryptographic material needed for a Runner to decrypt all input
-handles of a computation. The Gateway handles KMS delegation internally (same
-as `GET /v0/secrets/:handle` for users).
+handles of a computation. The Gateway handles KMS delegation internally (same as
+`GET /v0/secrets/:handle` for users).
 
 **Request body:**
 
