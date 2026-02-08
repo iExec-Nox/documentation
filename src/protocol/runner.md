@@ -1,27 +1,38 @@
 ---
 title: Runner
-description: TEE Runner Service for executing confidential computations in trusted execution environments
+description:
+  TEE Runner Service for executing confidential computations in trusted
+  execution environments
 ---
 
 # Runner
 
-Runners are workers that execute confidential computations in Trusted Execution Environments (TEEs). They provide valid remote attestation and publish results directly on-chain.
+Runners are workers that execute confidential computations in Trusted Execution
+Environments (TEEs). They provide valid remote attestation and publish results
+directly on-chain.
 
 ## Overview
 
 Runners are responsible for:
 
-- **Executing Confidential Computations**: Processing encrypted data within hardware-backed TEE enclaves
-- **Remote Attestation**: Providing cryptographic proof of authentic TEE execution
+- **Executing Confidential Computations**: Processing encrypted data within
+  hardware-backed TEE enclaves
+- **Remote Attestation**: Providing cryptographic proof of authentic TEE
+  execution
 - **Result Publication**: Publishing computation results on-chain
-- **Data Security**: Ensuring data remains encrypted except within the secure TEE
+- **Data Security**: Ensuring data remains encrypted except within the secure
+  TEE
 
 ## Key Characteristics
 
-- **TEE Execution**: All computations run in hardware-backed enclaves (Intel TDX, AMD SEV, ARM TrustZone)
-- **Diverse Infrastructure**: Support for multiple cloud providers and TEE technologies reduces single points of failure
-- **Proxy Re-Encryption**: Data is re-encrypted specifically for each assigned Runner using their public key
-- **Forward Secrecy**: Even if a TEE is compromised, it can only decrypt data assigned to it after compromise
+- **TEE Execution**: All computations run in hardware-backed enclaves (Intel
+  TDX, AMD SEV, ARM TrustZone)
+- **Diverse Infrastructure**: Support for multiple cloud providers and TEE
+  technologies reduces single points of failure
+- **Proxy Re-Encryption**: Data is re-encrypted specifically for each assigned
+  Runner using their public key
+- **Forward Secrecy**: Even if a TEE is compromised, it can only decrypt data
+  assigned to it after compromise
 
 ## Workflow
 
@@ -45,7 +56,8 @@ Runners are responsible for:
 
 - Generates ephemeral keypair for this specific task
 - Sends signed request to Handle Gateway for input handles
-- Gateway coordinates with KMS for proxy re-encryption to Runner's ephemeral public key
+- Gateway coordinates with KMS for proxy re-encryption to Runner's ephemeral
+  public key
 - Verifies Gateway signature on response
 - Decrypts ciphertexts using ephemeral private key
 
@@ -70,14 +82,19 @@ Runners are responsible for:
 For a typical **transfer operation**, a computation requires 5 handles:
 
 **Input Handles (3):**
+
 - 2 handles for initial balances
 - 1 handle for transfer amount
 
 **Output Handles (2):**
+
 - 2 handles for final balances (must not exist in database)
 
 ::: info Handle Validation
-Output handles must not exist in the database before computation. The Runner submits new ciphertexts that will be associated with these handles.
+
+Output handles must not exist in the database before computation. The Runner
+submits new ciphertexts that will be associated with these handles.
+
 :::
 
 ## Security Model
@@ -98,8 +115,10 @@ Output handles must not exist in the database before computation. The Runner sub
 
 ### Legitimacy Validation
 
-- **Registry Verification**: Handle Gateway verifies Runner legitimacy via Registry
-- **Signature Verification**: All requests verified using Registry-stored public keys
+- **Registry Verification**: Handle Gateway verifies Runner legitimacy via
+  Registry
+- **Signature Verification**: All requests verified using Registry-stored public
+  keys
 - **Access Control**: ACL checks ensure Runner has permission to access handles
 
 ## Communication
@@ -110,29 +129,36 @@ Runners communicate via **gRPC** with signed messages:
 - **Runner ↔ Handle Gateway**: Data retrieval requests
 - **Runner ↔ KMS Manager**: Proxy re-encryption coordination (via Gateway)
 
-All messages are signed with the Runner's enclave private key and verified on-chain via the Registry.
+All messages are signed with the Runner's enclave private key and verified
+on-chain via the Registry.
 
 ## Computation Primitives
 
 Runners execute various computation primitives:
 
 - **Basic Operations**: `add()`, `sub()`, `trivialEncrypt()`
-- **Advanced Operations**: `div()`, `exp()`, `log()`, `sqrt()`, `mod()` (for sophisticated DeFi products)
+- **Advanced Operations**: `div()`, `exp()`, `log()`, `sqrt()`, `mod()` (for
+  sophisticated DeFi products)
 - **Token Operations**: Transfer, balance updates, swaps
 
 ::: tip Performance
-TEE-based execution enables operations that are impossible or extremely costly in pure FHE, making complex DeFi products feasible.
+
+TEE-based execution enables operations that are impossible or extremely costly
+in pure FHE, making complex DeFi products feasible.
+
 :::
 
 ## Integration Points
 
 - **Orchestrator**: Receives task assignments and submits results
-- **Handle Gateway**: Retrieves encrypted input data and stores encrypted results
+- **Handle Gateway**: Retrieves encrypted input data and stores encrypted
+  results
 - **KMS**: Coordinates proxy re-encryption for data access
 - **Registry**: Registers Runner and publishes attestation
 
 ## Learn More
 
-- [Global Architecture Overview](/protocol/global-architecture-overview) - Understand Runner role in the system
+- [Global Architecture Overview](/protocol/global-architecture-overview) -
+  Understand Runner role in the system
 - [KMS](/protocol/kms) - How Runners interact with key management
 - [Gateway](/protocol/gateway) - Data retrieval and storage

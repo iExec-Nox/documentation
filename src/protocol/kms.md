@@ -115,8 +115,12 @@ When a user requests decryption:
 4. KMS encrypts the shared secret with the user's RSA public key
 5. User decrypts the shared secret locally and derives the AES key
 
-::: warning Security The KMS never sees the plaintext. Only the RSA-encrypted
-shared secret travels over the network. :::
+::: warning Security
+
+The KMS never sees the plaintext. Only the RSA-encrypted shared secret travels
+over the network.
+
+:::
 
 ## Threshold Cryptography
 
@@ -137,8 +141,12 @@ get `K * privkey_KMS` — the private key itself is never reconstructed.
 | **share_i** | Node i's piece of the private key           |
 | **DKG**     | Distributed Key Generation — setup protocol |
 
-::: info Current Status MVP uses a single KMS node running in a TEE. The
-distributed threshold KMS (t/n) is the long-term architecture. :::
+::: info
+
+Current Status MVP uses a single KMS node running in a TEE. The distributed
+threshold KMS (t/n) is the long-term architecture.
+
+:::
 
 ## Learn More
 
