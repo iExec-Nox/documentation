@@ -1,152 +1,156 @@
 ---
 title: KMS
 description:
-  Key Management Service for distributed key management and decryption
-  delegation
+  Key Management Service for protocol encryption and decryption delegation
 ---
 
 # Key Management Service (KMS)
 
-The KMS generates and manages the cryptographic keys used for encryption and
-decryption delegation. It never decrypts data — it only provides the shared
-secret needed for clients to decrypt locally.
+The KMS is a Rust service running in Intel TDX that manages the protocol's
+cryptographic keys. It **never decrypts data itself**. It only delegates
+decryption by providing the cryptographic material (shared secret) needed for
+authorized parties to decrypt locally.
 
-## Key Concepts
+## Role in the Protocol
 
-| Term              | Description                                                          |
-| ----------------- | -------------------------------------------------------------------- |
-| **G**             | Generator point on the elliptic curve (public constant)              |
-| **privkey_KMS**   | KMS private key (split into shares, never stored whole)              |
-| **pubkey_KMS**    | KMS public key: `pubkey_KMS = privkey_KMS * G`                       |
-| **t/n threshold** | At least `t` out of `n` nodes must collaborate to perform operations |
+The KMS holds the **protocol private key** (secp256k1). All data stored in the
+Handle Gateway is encrypted under the corresponding public key. When a user or
+Runner needs to decrypt, the KMS performs a **decryption delegation**: it
+computes a shared secret and encrypts it with the requester's RSA public key, so
+only the requester can recover it.
 
 ## How It Works
 
+### Decryption Delegation Flow
+
 ```mermaid
-flowchart LR
-    subgraph Gateway["Gateway (Encryption)"]
-        A3[Random k] --> A4[k * pubkey_KMS]
-        A3 --> A5[K = k * G]
-        A4 --> A6[Derive KDF]
-        A6 --> A7[AES-256 key]
-        A7 --> A8[Ciphertext]
-    end
+sequenceDiagram
+    participant R as Requester (User/Runner)
+    participant GW as Handle Gateway
+    participant KMS
 
-    subgraph KMS["Distributed KMS (t/n threshold)"]
-        K0[pubkey_KMS = privkey_KMS * G]
-        K1[(node_1: share_1)]
-        K2[(node_2: share_2)]
-        K3[(node_n: share_n)]
-    end
-
-    subgraph Client["User or Runner (Decryption)"]
-        B0[RSA decrypt]
-        B2[K * share_1]
-        B3[K * share_2]
-        B4[K * share_t]
-        B5[Shamir reassemble]
-        B6[K * privkey_KMS]
-        B7[k * pubkey_KMS]
-        B8[Derive KDF]
-        B9[AES-256 key]
-        B10[Plaintext]
-    end
-
-    A5 -->|"K"| K1
-    A5 -->|"K"| K2
-    A5 -->|"K"| K3
-    A8 -->|"Ciphertext"| B10
-
-    K1 --> B2
-    K2 --> B3
-    K3 --> B4
-
-    B2 --> B5
-    B3 --> B5
-    B4 --> B5
-    B5 --> B6
-    B6 -->|"= k * pubkey_KMS"| B7
-    B7 --> B8
-    B8 --> B9
-    B9 --> B10
+    R->>R: Generate ephemeral RSA keypair
+    R->>GW: Request decryption (handle, RSA pubkey)
+    GW->>GW: Retrieve (ciphertext, K, nonce) from DB
+    GW->>KMS: POST /v0/delegate (K, RSA pubkey)
+    KMS->>KMS: Compute S = K * privkey_KMS
+    KMS->>KMS: RSA-OAEP encrypt S with RSA pubkey
+    KMS-->>GW: encryptedSharedSecret
+    GW-->>R: ciphertext + encryptedSharedSecret + nonce
+    R->>R: RSA decrypt → S
+    R->>R: HKDF(S) → AES-256 key
+    R->>R: AES-GCM decrypt(ciphertext, nonce) → plaintext
 ```
-
-1. **Gateway encrypts** — The Gateway generates a random ephemeral key `k`,
-   computes the shared secret `k * pubkey_KMS` derives an AES-256 key and
-   encrypts the data with the AES-256 key. The ephemeral public key `K = k * G`
-   is stored with the ciphertext.
-
-2. **Gateway requests delegation** — When a User or Runner requests decryption,
-   the Gateway verifies the on-chain ACL. If authorized, the Gateway forwards
-   the request to the KMS. Each KMS node computes `K * share_i` using its secret
-   share and encrypts the result with the client's RSA public key.
-
-3. **Client decrypts** — The client collects at least `t` partial results from
-   the KMS nodes, decrypts each with their RSA private key, and reassembles them
-   to recover `K * privkey_KMS`. This equals `k * pubkey_KMS` (the original
-   shared secret) because
-   `K * privkey_KMS = (k * G) * privkey_KMS = k * pubkey_KMS`. The client then
-   derives the AES-256 key using HKDF and decrypts the ciphertext locally.
-
-## ECIES Encryption
-
-The KMS uses **ECIES** (Elliptic Curve Integrated Encryption Scheme):
-
-- **Public key**: `pubkey_A = privkey_A * G` (G is the curve generator)
-- **Shared secret**: `k * pubkey_A` where `k` is a random ephemeral key
-- **Ephemeral public key**: `K = k * G` (stored with ciphertext for delegation)
-
-### AES-256-GCM Key Derivation
-
-The AES key is derived from the shared secret using **HKDF (SHA-256)**:
-
-- **Input**: x-coordinate of the shared secret point (32 bytes)
-- **Info**: `"ECIES:AES_GCM:v1"` (`45434945533a4145535f47434d3a7631` in hex)
-- **Salt**: 32 bytes of zeros
-
-## Decryption Delegation
-
-When a user requests decryption:
-
-1. User generates an **RSA-OAEP 2048** keypair (public exponent 65537)
-2. User exports the public key in **SPKI format** as a hex string (no `0x`
-   prefix)
-3. KMS computes the shared secret `K * privkey_A`
-4. KMS encrypts the shared secret with the user's RSA public key
-5. User decrypts the shared secret locally and derives the AES key
 
 ::: warning Security
 
-The KMS never sees the plaintext. Only the RSA-encrypted shared secret travels
-over the network.
+The KMS never sees plaintext data. Only the RSA-encrypted shared secret travels
+over the network. The requester performs the final decryption locally.
 
 :::
 
-## Threshold Cryptography
+### ECIES Encryption Scheme
 
-### What is a Share?
+The protocol uses **ECIES** (Elliptic Curve Integrated Encryption Scheme) on
+secp256k1:
 
-A **share** is a piece of the private key. Individually, a share reveals nothing
-about the private key. But when `t` shares are combined using Lagrange
-interpolation, the original secret can be reconstructed.
+1. Generate a random ephemeral scalar `k`
+2. Compute the ephemeral public key `K = k * G`
+3. Compute the shared secret `S = k * pubkey_KMS`
+4. Derive an AES-256 key from `S` using HKDF-SHA256
+5. Encrypt plaintext with AES-256-GCM (random 12-byte nonce)
+6. Store: `(ciphertext, K, nonce)` alongside the handle
 
-In practice, shares are never combined directly. Instead, each node computes a
-**partial result** (`K * share_i`), and these partial results are reassembled to
-get `K * privkey_KMS` — the private key itself is never reconstructed.
+### Key Derivation (HKDF)
 
-| Concept     | Description                                 |
-| ----------- | ------------------------------------------- |
-| **n**       | Total number of KMS nodes                   |
-| **t**       | Minimum shares required (threshold)         |
-| **share_i** | Node i's piece of the private key           |
-| **DKG**     | Distributed Key Generation — setup protocol |
+| Parameter | Value                    |
+| --------- | ------------------------ |
+| Hash      | SHA-256                  |
+| IKM       | Shared secret (32 bytes) |
+| Salt      | 32 bytes of zeros        |
+| Info      | `"ECIES:AES_GCM:v1"`     |
+| Output    | 32 bytes (AES-256 key)   |
 
-::: info
+## Threshold Architecture
 
-Current Status MVP uses a single KMS node running in a TEE. The distributed
-threshold KMS (t/n) is the long-term architecture.
+The long-term design uses **threshold cryptography** based on
+[Shamir's Secret Sharing](https://en.wikipedia.org/wiki/Shamir%27s_secret_sharing)
+(SSS):
+
+- The private key is split into **n shares** using a random polynomial of degree
+  `t-1`, where `P(0) = privkey_KMS`
+- Each KMS node `i` holds `share_i = P(i)`, one point on the polynomial
+- At least **t shares** are needed to reconstruct `P(0)` via **Lagrange
+  interpolation**. Fewer than `t` shares reveal nothing
+- In practice, the private key is **never reconstructed**. Each node computes a
+  partial result `K * share_i`, and the client recombines them using Lagrange
+  coefficients: `Σ λ_i * (K * share_i) = K * privkey_KMS`
+
+This eliminates single points of failure: compromising fewer than `t` nodes
+reveals nothing about the private key.
+
+::: info Current Implementation
+
+The MVP runs a **single KMS node** that holds the full private key. The
+threshold protocol (t/n with distributed key generation) is the target
+architecture for production.
 
 :::
+
+## API
+
+### `GET /v0/public-key`
+
+Returns the KMS public key with an EIP-712 signed proof.
+
+**Response:**
+
+```json
+{
+  "publicKey": "0x...",
+  "proof": "0x..."
+}
+```
+
+The proof uses the EIP-712 domain `ProtocolPublicKey` (version `"1"`) with a
+`PublicKeyProof` struct containing the public key.
+
+### `POST /v0/delegate`
+
+Performs decryption delegation. Given an ephemeral Elliptic Curve public key `K`
+(from encryption) and a target RSA public key, the KMS:
+
+1. Computes the shared secret `S = K * privkey_KMS`
+2. Encrypts `S` with RSA-OAEP (SHA-256)
+3. Returns the RSA-encrypted shared secret
+
+**Request:**
+
+```json
+{
+  "ephemeralPubKey": "0x...",
+  "targetPubKey": "0x..."
+}
+```
+
+- `ephemeralPubKey`: compressed SEC1 format (33 bytes), the `K` stored with the
+  ciphertext
+- `targetPubKey`: RSA public key in SPKI format (minimum 2048-bit)
+
+**Authorization:** EIP-712 signed `DelegateAuthorization` in the `Authorization`
+header (`Bearer <hex signature>`).
+
+**Response:**
+
+```json
+{
+  "encryptedSharedSecret": "0x...",
+  "proof": "0x..."
+}
+```
+
+The requester then decrypts the shared secret with their RSA private key,
+derives the AES-256 key via HKDF, and decrypts the ciphertext locally.
 
 ## Learn More
 
