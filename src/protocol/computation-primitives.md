@@ -113,31 +113,33 @@ function div(euint256 lhs, euint256 rhs) returns (euint256);
 ```
 
 Integer division, truncated toward zero. Division by zero does not revert, it
-returns a deterministic value instead.
+returns `modulus - 1` (where modulus = `2^N`, the total number of representable
+values on N bits).
 
-- **Unsigned:** division by zero returns `MAX` (all bits set)
-- **Signed:** division by zero returns `-1`; `MIN / -1` wraps back to `MIN`
+- **Unsigned:** `2^N - 1` = all bits set to 1 = MAX value (e.g. `255` for Uint8)
+- **Signed:** `2^N - 1` = all bits set to 1 = `-1` in two's complement;
+  `MIN / -1` wraps back to `MIN`
 
-| Example (Uint8) | Result | Reason                 |
-| --------------- | ------ | ---------------------- |
-| `10 / 0`        | `255`  | Division by zero → MAX |
-| `7 / 2`         | `3`    | Truncated toward zero  |
-| `255 / 256`     | `0`    | Truncated toward zero  |
+| Example (Uint8) | Result | Reason                          |
+| --------------- | ------ | ------------------------------- |
+| `10 / 0`        | `255`  | Division by zero, all bits to 1 |
+| `7 / 2`         | `3`    | Truncated toward zero           |
+| `1 / 2`         | `0`    | Truncated toward zero           |
+| `0 / 5`         | `0`    | Zero numerator                  |
 
-| Example (Int8) | Result | Reason                      |
-| -------------- | ------ | --------------------------- |
-| `10 / 0`       | `-1`   | Division by zero → -1       |
-| `-128 / -1`    | `-128` | Overflow, wraps back to MIN |
-| `7 / 2`        | `3`    | Truncated toward zero       |
-| `-7 / 2`       | `-3`   | Truncated toward zero       |
+| Example (Int8) | Result | Reason                          |
+| -------------- | ------ | ------------------------------- |
+| `10 / 0`       | `-1`   | Division by zero, all bits to 1 |
+| `-128 / -1`    | `-128` | Overflow, wraps back to MIN     |
+| `7 / 2`        | `3`    | Truncated toward zero           |
+| `-7 / 2`       | `-3`   | Truncated toward zero           |
 
 ## Safe Arithmetic
 
 Same operations as core arithmetic, but returning two handles:
-`(success: Bool, result: same_type)`. The `result` is **always** the wrapping
-value (identical to the core variant). The `success` flag is `true` when no
-overflow/underflow occurred. Each takes 2 input handles and produces 2 output
-handles.
+`(success: Bool, result: same_type)`. When `success` is `false`, the `result` is
+always `0`. The `success` flag is `true` when no overflow/underflow occurred.
+Each takes 2 input handles and produces 2 output handles.
 
 ### SafeAdd
 
@@ -145,21 +147,25 @@ handles.
 function safeAdd(euint256 lhs, euint256 rhs) returns (ebool, euint256);
 ```
 
-Wrapping addition with overflow detection.
+Addition with overflow detection. Returns `0` on overflow.
 
 - **Unsigned:** `success = false` when `a + b > MAX`
 - **Signed:** `success = false` when the result crosses the type boundary
 
-| Example (Uint8)     | success | result | Reason           |
-| ------------------- | ------- | ------ | ---------------- |
-| `SafeAdd(200, 100)` | `false` | `44`   | Overflow         |
-| `SafeAdd(255, 1)`   | `false` | `0`    | Overflow to zero |
-| `SafeAdd(100, 50)`  | `true`  | `150`  | No overflow      |
+| Example (Uint8)     | success | result | Reason      |
+| ------------------- | ------- | ------ | ----------- |
+| `SafeAdd(200, 100)` | `false` | `0`    | Overflow    |
+| `SafeAdd(255, 1)`   | `false` | `0`    | Overflow    |
+| `SafeAdd(200, 55)`  | `true`  | `255`  | No overflow |
+| `SafeAdd(100, 50)`  | `true`  | `150`  | No overflow |
+| `SafeAdd(0, 0)`     | `true`  | `0`    | No overflow |
 
-| Example (Int8)     | success | result | Reason          |
-| ------------------ | ------- | ------ | --------------- |
-| `SafeAdd(127, 1)`  | `false` | `-128` | Overflow to MIN |
-| `SafeAdd(-50, 30)` | `true`  | `-20`  | No overflow     |
+| Example (Int8)      | success | result | Reason            |
+| ------------------- | ------- | ------ | ----------------- |
+| `SafeAdd(127, 1)`   | `false` | `0`    | Positive overflow |
+| `SafeAdd(-128, -1)` | `false` | `0`    | Negative overflow |
+| `SafeAdd(100, 20)`  | `true`  | `120`  | No overflow       |
+| `SafeAdd(-50, -50)` | `true`  | `-100` | No overflow       |
 
 ### SafeSub
 
@@ -167,21 +173,23 @@ Wrapping addition with overflow detection.
 function safeSub(euint256 lhs, euint256 rhs) returns (ebool, euint256);
 ```
 
-Wrapping subtraction with underflow detection.
+Subtraction with underflow detection. Returns `0` on underflow.
 
 - **Unsigned:** `success = false` when `a - b < 0`
 - **Signed:** `success = false` when the result crosses the type boundary
 
-| Example (Uint8)  | success | result | Reason           |
-| ---------------- | ------- | ------ | ---------------- |
-| `SafeSub(0, 1)`  | `false` | `255`  | Underflow to MAX |
-| `SafeSub(3, 10)` | `false` | `249`  | Underflow        |
-| `SafeSub(10, 3)` | `true`  | `7`    | No underflow     |
+| Example (Uint8)    | success | result | Reason       |
+| ------------------ | ------- | ------ | ------------ |
+| `SafeSub(0, 1)`    | `false` | `0`    | Underflow    |
+| `SafeSub(50, 100)` | `false` | `0`    | Underflow    |
+| `SafeSub(100, 50)` | `true`  | `50`   | No underflow |
+| `SafeSub(0, 0)`    | `true`  | `0`    | No underflow |
 
-| Example (Int8)     | success | result | Reason           |
-| ------------------ | ------- | ------ | ---------------- |
-| `SafeSub(-128, 1)` | `false` | `127`  | Underflow to MAX |
-| `SafeSub(50, 30)`  | `true`  | `20`   | No underflow     |
+| Example (Int8)     | success | result | Reason                          |
+| ------------------ | ------- | ------ | ------------------------------- |
+| `SafeSub(-128, 1)` | `false` | `0`    | Signed underflow                |
+| `SafeSub(127, -1)` | `false` | `0`    | Equivalent to 127 + 1, overflow |
+| `SafeSub(0, 0)`    | `true`  | `0`    | No underflow                    |
 
 ### SafeMul
 
@@ -189,22 +197,26 @@ Wrapping subtraction with underflow detection.
 function safeMul(euint256 lhs, euint256 rhs) returns (ebool, euint256);
 ```
 
-Wrapping multiplication with overflow detection.
+Multiplication with overflow detection. Returns `0` on overflow.
 
 - **Unsigned:** `success = false` when `a * b > MAX`
 - **Signed:** `success = false` when the result crosses the type boundary
 
-| Example (Uint8)   | success | result | Reason           |
-| ----------------- | ------- | ------ | ---------------- |
-| `SafeMul(3, 100)` | `false` | `44`   | Overflow         |
-| `SafeMul(16, 16)` | `false` | `0`    | Overflow to zero |
-| `SafeMul(10, 5)`  | `true`  | `50`   | No overflow      |
+| Example (Uint8)   | success | result | Reason                |
+| ----------------- | ------- | ------ | --------------------- |
+| `SafeMul(16, 16)` | `false` | `0`    | Overflow              |
+| `SafeMul(15, 17)` | `false` | `0`    | Overflow              |
+| `SafeMul(15, 16)` | `true`  | `240`  | No overflow           |
+| `SafeMul(0, x)`   | `true`  | `0`    | Zero is absorbing     |
+| `SafeMul(1, x)`   | `true`  | `x`    | Identity, no overflow |
 
-| Example (Int8)      | success | result | Reason          |
-| ------------------- | ------- | ------ | --------------- |
-| `SafeMul(-1, -128)` | `false` | `-128` | Overflow to MIN |
-| `SafeMul(10, 20)`   | `false` | `-56`  | Overflow        |
-| `SafeMul(-5, 3)`    | `true`  | `-15`  | No overflow     |
+| Example (Int8)      | success | result | Reason               |
+| ------------------- | ------- | ------ | -------------------- |
+| `SafeMul(-128, -1)` | `false` | `0`    | Overflow (128 > MAX) |
+| `SafeMul(127, 2)`   | `false` | `0`    | Overflow             |
+| `SafeMul(64, 2)`    | `false` | `0`    | Overflow (128 > MAX) |
+| `SafeMul(-1, -1)`   | `true`  | `1`    | No overflow          |
+| `SafeMul(63, 2)`    | `true`  | `126`  | No overflow          |
 
 ### SafeDiv
 
@@ -212,21 +224,27 @@ Wrapping multiplication with overflow detection.
 function safeDiv(euint256 lhs, euint256 rhs) returns (ebool, euint256);
 ```
 
-Integer division with error detection. The result is the same as core Div.
+Integer division with error detection. Returns `0` on division by zero or signed
+overflow.
 
 - **Unsigned:** `success = false` when dividing by zero
 - **Signed:** `success = false` when dividing by zero or `MIN / -1`
 
-| Example (Uint8)  | success | result | Reason            |
-| ---------------- | ------- | ------ | ----------------- |
-| `SafeDiv(10, 0)` | `false` | `255`  | Division by zero  |
-| `SafeDiv(7, 2)`  | `true`  | `3`    | Truncated to zero |
+| Example (Uint8)   | success | result | Reason                |
+| ----------------- | ------- | ------ | --------------------- |
+| `SafeDiv(255, 0)` | `false` | `0`    | Division by zero      |
+| `SafeDiv(0, 0)`   | `false` | `0`    | Division by zero      |
+| `SafeDiv(100, 3)` | `true`  | `33`   | Normal division       |
+| `SafeDiv(1, 2)`   | `true`  | `0`    | Truncated toward zero |
+| `SafeDiv(0, 5)`   | `true`  | `0`    | Zero numerator        |
 
-| Example (Int8)      | success | result | Reason            |
-| ------------------- | ------- | ------ | ----------------- |
-| `SafeDiv(10, 0)`    | `false` | `-1`   | Division by zero  |
-| `SafeDiv(-128, -1)` | `false` | `-128` | Signed overflow   |
-| `SafeDiv(-7, 2)`    | `true`  | `-3`   | Truncated to zero |
+| Example (Int8)      | success | result | Reason                            |
+| ------------------- | ------- | ------ | --------------------------------- |
+| `SafeDiv(100, 0)`   | `false` | `0`    | Division by zero                  |
+| `SafeDiv(0, 0)`     | `false` | `0`    | Division by zero                  |
+| `SafeDiv(-128, -1)` | `false` | `0`    | Signed overflow (MIN / -1)        |
+| `SafeDiv(-7, 2)`    | `true`  | `-3`   | Truncated toward zero (not floor) |
+| `SafeDiv(50, 5)`    | `true`  | `10`   | Normal division                   |
 
 ## Comparisons
 
@@ -341,73 +359,123 @@ Returns `ifTrue` when `cond` is `true`, `ifFalse` otherwise.
 ## Token Operations
 
 High-level operations designed for confidential token contracts. They **never
-revert**: if the requested amount exceeds the available balance, the operation
-silently limits to what is available. This prevents leaking balance information
-through transaction success/failure.
+revert** and follow **all-or-nothing** semantics: if the requested amount
+exceeds the available balance or an arithmetic overflow occurs, **nothing
+changes**. The previous ciphertexts are reassigned to the new output handles and
+`success` is set to `false`. This prevents leaking balance information through
+transaction success/failure (which would create a binary oracle).
 
 ### Transfer
 
-Moves tokens between two balances, capped at the sender's available balance.
+Moves tokens between two balances. All-or-nothing: if `amount > balanceFrom`,
+nothing is transferred.
+
+Overflow of `balanceTo` is impossible because the total supply is bounded by
+`MAX_U`, so `balanceTo + amount <= totalSupply <= MAX_U` is guaranteed.
 
 ```solidity
-function transfer(address from, address to, euint256 amount)
-    returns (euint256 newBalanceFrom, euint256 newBalanceTo, euint256 transferredAmount);
+function transfer(euint256 amount, euint256 balanceFrom, euint256 balanceTo)
+    returns (ebool success, euint256 newBalanceFrom, euint256 newBalanceTo);
 ```
 
-| Input       | Output            |
-| ----------- | ----------------- |
-| amount      | newBalanceFrom    |
-| balanceFrom | newBalanceTo      |
-| balanceTo   | transferredAmount |
+| Input       | Output         |
+| ----------- | -------------- |
+| amount      | success        |
+| balanceFrom | newBalanceFrom |
+| balanceTo   | newBalanceTo   |
 
-The actual transferred amount is `min(amount, balanceFrom)`. If the sender has
-insufficient balance, only what is available is moved.
+**Behavior:**
 
-| Example                              | transferredAmount | newBalanceFrom | newBalanceTo |
-| ------------------------------------ | ----------------- | -------------- | ------------ |
-| Transfer 50, balance 100, receiver 0 | 50                | 50             | 50           |
-| Transfer 100, balance 60, receiver 0 | 60                | 0              | 60           |
+```
+if amount > balanceFrom:
+    success        = false
+    newBalanceFrom = balanceFrom    // ciphertext reassigned to new handle
+    newBalanceTo   = balanceTo      // ciphertext reassigned to new handle
+else:
+    success        = true
+    newBalanceFrom = balanceFrom - amount
+    newBalanceTo   = balanceTo + amount
+```
+
+| balanceFrom | balanceTo | amount | success | newBalanceFrom | newBalanceTo | Reason                                |
+| ----------- | --------- | ------ | ------- | -------------- | ------------ | ------------------------------------- |
+| 1000        | 500       | 300    | `true`  | 700            | 800          | Normal transfer                       |
+| 1000        | 500       | 1000   | `true`  | 0              | 1500         | Full balance transferred              |
+| 1000        | 500       | 2000   | `false` | 1000           | 500          | Amount > balance, nothing transferred |
+| 0           | 500       | 100    | `false` | 0              | 500          | Insufficient balance                  |
+| 100         | 500       | 0      | `true`  | 100            | 500          | Zero amount, no-op                    |
 
 ### Mint
 
-Creates new tokens, increasing a balance and total supply. Additions use
-wrapping semantics.
+Creates new tokens, increasing a balance and total supply. All-or-nothing: if
+either addition overflows, nothing is minted.
 
 ```solidity
 function mint(euint256 amount, euint256 balanceTo, euint256 totalSupply)
-    returns (euint256 newBalanceTo, euint256 newTotalSupply);
+    returns (ebool success, euint256 newBalanceTo, euint256 newTotalSupply);
 ```
 
 | Input       | Output         |
 | ----------- | -------------- |
-| amount      | newBalanceTo   |
-| balanceTo   | newTotalSupply |
-| totalSupply |                |
+| amount      | success        |
+| balanceTo   | newBalanceTo   |
+| totalSupply | newTotalSupply |
 
-| Example                           | newBalanceTo | newTotalSupply |
-| --------------------------------- | ------------ | -------------- |
-| Mint 50, balance 200, supply 1000 | 250          | 1050           |
+**Behavior:**
+
+```
+if overflow(balanceTo + amount) or overflow(totalSupply + amount):
+    success        = false
+    newBalanceTo   = balanceTo      // unchanged
+    newTotalSupply = totalSupply    // unchanged
+else:
+    success        = true
+    newBalanceTo   = balanceTo + amount
+    newTotalSupply = totalSupply + amount
+```
+
+| balanceTo | amount | totalSupply | success | newBalanceTo | newTotalSupply | Reason            |
+| --------- | ------ | ----------- | ------- | ------------ | -------------- | ----------------- |
+| 500       | 300    | 10000       | `true`  | 800          | 10300          | Normal mint       |
+| 0         | 1000   | 0           | `true`  | 1000         | 1000           | Mint on empty     |
+| 500       | 0      | 10000       | `true`  | 500          | 10000          | Zero amount no-op |
 
 ### Burn
 
-Destroys tokens, decreasing a balance and total supply. The burnt amount is
-capped at the holder's available balance.
+Destroys tokens, decreasing a balance and total supply. All-or-nothing: if
+`amount > balanceFrom` or `totalSupply - amount` underflows, nothing is burned.
 
 ```solidity
 function burn(euint256 amount, euint256 balanceFrom, euint256 totalSupply)
-    returns (euint256 newBalanceFrom, euint256 newTotalSupply, euint256 burntAmount);
+    returns (ebool success, euint256 newBalanceFrom, euint256 newTotalSupply);
 ```
 
 | Input       | Output         |
 | ----------- | -------------- |
-| amount      | newBalanceFrom |
-| balanceFrom | newTotalSupply |
-| totalSupply | burntAmount    |
+| amount      | success        |
+| balanceFrom | newBalanceFrom |
+| totalSupply | newTotalSupply |
 
-| Example                           | burntAmount | newBalanceFrom | newTotalSupply |
-| --------------------------------- | ----------- | -------------- | -------------- |
-| Burn 50, balance 100, supply 1000 | 50          | 50             | 950            |
-| Burn 100, balance 60, supply 1000 | 60          | 0              | 940            |
+**Behavior:**
+
+```
+if amount > balanceFrom or underflow(totalSupply - amount):
+    success        = false
+    newBalanceFrom = balanceFrom    // ciphertext reassigned to new handle
+    newTotalSupply = totalSupply    // ciphertext reassigned to new handle
+else:
+    success        = true
+    newBalanceFrom = balanceFrom - amount
+    newTotalSupply = totalSupply - amount
+```
+
+| balanceFrom | amount | totalSupply | success | newBalanceFrom | newTotalSupply | Reason                           |
+| ----------- | ------ | ----------- | ------- | -------------- | -------------- | -------------------------------- |
+| 100         | 50     | 1000        | `true`  | 50             | 950            | Normal burn                      |
+| 1000        | 1000   | 10000       | `true`  | 0              | 9000           | Full balance burned              |
+| 60          | 100    | 1000        | `false` | 60             | 1000           | Amount > balance, nothing burned |
+| 0           | 100    | 1000        | `false` | 0              | 1000           | Insufficient balance             |
+| 100         | 0      | 1000        | `true`  | 100            | 1000           | Zero amount, no-op               |
 
 ## Learn More
 
