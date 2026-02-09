@@ -7,6 +7,8 @@ description:
 
 # Computation Primitives
 
+![Confidential Functions by Nox](/confidential-primtive.png)
+
 This page describes all operations the [Runner](/protocol/runner) can execute on
 encrypted data. Each operation takes encrypted input handles, decrypts them
 inside the TEE, performs the computation, re-encrypts the results, and stores
