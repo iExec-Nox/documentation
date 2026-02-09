@@ -103,4 +103,13 @@ contract ConfidentialPiggyBank is TEEChainConfig {
     function grantViewAccess(address viewer) external onlyOwner {
         acl.allow(euint256.unwrap(balance), viewer);
     }
+
+    /**
+     * @notice Get the raw encrypted handle for the balance
+     * @dev Demonstrates that balance is stored as an opaque handle, not the actual value.
+     * @return The encrypted handle (bytes32) - NOT the actual balance
+     */
+    function getBalanceHandle() external view returns (bytes32) {
+        return euint256.unwrap(balance);
+    }
 }

@@ -1,0 +1,44 @@
+# Normaliser les fins de ligne en LF dans le dépôt Git
+# Compatible avec Prettier (endOfLine: "lf") et multi-plateforme (Windows/Mac/Linux)
+
+# Par défaut : tous les fichiers texte en LF
+* text=auto eol=lf
+
+# Fichiers de code
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.vue text eol=lf
+*.css text eol=lf
+*.scss text eol=lf
+*.html text eol=lf
+
+# Fichiers de documentation
+*.md text eol=lf
+*.mdx text eol=lf
+
+# Fichiers de configuration
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+
+# Fichiers de lock
+package-lock.json text eol=lf
+yarn.lock text eol=lf
+pnpm-lock.yaml text eol=lf
+
+# Fichiers binaires (ne pas modifier)
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary
+*.webp binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.pdf binary

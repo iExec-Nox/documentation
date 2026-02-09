@@ -92,6 +92,30 @@ The ACL (Access Control List) manages who can access encrypted values:
 - `allow(handle, address)` - Grants a specific address access
 - By default, only the handle creator has access
 
+## Verifying Confidentiality
+
+Want proof that your balance is truly private? After deploying and depositing funds, call `getBalanceHandle()` in Remix:
+
+```solidity
+function getBalanceHandle() external view returns (bytes32) {
+    return euint256.unwrap(balance);
+}
+```
+
+You'll see something like:
+
+```
+0x7f8a9b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a
+```
+
+This 32-byte value is **not your balance** - it's an encrypted handle. In a traditional contract, you'd see `100` directly. Here, the actual value is encrypted inside the TEE and can only be decrypted by authorized addresses.
+
+| What you deposited | What `getBalanceHandle()` returns |
+|-------------------|-----------------------------------|
+| 100 | `0x7f8a9b3c...` (opaque handle) |
+
+The handle reveals nothing about the underlying value - that's confidentiality in action.
+
 ## Interacting from the Frontend
 
 Use the Nox SDK to interact with your confidential piggy bank:
