@@ -34,6 +34,33 @@ The long-term vision for Nox evolves the protocol along five axes:
 
 ## Privacy by Convergence
 
+```mermaid
+block-beta
+    columns 3
+    block:onchain:3
+        columns 3
+        zk["ZK Proofs"]
+        space
+        onlabel["On-chain verification"]
+    end
+    block:exec:3
+        columns 3
+        tee["TEE (Intel TDX)"]
+        space
+        execlabel["Confidential execution"]
+    end
+    block:keys:3
+        columns 3
+        threshold["Threshold + MPC"]
+        space
+        keyslabel["Key management"]
+    end
+
+    style onchain fill:#4a9eff,color:#fff
+    style exec fill:#7c3aed,color:#fff
+    style keys fill:#059669,color:#fff
+```
+
 No single privacy technology solves confidential DeFi alone. TEEs are fast but
 rely on hardware trust. Threshold cryptography distributes trust but cannot
 execute arbitrary computation. MPC enables collaborative computation but does
@@ -66,6 +93,33 @@ Together, these technologies cover each other's weaknesses:
   gas fees
 
 ## No Single Key, No Single Point of Failure
+
+```mermaid
+flowchart TB
+    subgraph split ["Key Splitting (n shares)"]
+        direction LR
+        S1["KMS Node 1"]
+        S2["KMS Node 2"]
+        S3["KMS Node 3"]
+        SN["KMS Node n"]
+    end
+
+    Client["Client (Runner, Gateway...)"]
+
+    Client --> |request| S1
+    Client --> |request| S2
+    Client --> |request| S3
+
+    S1 --> |partial result| Client
+    S2 --> |partial result| Client
+    S3 --> |partial result| Client
+
+    Client --> OUT["Recombine via Lagrange<br/>Key never reconstructed"]
+
+    style split fill:#1e293b,color:#fff
+    style Client fill:#7c3aed,color:#fff
+    style OUT fill:#059669,color:#fff
+```
 
 The protocol's private key is Nox's most sensitive asset: whoever holds it can
 decrypt every handle in the system. In the current version, a single KMS node
@@ -188,6 +242,26 @@ components is cryptographically tied to that proof.
 
 ## Open and Permissionless
 
+```mermaid
+flowchart TB
+    subgraph operators ["Operate"]
+        direction TB
+        O1["Stake RLC"] --> O2["Pass Attestation"] --> O3["Run a Node"]
+    end
+
+    subgraph developers ["Build"]
+        direction TB
+        D1["Write Primitive"] --> D2["Deploy on Network"] --> D3["Earn Fees"]
+    end
+
+    operators --> N["Nox Network"]
+    developers --> N
+
+    style operators fill:#059669,color:#fff
+    style developers fill:#4a9eff,color:#fff
+    style N fill:#7c3aed,color:#fff
+```
+
 With the chain of trust in place, the protocol no longer needs a single trusted
 operator. Nox is designed to be permissionless at every level: anyone can
 operate infrastructure, and anyone can extend the protocol with new
@@ -255,6 +329,32 @@ the number of Runners, while the Orchestrator ensures that every computation
 request is eventually processed.
 
 ## Every Chain, One Privacy Layer
+
+```mermaid
+flowchart TB
+    subgraph chains ["Blockchains"]
+        direction LR
+        C1["Ethereum"]
+        C2["Arbitrum"]
+        C3["Base"]
+        CN["Chain N"]
+    end
+
+    subgraph nox ["Shared Nox Backend"]
+        direction LR
+        KMS["KMS"]
+        Runners["Runners"]
+        GW["Gateway"]
+    end
+
+    C1 --> nox
+    C2 --> nox
+    C3 --> nox
+    CN --> nox
+
+    style chains fill:#1e293b,color:#fff
+    style nox fill:#7c3aed,color:#fff
+```
 
 The handle structure already encodes a **4-byte chain ID** (bytes 26-29),
 ensuring that handles are bound to a specific chain and cannot be reused across
