@@ -16,7 +16,11 @@ All arithmetic uses **wrapping semantics**, matching Solidity's `unchecked`
 behavior. On overflow or underflow, values wrap around the type boundary instead
 of reverting.
 
-## PlaintextToEncrypted
+![Confidential Functions by Nox](/confidential-primtive.png)
+
+## Core Primitives
+
+### PlaintextToEncrypted
 
 Encrypts a plaintext value into an encrypted handle. This is the only operation
 with no input handles.
@@ -32,12 +36,12 @@ function plaintextToEncrypted(euint256 value) returns (euint256);
 The Runner forwards the plaintext to the Handle Gateway via `POST /v0/secrets`,
 which performs the ECIES encryption and stores the result.
 
-## Core Arithmetic
+### Arithmetic
 
 Binary operations on two encrypted values of the same type. Each takes 2 input
 handles and produces 1 output handle.
 
-### Add
+#### Add
 
 ```solidity
 function add(euint256 lhs, euint256 rhs) returns (euint256);
@@ -60,7 +64,7 @@ Wrapping addition. On overflow, the result wraps around the type boundary.
 | `127 + 1`      | `-128` | Overflows to MIN             |
 | `-50 + 30`     | `-20`  | No overflow                  |
 
-### Sub
+#### Sub
 
 ```solidity
 function sub(euint256 lhs, euint256 rhs) returns (euint256);
@@ -83,7 +87,7 @@ Wrapping subtraction. On underflow, the result wraps around the type boundary.
 | `-100 - 100`   | `56`   | Underflows, wraps to positive |
 | `50 - 30`      | `20`   | No underflow                  |
 
-### Mul
+#### Mul
 
 ```solidity
 function mul(euint256 lhs, euint256 rhs) returns (euint256);
@@ -106,7 +110,7 @@ Wrapping multiplication. On overflow, the result wraps around the type boundary.
 | `10 * 20`      | `-56`  | Overflows, wraps to negative |
 | `-5 * 3`       | `-15`  | No overflow                  |
 
-### Div
+#### Div
 
 ```solidity
 function div(euint256 lhs, euint256 rhs) returns (euint256);
@@ -134,14 +138,14 @@ values on N bits).
 | `7 / 2`        | `3`    | Truncated toward zero           |
 | `-7 / 2`       | `-3`   | Truncated toward zero           |
 
-## Safe Arithmetic
+### Safe Arithmetic
 
 Same operations as core arithmetic, but returning two handles:
 `(success: Bool, result: same_type)`. When `success` is `false`, the `result` is
 always `0`. The `success` flag is `true` when no overflow/underflow occurred.
 Each takes 2 input handles and produces 2 output handles.
 
-### SafeAdd
+#### SafeAdd
 
 ```solidity
 function safeAdd(euint256 lhs, euint256 rhs) returns (ebool, euint256);
@@ -167,7 +171,7 @@ Addition with overflow detection. Returns `0` on overflow.
 | `SafeAdd(100, 20)`  | `true`  | `120`  | No overflow       |
 | `SafeAdd(-50, -50)` | `true`  | `-100` | No overflow       |
 
-### SafeSub
+#### SafeSub
 
 ```solidity
 function safeSub(euint256 lhs, euint256 rhs) returns (ebool, euint256);
@@ -191,7 +195,7 @@ Subtraction with underflow detection. Returns `0` on underflow.
 | `SafeSub(127, -1)` | `false` | `0`    | Equivalent to 127 + 1, overflow |
 | `SafeSub(0, 0)`    | `true`  | `0`    | No underflow                    |
 
-### SafeMul
+#### SafeMul
 
 ```solidity
 function safeMul(euint256 lhs, euint256 rhs) returns (ebool, euint256);
@@ -218,7 +222,7 @@ Multiplication with overflow detection. Returns `0` on overflow.
 | `SafeMul(-1, -1)`   | `true`  | `1`    | No overflow          |
 | `SafeMul(63, 2)`    | `true`  | `126`  | No overflow          |
 
-### SafeDiv
+#### SafeDiv
 
 ```solidity
 function safeDiv(euint256 lhs, euint256 rhs) returns (ebool, euint256);
@@ -246,13 +250,13 @@ overflow.
 | `SafeDiv(-7, 2)`    | `true`  | `-3`   | Truncated toward zero (not floor) |
 | `SafeDiv(50, 5)`    | `true`  | `10`   | Normal division                   |
 
-## Comparisons
+### Comparisons
 
 Compare two encrypted values and return an encrypted boolean. Each takes 2 input
 handles and produces 1 Bool output handle. Comparison semantics depend on the
 type: unsigned for `UintN`, signed for `IntN`.
 
-### Eq
+#### Eq
 
 ```solidity
 function eq(euint256 lhs, euint256 rhs) returns (ebool);
@@ -265,7 +269,7 @@ Returns `true` when `a == b`.
 | `Eq(42, 42)`    | `true`  | Equal values     |
 | `Eq(0, 255)`    | `false` | Different values |
 
-### Ne
+#### Ne
 
 ```solidity
 function ne(euint256 lhs, euint256 rhs) returns (ebool);
@@ -278,7 +282,7 @@ Returns `true` when `a != b`.
 | `Ne(42, 42)`    | `false` | Equal values     |
 | `Ne(0, 255)`    | `true`  | Different values |
 
-### Lt
+#### Lt
 
 ```solidity
 function lt(euint256 lhs, euint256 rhs) returns (ebool);
@@ -296,7 +300,7 @@ Returns `true` when `a < b`.
 | `Lt(-56, 10)`   | `true`  | -56 < 10 (signed)   |
 | `Lt(127, -128)` | `false` | 127 < -128 is false |
 
-### Le
+#### Le
 
 ```solidity
 function le(euint256 lhs, euint256 rhs) returns (ebool);
@@ -309,7 +313,7 @@ Returns `true` when `a <= b`.
 | `Le(10, 10)`    | `true`  | Equal values       |
 | `Le(200, 10)`   | `false` | 200 <= 10 is false |
 
-### Gt
+#### Gt
 
 ```solidity
 function gt(euint256 lhs, euint256 rhs) returns (ebool);
@@ -327,7 +331,7 @@ Returns `true` when `a > b`.
 | `Gt(10, -56)`   | `true`  | 10 > -56 (signed)   |
 | `Gt(-128, 127)` | `false` | -128 > 127 is false |
 
-### Ge
+#### Ge
 
 ```solidity
 function ge(euint256 lhs, euint256 rhs) returns (ebool);
@@ -340,7 +344,7 @@ Returns `true` when `a >= b`.
 | `Ge(10, 10)`    | `true`  | Equal values       |
 | `Ge(10, 200)`   | `false` | 10 >= 200 is false |
 
-## Select
+### Select
 
 Conditional selection based on an encrypted boolean. No computation is performed
 on the values. Takes 3 input handles and produces 1 output handle.
@@ -356,7 +360,7 @@ Returns `ifTrue` when `cond` is `true`, `ifFalse` otherwise.
 | `Select(true, 42, 100)`  | `42`   | Condition is true  |
 | `Select(false, 42, 100)` | `100`  | Condition is false |
 
-## Token Operations
+## Advanced Functions
 
 High-level operations designed for confidential token contracts. They **never
 revert** and follow **all-or-nothing** semantics: if the requested amount
