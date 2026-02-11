@@ -50,7 +50,8 @@ function add(euint256 lhs, euint256 rhs) returns (euint256);
 Wrapping addition. On overflow, the result wraps around the type boundary.
 
 - **Unsigned:** `(a + b) mod 2^N`
-- **Signed:** wraps from positive MAX to negative MIN on overflow
+- **Signed:** `(a + b) mod 2^N`, interpreted in two's complement. For example on
+  Int8, adding past `127` continues from `-128`
 
 | Example (Uint8) | Result | Reason                  |
 | --------------- | ------ | ----------------------- |
@@ -72,8 +73,10 @@ function sub(euint256 lhs, euint256 rhs) returns (euint256);
 
 Wrapping subtraction. On underflow, the result wraps around the type boundary.
 
-- **Unsigned:** wraps from 0 to MAX when the result would be negative
-- **Signed:** wraps from negative MIN to positive MAX on underflow
+- **Unsigned:** when the result would be negative, it wraps around through MAX.
+  For example on Uint8, `0 - 1` gives `255`
+- **Signed:** when the result goes below MIN, it wraps around through MAX.
+  For example on Int8, `-128 - 1` gives `127`
 
 | Example (Uint8) | Result | Reason                   |
 | --------------- | ------ | ------------------------ |
@@ -96,7 +99,8 @@ function mul(euint256 lhs, euint256 rhs) returns (euint256);
 Wrapping multiplication. On overflow, the result wraps around the type boundary.
 
 - **Unsigned:** `(a * b) mod 2^N`
-- **Signed:** wraps on overflow, same modular behavior
+- **Signed:** `(a * b) mod 2^N`, interpreted in two's complement. Same modular
+  arithmetic as unsigned, but the result is reinterpreted as a signed value
 
 | Example (Uint8) | Result | Reason                  |
 | --------------- | ------ | ----------------------- |
@@ -117,26 +121,26 @@ function div(euint256 lhs, euint256 rhs) returns (euint256);
 ```
 
 Integer division, truncated toward zero. Division by zero does not revert, it
-returns `modulus - 1` (where modulus = `2^N`, the total number of representable
-values on N bits).
+returns the maximum representable value of the type (saturates toward +infinity).
 
-- **Unsigned:** `2^N - 1` = all bits set to 1 = MAX value (e.g. `255` for Uint8)
-- **Signed:** `2^N - 1` = all bits set to 1 = `-1` in two's complement;
-  `MIN / -1` wraps back to `MIN`
+- **Unsigned:** returns `2^N - 1` (MAX_U). For example on Uint8, `10 / 0` gives `255`
+- **Signed:** returns `2^(N-1) - 1` (MAX_I). For example on Int8, `10 / 0` gives
+  `127`. Additionally, `MIN / -1` wraps back to `MIN` because the true result
+  (`128`) exceeds MAX_I (`127`)
 
 | Example (Uint8) | Result | Reason                          |
 | --------------- | ------ | ------------------------------- |
-| `10 / 0`        | `255`  | Division by zero, all bits to 1 |
+| `10 / 0`        | `255`  | Division by zero, returns MAX_U |
 | `7 / 2`         | `3`    | Truncated toward zero           |
 | `1 / 2`         | `0`    | Truncated toward zero           |
 | `0 / 5`         | `0`    | Zero numerator                  |
 
-| Example (Int8) | Result | Reason                          |
-| -------------- | ------ | ------------------------------- |
-| `10 / 0`       | `-1`   | Division by zero, all bits to 1 |
-| `-128 / -1`    | `-128` | Overflow, wraps back to MIN     |
-| `7 / 2`        | `3`    | Truncated toward zero           |
-| `-7 / 2`       | `-3`   | Truncated toward zero           |
+| Example (Int8) | Result | Reason                              |
+| -------------- | ------ | ----------------------------------- |
+| `10 / 0`       | `127`  | Division by zero, returns MAX_I     |
+| `-128 / -1`    | `-128` | Overflow, wraps back to MIN         |
+| `7 / 2`        | `3`    | Truncated toward zero               |
+| `-7 / 2`       | `-3`   | Truncated toward zero               |
 
 ### Safe Arithmetic
 
@@ -154,7 +158,8 @@ function safeAdd(euint256 lhs, euint256 rhs) returns (ebool, euint256);
 Addition with overflow detection. Returns `0` on overflow.
 
 - **Unsigned:** `success = false` when `a + b > MAX`
-- **Signed:** `success = false` when the result crosses the type boundary
+- **Signed:** `success = false` when the result exceeds MAX or goes below MIN
+  (e.g. on Int8, `127 + 1` or `-128 + (-1)`)
 
 | Example (Uint8)     | success | result | Reason      |
 | ------------------- | ------- | ------ | ----------- |
@@ -180,7 +185,8 @@ function safeSub(euint256 lhs, euint256 rhs) returns (ebool, euint256);
 Subtraction with underflow detection. Returns `0` on underflow.
 
 - **Unsigned:** `success = false` when `a - b < 0`
-- **Signed:** `success = false` when the result crosses the type boundary
+- **Signed:** `success = false` when the result exceeds MAX or goes below MIN
+  (e.g. on Int8, `127 - (-1)` overflows, `-128 - 1` underflows)
 
 | Example (Uint8)    | success | result | Reason       |
 | ------------------ | ------- | ------ | ------------ |
@@ -204,7 +210,8 @@ function safeMul(euint256 lhs, euint256 rhs) returns (ebool, euint256);
 Multiplication with overflow detection. Returns `0` on overflow.
 
 - **Unsigned:** `success = false` when `a * b > MAX`
-- **Signed:** `success = false` when the result crosses the type boundary
+- **Signed:** `success = false` when the result exceeds MAX or goes below MIN
+  (e.g. on Int8, `127 * 2` overflows, `-128 * -1` also overflows because `128 > 127`)
 
 | Example (Uint8)   | success | result | Reason                |
 | ----------------- | ------- | ------ | --------------------- |
