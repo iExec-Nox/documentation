@@ -75,8 +75,8 @@ Wrapping subtraction. On underflow, the result wraps around the type boundary.
 
 - **Unsigned:** when the result would be negative, it wraps around through MAX.
   For example on Uint8, `0 - 1` gives `255`
-- **Signed:** when the result goes below MIN, it wraps around through MAX.
-  For example on Int8, `-128 - 1` gives `127`
+- **Signed:** when the result goes below MIN, it wraps around through MAX. For
+  example on Int8, `-128 - 1` gives `127`
 
 | Example (Uint8) | Result | Reason                   |
 | --------------- | ------ | ------------------------ |
@@ -121,9 +121,11 @@ function div(euint256 lhs, euint256 rhs) returns (euint256);
 ```
 
 Integer division, truncated toward zero. Division by zero does not revert, it
-returns the maximum representable value of the type (saturates toward +infinity).
+returns the maximum representable value of the type (saturates toward
++infinity).
 
-- **Unsigned:** returns `2^N - 1` (MAX_U). For example on Uint8, `10 / 0` gives `255`
+- **Unsigned:** returns `2^N - 1` (MAX_U). For example on Uint8, `10 / 0` gives
+  `255`
 - **Signed:** returns `2^(N-1) - 1` (MAX_I). For example on Int8, `10 / 0` gives
   `127`. Additionally, `MIN / -1` wraps back to `MIN` because the true result
   (`128`) exceeds MAX_I (`127`)
@@ -135,12 +137,12 @@ returns the maximum representable value of the type (saturates toward +infinity)
 | `1 / 2`         | `0`    | Truncated toward zero           |
 | `0 / 5`         | `0`    | Zero numerator                  |
 
-| Example (Int8) | Result | Reason                              |
-| -------------- | ------ | ----------------------------------- |
-| `10 / 0`       | `127`  | Division by zero, returns MAX_I     |
-| `-128 / -1`    | `-128` | Overflow, wraps back to MIN         |
-| `7 / 2`        | `3`    | Truncated toward zero               |
-| `-7 / 2`       | `-3`   | Truncated toward zero               |
+| Example (Int8) | Result | Reason                          |
+| -------------- | ------ | ------------------------------- |
+| `10 / 0`       | `127`  | Division by zero, returns MAX_I |
+| `-128 / -1`    | `-128` | Overflow, wraps back to MIN     |
+| `7 / 2`        | `3`    | Truncated toward zero           |
+| `-7 / 2`       | `-3`   | Truncated toward zero           |
 
 ### Safe Arithmetic
 
@@ -211,7 +213,8 @@ Multiplication with overflow detection. Returns `0` on overflow.
 
 - **Unsigned:** `success = false` when `a * b > MAX`
 - **Signed:** `success = false` when the result exceeds MAX or goes below MIN
-  (e.g. on Int8, `127 * 2` overflows, `-128 * -1` also overflows because `128 > 127`)
+  (e.g. on Int8, `127 * 2` overflows, `-128 * -1` also overflows because
+  `128 > 127`)
 
 | Example (Uint8)   | success | result | Reason                |
 | ----------------- | ------- | ------ | --------------------- |
