@@ -11,7 +11,6 @@ export function getSidebar() {
           {
             text: 'Developer',
             items: [
-              { text: 'Manifesto', link: '/overview/manifesto' },
               { text: 'Release Note', link: '/overview/release-notes' },
               { text: 'Status', link: '/overview/status' },
             ],
@@ -123,8 +122,8 @@ export function getSidebar() {
         text: 'PROTOCOL',
         items: [
           {
-            text: 'Nox Long-Term Vision',
-            link: '/protocol/nox-long-term-vision',
+            text: 'Protocol Vision',
+            link: '/protocol/protocol-vision',
           },
           {
             text: 'Global Architecture Overview',
@@ -137,6 +136,10 @@ export function getSidebar() {
           {
             text: 'Runner',
             link: '/protocol/runner',
+          },
+          {
+            text: 'Computation Primitives',
+            link: '/protocol/computation-primitives',
           },
           {
             text: 'Gateway',
