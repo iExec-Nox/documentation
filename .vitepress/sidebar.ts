@@ -11,8 +11,8 @@ export function getSidebar() {
           {
             text: 'Developer',
             items: [
-              { text: 'Release Note', link: '/overview/release-notes' },
-              { text: 'Status', link: '/overview/status' },
+              { text: 'Release Note', link: '/getting-started/release-notes' },
+              { text: 'Status', link: '/getting-started/status' },
             ],
           },
           { text: 'Use Cases', link: '/getting-started/use-cases' },
@@ -108,7 +108,7 @@ export function getSidebar() {
           },
           {
             text: 'Advanced Configuration',
-            link: '/references/handle-sdk/advanced-configuration',
+            link: '/references/solidity-library/advanced-configuration',
           },
         ],
       },
