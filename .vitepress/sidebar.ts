@@ -11,9 +11,8 @@ export function getSidebar() {
           {
             text: 'Developer',
             items: [
-              { text: 'Manifesto', link: '/getting-started/manifesto' },
-              { text: 'Release Note', link: '/getting-started/release-notes' },
-              { text: 'Status', link: '/getting-started/status' },
+              { text: 'Release Note', link: '/overview/release-notes' },
+              { text: 'Status', link: '/overview/status' },
             ],
           },
           { text: 'Use Cases', link: '/getting-started/use-cases' },
@@ -81,10 +80,6 @@ export function getSidebar() {
                 text: 'decrypt',
                 link: '/references/js-sdk/methods/decrypt',
               },
-              {
-                text: 'viewACL',
-                link: '/references/js-sdk/methods/viewACL',
-              },
             ],
           },
           {
@@ -127,8 +122,8 @@ export function getSidebar() {
         text: 'PROTOCOL',
         items: [
           {
-            text: 'Nox Long-Term Vision',
-            link: '/protocol/nox-long-term-vision',
+            text: 'Protocol Vision',
+            link: '/protocol/protocol-vision',
           },
           {
             text: 'Global Architecture Overview',
@@ -141,6 +136,10 @@ export function getSidebar() {
           {
             text: 'Runner',
             link: '/protocol/runner',
+          },
+          {
+            text: 'Computation Primitives',
+            link: '/protocol/computation-primitives',
           },
           {
             text: 'Gateway',
