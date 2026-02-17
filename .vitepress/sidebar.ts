@@ -101,8 +101,8 @@ export function getSidebar() {
             collapsed: true,
             items: [
               {
-                text: 'Trivial Encryption',
-                link: '/references/solidity-library/methods/trivial-encryption',
+                text: 'Plaintext to Encrypted',
+                link: '/references/solidity-library/methods/plaintext-to-encrypted',
               },
               {
                 text: 'fromExternal',

@@ -61,7 +61,7 @@ contract ConfidentialVault {
 
 ### Methods
 
-- [Trivial Encryption](/references/solidity-library/methods/trivial-encryption):
+- [Plaintext to Encrypted](/references/solidity-library/methods/plaintext-to-encrypted):
   convert plaintext values to encrypted handles
 - [fromExternal](/references/solidity-library/methods/fromExternal): validate
   user-submitted handles with EIP-712 proofs

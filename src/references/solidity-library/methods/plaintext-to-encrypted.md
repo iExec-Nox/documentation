@@ -1,9 +1,9 @@
 ---
-title: Trivial Encryption
+title: Plaintext to Encrypted
 description: Convert plaintext values to encrypted handles
 ---
 
-# Trivial Encryption
+# Plaintext to Encrypted
 
 Convert plaintext values to encrypted handles. The value is encrypted off-chain
 by the Runner and stored in the [Handle Gateway](/protocol/gateway).
