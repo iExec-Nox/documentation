@@ -168,8 +168,14 @@ current transaction.
 
 ## Next Steps
 
-- [Available Methods](/references/solidity-library/methods/available-methods):
-  full API reference for all functions
+- [Arithmetic](/references/solidity-library/methods/arithmetic): `add`, `sub`,
+  `mul`, `div` with wrapping semantics
+- [Comparisons](/references/solidity-library/methods/comparisons): `eq`, `ne`,
+  `lt`, `le`, `gt`, `ge`
+- [Token Operations](/references/solidity-library/methods/token-operations):
+  `transfer`, `mint`, `burn`
+- [Access Control](/references/solidity-library/methods/access-control):
+  permissions and viewer management
 - [Computation Primitives](/protocol/computation-primitives): detailed semantics
   for each operation (overflow behavior, edge cases)
 - [JS SDK](/references/js-sdk): encrypt inputs and decrypt results from

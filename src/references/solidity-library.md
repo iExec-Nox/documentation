@@ -58,5 +58,22 @@ contract ConfidentialVault {
 
 - [Getting Started](/references/solidity-library/getting-started): installation
   and project setup
-- [Available Methods](/references/solidity-library/methods/available-methods):
-  full API reference
+
+### Methods
+
+- [Trivial Encryption](/references/solidity-library/methods/trivial-encryption):
+  convert plaintext values to encrypted handles
+- [fromExternal](/references/solidity-library/methods/fromExternal): validate
+  user-submitted handles with EIP-712 proofs
+- [Arithmetic](/references/solidity-library/methods/arithmetic): `add`, `sub`,
+  `mul`, `div` with wrapping semantics
+- [Safe Arithmetic](/references/solidity-library/methods/safe-arithmetic):
+  `safeAdd`, `safeSub`, `safeMul`, `safeDiv` with overflow detection
+- [Comparisons](/references/solidity-library/methods/comparisons): `eq`, `ne`,
+  `lt`, `le`, `gt`, `ge` returning `ebool`
+- [select](/references/solidity-library/methods/select): encrypted conditional
+  branching
+- [Token Operations](/references/solidity-library/methods/token-operations):
+  `transfer`, `mint`, `burn` with all-or-nothing semantics
+- [Access Control](/references/solidity-library/methods/access-control):
+  `allow`, `allowThis`, `addViewer`, `allowPublicDecryption` and more

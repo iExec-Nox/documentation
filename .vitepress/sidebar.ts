@@ -102,43 +102,35 @@ export function getSidebar() {
             items: [
               {
                 text: 'Trivial Encryption',
-                link: '/references/solidity-library/methods/available-methods#trivial-encryption',
+                link: '/references/solidity-library/methods/trivial-encryption',
               },
               {
-                text: 'Handle Validation',
-                link: '/references/solidity-library/methods/available-methods#handle-validation',
+                text: 'fromExternal',
+                link: '/references/solidity-library/methods/fromExternal',
               },
               {
                 text: 'Arithmetic',
-                link: '/references/solidity-library/methods/available-methods#arithmetic',
+                link: '/references/solidity-library/methods/arithmetic',
               },
               {
                 text: 'Safe Arithmetic',
-                link: '/references/solidity-library/methods/available-methods#safe-arithmetic',
+                link: '/references/solidity-library/methods/safe-arithmetic',
               },
               {
                 text: 'Comparisons',
-                link: '/references/solidity-library/methods/available-methods#comparisons',
+                link: '/references/solidity-library/methods/comparisons',
               },
               {
-                text: 'Conditional',
-                link: '/references/solidity-library/methods/available-methods#conditional',
+                text: 'select',
+                link: '/references/solidity-library/methods/select',
               },
               {
                 text: 'Token Operations',
-                link: '/references/solidity-library/methods/available-methods#token-operations',
+                link: '/references/solidity-library/methods/token-operations',
               },
               {
                 text: 'Access Control',
-                link: '/references/solidity-library/methods/available-methods#access-control',
-              },
-              {
-                text: 'Viewer Management',
-                link: '/references/solidity-library/methods/available-methods#viewer-management',
-              },
-              {
-                text: 'Public Decryption',
-                link: '/references/solidity-library/methods/available-methods#public-decryption',
+                link: '/references/solidity-library/methods/access-control',
               },
             ],
           },
