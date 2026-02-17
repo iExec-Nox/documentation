@@ -67,14 +67,6 @@ bun add @iexec-nox/nox-protocol-contracts
 
 :::
 
-The package includes:
-
-- `contracts/sdk/Nox.sol`: the main library
-- `contracts/NoxCompute.sol`: the on-chain compute contract
-- `contracts/ACL.sol`: the access control contract
-- `contracts/interfaces/`: contract interfaces
-- `contracts/shared/TypeUtils.sol`: type utilities
-
 The `encrypted-types` package (providing `euint256`, `ebool`, etc.) is installed
 automatically as a dependency.
 
@@ -87,10 +79,6 @@ import {Nox} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol";
 // Encrypted types (required)
 import "encrypted-types/EncryptedTypes.sol";
 ```
-
-The `EncryptedTypes.sol` import brings all encrypted types into scope: `ebool`,
-`euint8` through `euint256`, `eint8` through `eint256`, `eaddress`, `ebytes1`
-through `ebytes32`, and their `external*` variants.
 
 ## Encrypted Types
 
@@ -108,63 +96,6 @@ off-chain in the Handle Gateway.
 
 Each type has a corresponding `external*` variant (e.g. `externalEuint256`) used
 for handles received from users that need proof validation before use.
-
-## Minimal Example
-
-```solidity
-// SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
-
-import {Nox} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol";
-import "encrypted-types/EncryptedTypes.sol";
-
-contract ConfidentialCounter {
-    euint256 private _count;
-
-    constructor() {
-        _count = Nox.toEuint256(0);
-        Nox.allowThis(_count);
-    }
-
-    /// @notice Increment the counter by an encrypted amount.
-    function increment(externalEuint256 encryptedAmount, bytes calldata proof) external {
-        // 1. Validate the user's encrypted input
-        euint256 amount = Nox.fromExternal(encryptedAmount, proof);
-
-        // 2. Compute on encrypted data
-        euint256 newCount = Nox.add(_count, amount);
-
-        // 3. Manage access: allow this contract to reuse the handle
-        Nox.allowThis(newCount);
-
-        // 4. Allow the caller to decrypt the result
-        Nox.addViewer(newCount, msg.sender);
-
-        _count = newCount;
-    }
-
-    function count() external view returns (euint256) {
-        return _count;
-    }
-}
-```
-
-::: warning Important: Access Control
-
-Every time you produce a new encrypted handle (from `Nox.add()`,
-`Nox.toEuint256()`, `Nox.fromExternal()`, etc.), you must explicitly grant
-permissions:
-
-- `Nox.allowThis(handle)`: lets your contract use the handle in future
-  transactions
-- `Nox.allow(handle, account)`: lets another contract use the handle as a
-  computation input
-- `Nox.addViewer(handle, user)`: lets a user decrypt the handle via the JS SDK
-
-Without `allowThis()`, your contract will lose access to the handle after the
-current transaction.
-
-:::
 
 ## Next Steps
 
