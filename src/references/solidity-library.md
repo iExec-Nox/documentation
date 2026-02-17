@@ -15,8 +15,7 @@ computation, all through a single `import`.
 ## Quick Overview
 
 ```solidity
-import {Nox} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol";
-import "encrypted-types/EncryptedTypes.sol";
+import {Nox, euint256, externalEuint256} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol";
 
 contract ConfidentialVault {
     mapping(address => euint256) private _balances;

@@ -73,12 +73,12 @@ automatically as a dependency.
 ## Imports
 
 ```solidity
-// The library (required)
-import {Nox} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol";
-
-// Encrypted types (required)
-import "encrypted-types/EncryptedTypes.sol";
+import {Nox, euint256, externalEuint256} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol";
 ```
+
+Import the `Nox` library along with the encrypted types you need, all from a
+single path. The `Nox.sol` file re-exports every type from `EncryptedTypes.sol`,
+so there is no need for a separate import.
 
 ## Encrypted Types
 
