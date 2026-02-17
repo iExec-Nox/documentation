@@ -5,10 +5,6 @@ description: Validate encrypted handles submitted by users via the JS SDK
 
 # fromExternal
 
-```solidity
-function fromExternal(externalEuint256 handle, bytes calldata proof) internal returns (euint256)
-```
-
 Validates an EIP-712 proof attached to an encrypted handle submitted by a user.
 On success, returns a typed handle ready for computation. Reverts if the proof
 is invalid, expired, or was issued for a different contract.
@@ -17,27 +13,15 @@ This is the entry point for all user-provided encrypted inputs. The user
 encrypts a value with the [JS SDK](/references/js-sdk/methods/encryptInput), and
 the contract validates the proof on-chain before using the handle.
 
-### Parameters
+**Available overloads:** `ebool`, `eaddress`, `euint16`, `euint256`, `eint16`,
+`eint256`
 
-| Name     | Type               | Description                                       |
-| -------- | ------------------ | ------------------------------------------------- |
-| `handle` | `externalEuint256` | The unvalidated handle received from the user.    |
-| `proof`  | `bytes calldata`   | The EIP-712 signed proof from the Handle Gateway. |
+::: tip
 
-### Returns
+The `external*` types enforce at the Solidity type level that unvalidated
+handles cannot be used in computations. You must call `fromExternal` first.
 
-`euint256` : a validated encrypted handle, ready for computation.
-
-### Available overloads
-
-| Input type         | Return type |
-| ------------------ | ----------- |
-| `externalEbool`    | `ebool`     |
-| `externalEaddress` | `eaddress`  |
-| `externalEuint16`  | `euint16`   |
-| `externalEuint256` | `euint256`  |
-| `externalEint16`   | `eint16`    |
-| `externalEint256`  | `eint256`   |
+:::
 
 ### Usage
 
@@ -54,9 +38,8 @@ function deposit(externalEuint256 encryptedAmount, bytes calldata proof) externa
 }
 ```
 
-::: tip
+## Signature
 
-The `external*` types enforce at the Solidity type level that unvalidated
-handles cannot be used in computations. You must call `fromExternal` first.
-
-:::
+```solidity
+function fromExternal(externalEuint256 handle, bytes calldata proof) internal returns (euint256)
+```

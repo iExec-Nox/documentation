@@ -13,6 +13,17 @@ Comparison results are typically used with
 [select](/references/solidity-library/methods/core-primitives/select) for
 encrypted conditional logic.
 
+**Available overloads:** `euint16`, `euint256`, `eint16`, `eint256`
+
+### Usage
+
+```solidity
+// Check if balance is sufficient and conditionally apply a transfer
+ebool hasEnough = Nox.ge(balance, amount);
+euint256 newBalance = Nox.select(hasEnough, Nox.sub(balance, amount), balance);
+Nox.allowThis(newBalance);
+```
+
 ## eq
 
 ```solidity
@@ -20,26 +31,6 @@ function eq(euint256 a, euint256 b) internal returns (ebool)
 ```
 
 Returns encrypted `true` when `a == b`.
-
-### Parameters
-
-| Name | Type       | Description    |
-| ---- | ---------- | -------------- |
-| `a`  | `euint256` | Left operand.  |
-| `b`  | `euint256` | Right operand. |
-
-### Returns
-
-`ebool` : encrypted `true` if `a` equals `b`.
-
-**Available overloads:** `euint16`, `euint256`, `eint16`, `eint256`
-
-### Usage
-
-```solidity
-ebool isEqual = Nox.eq(balanceA, balanceB);
-Nox.allowThis(isEqual);
-```
 
 ## ne
 
@@ -49,26 +40,6 @@ function ne(euint256 a, euint256 b) internal returns (ebool)
 
 Returns encrypted `true` when `a != b`.
 
-### Parameters
-
-| Name | Type       | Description    |
-| ---- | ---------- | -------------- |
-| `a`  | `euint256` | Left operand.  |
-| `b`  | `euint256` | Right operand. |
-
-### Returns
-
-`ebool` : encrypted `true` if `a` does not equal `b`.
-
-**Available overloads:** `euint16`, `euint256`, `eint16`, `eint256`
-
-### Usage
-
-```solidity
-ebool isDifferent = Nox.ne(currentPrice, lastPrice);
-Nox.allowThis(isDifferent);
-```
-
 ## lt
 
 ```solidity
@@ -76,26 +47,6 @@ function lt(euint256 a, euint256 b) internal returns (ebool)
 ```
 
 Returns encrypted `true` when `a < b`.
-
-### Parameters
-
-| Name | Type       | Description    |
-| ---- | ---------- | -------------- |
-| `a`  | `euint256` | Left operand.  |
-| `b`  | `euint256` | Right operand. |
-
-### Returns
-
-`ebool` : encrypted `true` if `a` is strictly less than `b`.
-
-**Available overloads:** `euint16`, `euint256`, `eint16`, `eint256`
-
-### Usage
-
-```solidity
-ebool isUnderLimit = Nox.lt(amount, maxAllowed);
-Nox.allowThis(isUnderLimit);
-```
 
 ## le
 
@@ -105,26 +56,6 @@ function le(euint256 a, euint256 b) internal returns (ebool)
 
 Returns encrypted `true` when `a <= b`.
 
-### Parameters
-
-| Name | Type       | Description    |
-| ---- | ---------- | -------------- |
-| `a`  | `euint256` | Left operand.  |
-| `b`  | `euint256` | Right operand. |
-
-### Returns
-
-`ebool` : encrypted `true` if `a` is less than or equal to `b`.
-
-**Available overloads:** `euint16`, `euint256`, `eint16`, `eint256`
-
-### Usage
-
-```solidity
-ebool withinBudget = Nox.le(spent, budget);
-Nox.allowThis(withinBudget);
-```
-
 ## gt
 
 ```solidity
@@ -133,26 +64,6 @@ function gt(euint256 a, euint256 b) internal returns (ebool)
 
 Returns encrypted `true` when `a > b`.
 
-### Parameters
-
-| Name | Type       | Description    |
-| ---- | ---------- | -------------- |
-| `a`  | `euint256` | Left operand.  |
-| `b`  | `euint256` | Right operand. |
-
-### Returns
-
-`ebool` : encrypted `true` if `a` is strictly greater than `b`.
-
-**Available overloads:** `euint16`, `euint256`, `eint16`, `eint256`
-
-### Usage
-
-```solidity
-ebool hasSurplus = Nox.gt(revenue, expenses);
-Nox.allowThis(hasSurplus);
-```
-
 ## ge
 
 ```solidity
@@ -160,23 +71,3 @@ function ge(euint256 a, euint256 b) internal returns (ebool)
 ```
 
 Returns encrypted `true` when `a >= b`.
-
-### Parameters
-
-| Name | Type       | Description    |
-| ---- | ---------- | -------------- |
-| `a`  | `euint256` | Left operand.  |
-| `b`  | `euint256` | Right operand. |
-
-### Returns
-
-`ebool` : encrypted `true` if `a` is greater than or equal to `b`.
-
-**Available overloads:** `euint16`, `euint256`, `eint16`, `eint256`
-
-### Usage
-
-```solidity
-ebool hasEnough = Nox.ge(balance, minRequired);
-Nox.allowThis(hasEnough);
-```
