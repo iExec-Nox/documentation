@@ -97,40 +97,46 @@ export function getSidebar() {
             link: '/references/solidity-library/getting-started',
           },
           {
-            text: 'Methods',
+            text: 'Core Primitives',
             collapsed: true,
             items: [
               {
                 text: 'Plaintext to Encrypted',
-                link: '/references/solidity-library/methods/plaintext-to-encrypted',
+                link: '/references/solidity-library/methods/core-primitives/plaintext-to-encrypted',
               },
               {
                 text: 'fromExternal',
-                link: '/references/solidity-library/methods/fromExternal',
+                link: '/references/solidity-library/methods/core-primitives/fromExternal',
               },
               {
                 text: 'Arithmetic',
-                link: '/references/solidity-library/methods/arithmetic',
+                link: '/references/solidity-library/methods/core-primitives/arithmetic',
               },
               {
                 text: 'Safe Arithmetic',
-                link: '/references/solidity-library/methods/safe-arithmetic',
+                link: '/references/solidity-library/methods/core-primitives/safe-arithmetic',
               },
               {
                 text: 'Comparisons',
-                link: '/references/solidity-library/methods/comparisons',
+                link: '/references/solidity-library/methods/core-primitives/comparisons',
               },
               {
                 text: 'select',
-                link: '/references/solidity-library/methods/select',
-              },
-              {
-                text: 'Token Operations',
-                link: '/references/solidity-library/methods/token-operations',
+                link: '/references/solidity-library/methods/core-primitives/select',
               },
               {
                 text: 'Access Control',
-                link: '/references/solidity-library/methods/access-control',
+                link: '/references/solidity-library/methods/core-primitives/access-control',
+              },
+            ],
+          },
+          {
+            text: 'Advanced Functions',
+            collapsed: true,
+            items: [
+              {
+                text: 'Token Operations',
+                link: '/references/solidity-library/methods/advanced/token-operations',
               },
             ],
           },

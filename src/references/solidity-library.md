@@ -38,42 +38,54 @@ contract ConfidentialVault {
 }
 ```
 
-## What the Library Does
+## Confidential Functions
 
-- **Encrypted types**: `euint256`, `ebool`, `eaddress`, `eint16`, etc.,
-  user-defined value types backed by `bytes32` handles
-- **Trivial encryption**: convert plaintext values to encrypted handles on-chain
-  (`toEuint256`, `toEbool`, ...)
-- **Proof validation**: verify handles submitted by users via the SDK
-  (`fromExternal`)
-- **Arithmetic**: `add`, `sub`, `mul`, `div` with wrapping semantics, plus safe
-  variants with overflow detection
-- **Comparisons**: `eq`, `ne`, `lt`, `le`, `gt`, `ge` returning `ebool`
-- **Conditional logic**: `select` for encrypted branching
-- **Token operations**: `transfer`, `mint`, `burn` with all-or-nothing semantics
-- **Access control**: `allow`, `allowThis`, `allowTransient`, `addViewer`,
-  `allowPublicDecryption`
+The Nox library organizes its functions into three layers, each building on the
+previous one.
+
+![Confidential Functions by Nox](/confidential-primtive.png)
+
+### Core Primitives
+
+The foundational building blocks for confidential computation. These low-level
+operations let you perform arithmetic, comparisons, and conditional logic
+directly on encrypted values.
+
+- [Plaintext to Encrypted](/references/solidity-library/methods/core-primitives/plaintext-to-encrypted):
+  convert plaintext values to encrypted handles
+- [fromExternal](/references/solidity-library/methods/core-primitives/fromExternal):
+  validate user-submitted handles with EIP-712 proofs
+- [Arithmetic](/references/solidity-library/methods/core-primitives/arithmetic):
+  `add`, `sub`, `mul`, `div` with wrapping semantics
+- [Safe Arithmetic](/references/solidity-library/methods/core-primitives/safe-arithmetic):
+  `safeAdd`, `safeSub`, `safeMul`, `safeDiv` with overflow detection
+- [Comparisons](/references/solidity-library/methods/core-primitives/comparisons):
+  `eq`, `ne`, `lt`, `le`, `gt`, `ge` returning `ebool`
+- [select](/references/solidity-library/methods/core-primitives/select):
+  encrypted conditional branching
+- [Access Control](/references/solidity-library/methods/core-primitives/access-control):
+  `allow`, `allowThis`, `addViewer`, `allowPublicDecryption` and more
+
+### Advanced Functions
+
+Higher-level operations composed from core primitives. These provide
+ready-to-use logic for common DeFi patterns with built-in safety guarantees
+(all-or-nothing semantics).
+
+- [Token Operations](/references/solidity-library/methods/advanced/token-operations):
+  `transfer`, `mint`, `burn` for confidential token contracts
+
+### Custom Functions
+
+::: info Coming Soon
+
+Developers will be able to define their own confidential functions (e.g. `swap`,
+`borrow`, `repay`) by composing core primitives and advanced functions into
+custom on-chain logic executed inside TEEs.
+
+:::
 
 ## Next Steps
 
 - [Getting Started](/references/solidity-library/getting-started): installation
   and project setup
-
-### Methods
-
-- [Plaintext to Encrypted](/references/solidity-library/methods/plaintext-to-encrypted):
-  convert plaintext values to encrypted handles
-- [fromExternal](/references/solidity-library/methods/fromExternal): validate
-  user-submitted handles with EIP-712 proofs
-- [Arithmetic](/references/solidity-library/methods/arithmetic): `add`, `sub`,
-  `mul`, `div` with wrapping semantics
-- [Safe Arithmetic](/references/solidity-library/methods/safe-arithmetic):
-  `safeAdd`, `safeSub`, `safeMul`, `safeDiv` with overflow detection
-- [Comparisons](/references/solidity-library/methods/comparisons): `eq`, `ne`,
-  `lt`, `le`, `gt`, `ge` returning `ebool`
-- [select](/references/solidity-library/methods/select): encrypted conditional
-  branching
-- [Token Operations](/references/solidity-library/methods/token-operations):
-  `transfer`, `mint`, `burn` with all-or-nothing semantics
-- [Access Control](/references/solidity-library/methods/access-control):
-  `allow`, `allowThis`, `addViewer`, `allowPublicDecryption` and more

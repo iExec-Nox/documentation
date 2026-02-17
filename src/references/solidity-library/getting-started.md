@@ -99,13 +99,13 @@ for handles received from users that need proof validation before use.
 
 ## Next Steps
 
-- [Arithmetic](/references/solidity-library/methods/arithmetic): `add`, `sub`,
-  `mul`, `div` with wrapping semantics
-- [Comparisons](/references/solidity-library/methods/comparisons): `eq`, `ne`,
-  `lt`, `le`, `gt`, `ge`
-- [Token Operations](/references/solidity-library/methods/token-operations):
+- [Arithmetic](/references/solidity-library/methods/core-primitives/arithmetic):
+  `add`, `sub`, `mul`, `div` with wrapping semantics
+- [Comparisons](/references/solidity-library/methods/core-primitives/comparisons):
+  `eq`, `ne`, `lt`, `le`, `gt`, `ge`
+- [Token Operations](/references/solidity-library/methods/advanced/token-operations):
   `transfer`, `mint`, `burn`
-- [Access Control](/references/solidity-library/methods/access-control):
+- [Access Control](/references/solidity-library/methods/core-primitives/access-control):
   permissions and viewer management
 - [Computation Primitives](/protocol/computation-primitives): detailed semantics
   for each operation (overflow behavior, edge cases)
