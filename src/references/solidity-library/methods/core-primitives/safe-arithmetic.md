@@ -13,7 +13,7 @@ the `result` is always `0`.
 Use safe arithmetic when your contract needs to detect and handle overflow or
 underflow without leaking information through transaction reverts.
 
-**Available overloads:** `euint16`, `euint256`, `eint16`, `eint256`
+**Supported types:** `euint16`, `euint256`, `eint16`, `eint256`
 
 ### Usage
 

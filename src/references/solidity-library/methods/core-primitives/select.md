@@ -9,7 +9,7 @@ Returns `ifTrue` when `condition` is encrypted `true`, `ifFalse` otherwise.
 Since encrypted values cannot be branched on with `if`, `select` is the only way
 to implement conditional logic on encrypted data.
 
-**Available overloads:** `euint16`, `euint256`, `eint16`, `eint256`
+**Supported types:** `euint16`, `euint256`, `eint16`, `eint256`
 
 ::: tip
 

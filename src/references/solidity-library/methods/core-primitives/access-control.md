@@ -13,7 +13,7 @@ future transactions and decrypted by authorized users.
 For a detailed explanation of the permission model, see
 [Nox Smart Contracts: ACL](/protocol/nox-smart-contracts#acl-access-control-list).
 
-**Available overloads:** `ebool`, `eaddress`, `euint16`, `euint256`, `eint16`,
+**Supported types:** `ebool`, `eaddress`, `euint16`, `euint256`, `eint16`,
 `eint256`
 
 ### Usage

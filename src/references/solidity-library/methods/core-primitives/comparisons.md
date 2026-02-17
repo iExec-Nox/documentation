@@ -13,7 +13,7 @@ Comparison results are typically used with
 [select](/references/solidity-library/methods/core-primitives/select) for
 encrypted conditional logic.
 
-**Available overloads:** `euint16`, `euint256`, `eint16`, `eint256`
+**Supported types:** `euint16`, `euint256`, `eint16`, `eint256`
 
 ### Usage
 

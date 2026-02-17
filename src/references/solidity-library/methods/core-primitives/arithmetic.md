@@ -13,7 +13,7 @@ behavior and edge cases.
 For overflow-safe variants, see
 [Safe Arithmetic](/references/solidity-library/methods/core-primitives/safe-arithmetic).
 
-**Available overloads:** `euint16`, `euint256`, `eint16`, `eint256`
+**Supported types:** `euint16`, `euint256`, `eint16`, `eint256`
 
 ### Usage
 
