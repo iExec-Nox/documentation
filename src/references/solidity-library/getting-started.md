@@ -1,7 +1,8 @@
 ---
 title: Getting Started
-description: Install and configure the Nox Solidity library for confidential
-  smart contracts
+description:
+  Install and configure the Nox Solidity library for confidential smart
+  contracts
 ---
 
 # Getting Started
@@ -88,8 +89,8 @@ import "encrypted-types/EncryptedTypes.sol";
 ```
 
 The `EncryptedTypes.sol` import brings all encrypted types into scope: `ebool`,
-`euint8` through `euint256`, `eint8` through `eint256`, `eaddress`,
-`ebytes1` through `ebytes32`, and their `external*` variants.
+`euint8` through `euint256`, `eint8` through `eint256`, `eaddress`, `ebytes1`
+through `ebytes32`, and their `external*` variants.
 
 ## Encrypted Types
 
@@ -97,16 +98,16 @@ Encrypted types are user-defined value types backed by `bytes32`. Each type
 wraps a **handle**, a 32-byte identifier that references encrypted data stored
 off-chain in the Handle Gateway.
 
-| Category | Types | Example |
-| --- | --- | --- |
-| Boolean | `ebool` | Encrypted true/false |
+| Category          | Types                                | Example                     |
+| ----------------- | ------------------------------------ | --------------------------- |
+| Boolean           | `ebool`                              | Encrypted true/false        |
 | Unsigned integers | `euint8`, `euint16`, ..., `euint256` | Encrypted balances, amounts |
-| Signed integers | `eint8`, `eint16`, ..., `eint256` | Encrypted signed values |
-| Address | `eaddress` | Encrypted Ethereum address |
-| Fixed bytes | `ebytes1`, ..., `ebytes32` | Encrypted raw bytes |
+| Signed integers   | `eint8`, `eint16`, ..., `eint256`    | Encrypted signed values     |
+| Address           | `eaddress`                           | Encrypted Ethereum address  |
+| Fixed bytes       | `ebytes1`, ..., `ebytes32`           | Encrypted raw bytes         |
 
-Each type has a corresponding `external*` variant (e.g. `externalEuint256`)
-used for handles received from users that need proof validation before use.
+Each type has a corresponding `external*` variant (e.g. `externalEuint256`) used
+for handles received from users that need proof validation before use.
 
 ## Minimal Example
 

@@ -101,14 +101,46 @@ export function getSidebar() {
             collapsed: true,
             items: [
               {
-                text: 'Available Methods',
-                link: '/references/solidity-library/methods/available-methods',
+                text: 'Trivial Encryption',
+                link: '/references/solidity-library/methods/available-methods#trivial-encryption',
+              },
+              {
+                text: 'Handle Validation',
+                link: '/references/solidity-library/methods/available-methods#handle-validation',
+              },
+              {
+                text: 'Arithmetic',
+                link: '/references/solidity-library/methods/available-methods#arithmetic',
+              },
+              {
+                text: 'Safe Arithmetic',
+                link: '/references/solidity-library/methods/available-methods#safe-arithmetic',
+              },
+              {
+                text: 'Comparisons',
+                link: '/references/solidity-library/methods/available-methods#comparisons',
+              },
+              {
+                text: 'Conditional',
+                link: '/references/solidity-library/methods/available-methods#conditional',
+              },
+              {
+                text: 'Token Operations',
+                link: '/references/solidity-library/methods/available-methods#token-operations',
+              },
+              {
+                text: 'Access Control',
+                link: '/references/solidity-library/methods/available-methods#access-control',
+              },
+              {
+                text: 'Viewer Management',
+                link: '/references/solidity-library/methods/available-methods#viewer-management',
+              },
+              {
+                text: 'Public Decryption',
+                link: '/references/solidity-library/methods/available-methods#public-decryption',
               },
             ],
-          },
-          {
-            text: 'Advanced Configuration',
-            link: '/references/solidity-library/advanced-configuration',
           },
         ],
       },

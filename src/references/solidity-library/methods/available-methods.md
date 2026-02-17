@@ -98,14 +98,14 @@ proof is invalid, expired, or was issued for a different contract.
 
 **Available overloads:**
 
-| Input type | Return type |
-| --- | --- |
-| `externalEbool` | `ebool` |
-| `externalEaddress` | `eaddress` |
-| `externalEuint16` | `euint16` |
-| `externalEuint256` | `euint256` |
-| `externalEint16` | `eint16` |
-| `externalEint256` | `eint256` |
+| Input type         | Return type |
+| ------------------ | ----------- |
+| `externalEbool`    | `ebool`     |
+| `externalEaddress` | `eaddress`  |
+| `externalEuint16`  | `euint16`   |
+| `externalEuint256` | `euint256`  |
+| `externalEint16`   | `eint16`    |
+| `externalEint256`  | `eint256`   |
 
 ```solidity
 function deposit(externalEuint256 encryptedAmount, bytes calldata proof) external {
