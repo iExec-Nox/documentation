@@ -26,7 +26,7 @@ Encrypts a plaintext value into an encrypted handle. This is the only operation
 with no input handles.
 
 ```solidity
-function plaintextToEncrypted(euint256 value) returns (euint256);
+function plaintextToEncrypted(bytes32 value) returns (euint256);
 ```
 
 | Inputs | Outputs | Description               |
@@ -494,6 +494,6 @@ else:
 ## Learn More
 
 - [Runner](/protocol/runner) - Executes these operations inside Intel TDX
-- [Nox Smart Contracts](/protocol/nox-smart-contracts) - Solidity interface
-  (TEEPrimitives library)
+- [Nox Smart Contracts](/protocol/nox-smart-contracts) - Solidity interface (Nox
+  library)
 - [Gateway](/protocol/gateway) - Handle storage and encryption
