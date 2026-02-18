@@ -13,10 +13,10 @@ computation requests, access control, and protocol component registration.
 ## Role in the Protocol
 
 Smart contracts are the on-chain entry point for all confidential operations.
-Users call the `Nox` library from their contracts, which routes
-through the `NoxCompute` contract. It validates handle proofs, verifies
-type compatibility between operands, grants transient access on result handles,
-and emits events (monitored by the [Ingestor](/protocol/ingestor)).
+Users call the `Nox` library from their contracts, which routes through the
+`NoxCompute` contract. It validates handle proofs, verifies type compatibility
+between operands, grants transient access on result handles, and emits events
+(monitored by the [Ingestor](/protocol/ingestor)).
 
 ## How It Works
 
@@ -53,12 +53,12 @@ HandleProof(bytes32 handle, address owner, address app, uint256 createdAt)
 
 **EIP-712 domain:**
 
-| Field             | Value                        |
-| ----------------- | ---------------------------- |
-| name              | `"NoxCompute"`               |
-| version           | `"1"`                        |
-| chainId           | Deployment chain ID          |
-| verifyingContract | NoxCompute contract address  |
+| Field             | Value                       |
+| ----------------- | --------------------------- |
+| name              | `"NoxCompute"`              |
+| version           | `"1"`                       |
+| chainId           | Deployment chain ID         |
+| verifyingContract | NoxCompute contract address |
 
 ### KMS Public Key
 
@@ -72,9 +72,9 @@ function kmsPublicKey() external view returns (bytes memory);
 
 ### Nox Library
 
-Smart contracts use the `Nox` library to interact with encrypted
-values. All functions emit events that the [Ingestor](/protocol/ingestor)
-monitors to trigger off-chain computation by the [Runner](/protocol/runner).
+Smart contracts use the `Nox` library to interact with encrypted values. All
+functions emit events that the [Ingestor](/protocol/ingestor) monitors to
+trigger off-chain computation by the [Runner](/protocol/runner).
 
 **Core functions:**
 
@@ -177,8 +177,8 @@ The full type mapping (byte 30) is defined in
 
 - **Determinism**: same operation + same inputs + same chain = same handle
 - **Cross-chain uniqueness**: the chain ID prevents handle reuse across chains
-- **Deployment isolation**: the NoxCompute address is included in the
-  hash, binding the handle to a specific protocol instance
+- **Deployment isolation**: the NoxCompute address is included in the hash,
+  binding the handle to a specific protocol instance
 - **Verifiable type**: the type can be extracted in O(1) without external calls
 - **Versioning**: allows format evolution while maintaining backward
   compatibility

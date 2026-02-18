@@ -494,6 +494,6 @@ else:
 ## Learn More
 
 - [Runner](/protocol/runner) - Executes these operations inside Intel TDX
-- [Nox Smart Contracts](/protocol/nox-smart-contracts) - Solidity interface
-  (Nox library)
+- [Nox Smart Contracts](/protocol/nox-smart-contracts) - Solidity interface (Nox
+  library)
 - [Gateway](/protocol/gateway) - Handle storage and encryption
