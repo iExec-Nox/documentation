@@ -13,8 +13,8 @@ computation requests, access control, and protocol component registration.
 ## Role in the Protocol
 
 Smart contracts are the on-chain entry point for all confidential operations.
-Users call the `TEEPrimitives` library from their contracts, which routes
-through the `TEEComputeManager`. The manager validates handle proofs, verifies
+Users call the `Nox` library from their contracts, which routes
+through the `NoxCompute` contract. It validates handle proofs, verifies
 type compatibility between operands, grants transient access on result handles,
 and emits events (monitored by the [Ingestor](/protocol/ingestor)).
 
@@ -23,11 +23,11 @@ and emits events (monitored by the [Ingestor](/protocol/ingestor)).
 ```mermaid
 sequenceDiagram
     participant U as User Contract
-    participant TEE as TEEComputeManager
+    participant TEE as NoxCompute
     participant ACL as ACL
     participant I as Ingestor
 
-    U->>TEE: Call via TEEPrimitives (e.g. add(a, b))
+    U->>TEE: Call via Nox (e.g. Nox.add(a, b))
     TEE->>TEE: Validate handle proofs
     TEE->>TEE: Verify type compatibility
     TEE->>ACL: Grant transient access on result handle
@@ -36,7 +36,7 @@ sequenceDiagram
     I->>I: Forward to Runner via NATS
 ```
 
-## TEEComputeManager
+## NoxCompute
 
 The main entry point for confidential computations. It receives requests from
 user contracts, validates handle proofs, emits events that trigger off-chain
@@ -53,16 +53,26 @@ HandleProof(bytes32 handle, address owner, address app, uint256 createdAt)
 
 **EIP-712 domain:**
 
-| Field             | Value                              |
-| ----------------- | ---------------------------------- |
-| name              | `"TEEComputeManager"`              |
-| version           | `"1"`                              |
-| chainId           | Deployment chain ID                |
-| verifyingContract | TEEComputeManager contract address |
+| Field             | Value                        |
+| ----------------- | ---------------------------- |
+| name              | `"NoxCompute"`               |
+| version           | `"1"`                        |
+| chainId           | Deployment chain ID          |
+| verifyingContract | NoxCompute contract address  |
 
-### TEEPrimitives Library
+### KMS Public Key
 
-Smart contracts use the `TEEPrimitives` library to interact with encrypted
+`NoxCompute` stores the KMS public key used by the protocol to encrypt
+computation inputs for the Runner. It is set at deployment and can be queried
+on-chain.
+
+```solidity
+function kmsPublicKey() external view returns (bytes memory);
+```
+
+### Nox Library
+
+Smart contracts use the `Nox` library to interact with encrypted
 values. All functions emit events that the [Ingestor](/protocol/ingestor)
 monitors to trigger off-chain computation by the [Runner](/protocol/runner).
 
@@ -70,7 +80,7 @@ monitors to trigger off-chain computation by the [Runner](/protocol/runner).
 
 ```solidity
 // Encrypt plaintext into a handle
-function plaintextToEncrypted(euint256 value) returns (euint256);
+function plaintextToEncrypted(bytes32 value) returns (euint256);
 
 // Arithmetic
 function add(euint256 lhs, euint256 rhs) returns (euint256);
@@ -167,7 +177,7 @@ The full type mapping (byte 30) is defined in
 
 - **Determinism**: same operation + same inputs + same chain = same handle
 - **Cross-chain uniqueness**: the chain ID prevents handle reuse across chains
-- **Deployment isolation**: the TEEComputeManager address is included in the
+- **Deployment isolation**: the NoxCompute address is included in the
   hash, binding the handle to a specific protocol instance
 - **Verifiable type**: the type can be extracted in O(1) without external calls
 - **Versioning**: allows format evolution while maintaining backward
@@ -184,7 +194,7 @@ depending on the handle origin:
 bytes32 prehandle = keccak256(abi.encodePacked(
     operator,           // Operator enum (Add, Sub, Div, ...)
     operands,           // Array of input handles
-    address(this),      // TEEComputeManager address
+    address(this),      // NoxCompute address
     msg.sender,         // Calling contract
     block.timestamp,
     outputIndex         // For multi-output operations (0, 1, ...)

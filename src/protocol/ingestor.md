@@ -8,7 +8,7 @@ description:
 # Ingestor
 
 The Ingestor is a Rust service running in Intel TDX that continuously monitors
-the blockchain for events emitted by the `TEEComputeManager` contract and
+the blockchain for events emitted by the `NoxCompute` contract and
 publishes them to a NATS JetStream queue for processing by the
 [Runner](/protocol/runner).
 
@@ -27,7 +27,7 @@ sequenceDiagram
     participant NATS as NATS JetStream
 
     BC->>I: New block produced
-    I->>I: Filter TEEComputeManager logs
+    I->>I: Filter NoxCompute logs
     I->>I: Group events by tx hash
     I->>NATS: Publish TransactionMessage
     I->>I: Persist block number (crash recovery)
@@ -53,7 +53,7 @@ sequenceDiagram
 
 ## Monitored Events
 
-The Ingestor listens for **all events** emitted by the `TEEComputeManager`
+The Ingestor listens for **all events** emitted by the `NoxCompute`
 contract. Each event corresponds to a computation primitive (arithmetic,
 comparisons, token operations, etc.). See
 [Computation Primitives](/protocol/computation-primitives) for the full list.
