@@ -2,7 +2,8 @@
   <div class="dev-banner">
     <span class="dev-banner__icon">🚧</span>
     <span class="dev-banner__text">
-      This documentation is currently under development. Content may be incomplete or subject to change.
+      This documentation is currently under development. Content may be
+      incomplete or subject to change.
     </span>
     <span class="dev-banner__icon">🚧</span>
   </div>
