@@ -9,7 +9,8 @@ description:
 
 The Ingestor is a Rust service running in Intel TDX that continuously monitors
 the blockchain for events emitted by the `NoxCompute` contract and publishes
-them to a NATS JetStream queue for processing by the [Runner](/protocol/runner).
+them to a [NATS JetStream](https://nats.io) queue for processing by the
+[Runner](/protocol/runner).
 
 ## Role in the Protocol
 
@@ -76,10 +77,14 @@ Each `TransactionEvent` contains the operation type and the associated handles
 
 - **Optimistic processing**: blocks are processed as soon as they appear,
   without waiting for confirmations. This enables low-latency event detection.
-- **Deduplication**: NATS message IDs based on content checksums prevent
-  duplicate processing when the Ingestor restarts and re-reads recent blocks.
+  If a processed event belongs to a block that is later reorganized (fork), the
+  corresponding handle is removed from the canonical chain.
+- **Deduplication**: NATS JetStream message IDs based on content checksums
+  prevent duplicate processing when the Ingestor restarts and re-reads recent
+  blocks.
 - **Stateless scaling**: multiple Ingestor instances can run in parallel for
-  redundancy. NATS deduplication ensures each event is processed only once.
+  redundancy. NATS JetStream deduplication ensures each event is processed only
+  once.
 
 ## Learn More
 
