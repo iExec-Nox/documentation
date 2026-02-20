@@ -21,7 +21,7 @@
 - [ ] Recentrer la vision sur la **V1** plutôt que sur du très long terme
 - [ ] Section **"Scale Out, Not Up"** : premier endroit où on parle de l'état actuel VS futur, à rendre plus explicite
 - [ ] Section **"Private Tokens Meet Public DeFi"** : c'est du **produit** (confidential token, smart contracts de wrap/unwrap), pas du protocole. Les smart contracts sont "du sucre" ajouté sur le protocole, pas Nox en soi
-- [ ] Ajouter une mention de la **librairie Solidity** (absente de la vision protocole)
+- [x] Ajouter une mention de la **librairie Solidity** (absente de la vision protocole)
 - [ ] Mieux mettre en avant la **possibilité de construire autre chose** que du confidential token
 - [ ] Envisager d'ajouter des **status sur les composants** (Done / WIP / Roadmap)
 
@@ -78,11 +78,11 @@
 
 - [x] **Ordre dans le menu** : mettre cette page plus tôt
 - [x] Préciser **"and emits events"** pour le calcul off-chain
-- [ ] **How it works** : l'emit event (au lieu de boucler sur lui-même) peut aller directement sur l'Ingestor. Préciser ici que l'Ingestor est off-chain
-- [ ] Ajouter une section expliquant que pour faire **handle A + 2**, si on connaît le handle A, il faut d'abord transformer `2` (en clair) en handle B
-- [ ] Expliquer pourquoi le **NoxCompute ne donne qu'un ACL transient** (et pas permanent) au handle
-- [ ] Préciser qu'il faut que le dev de smart contract **file un ACL permanent** pour pouvoir récupérer le handle plus tard
-- [ ] Rappeler qu'on travaille sur des **pointeurs calculés en asynchrone**
+- [x] **How it works** : l'emit event (au lieu de boucler sur lui-même) peut aller directement sur l'Ingestor. Préciser ici que l'Ingestor est off-chain
+- [x] Ajouter une section expliquant que pour faire **handle A + 2**, si on connaît le handle A, il faut d'abord transformer `2` (en clair) en handle B
+- [x] Expliquer pourquoi le **NoxCompute ne donne qu'un ACL transient** (et pas permanent) au handle
+- [x] Préciser qu'il faut que le dev de smart contract **file un ACL permanent** pour pouvoir récupérer le handle plus tard
+- [x] Rappeler qu'on travaille sur des **pointeurs calculés en asynchrone**
 
 ---
 

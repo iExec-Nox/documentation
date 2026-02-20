@@ -328,6 +328,21 @@ integrity.
 This openness applies to both infrastructure and innovation: operators earn by
 running the network, developers earn by extending it.
 
+### Solidity Library
+
+The primary developer surface for Nox is the
+[Solidity Library](/references/solidity-library): a set of Solidity types and
+functions that expose the protocol's computation primitives directly in smart
+contract code. Developers interact with encrypted values through opaque handles
+(`euint256`, `ebool`, etc.) without ever manipulating ciphertexts directly.
+
+The library's current model requires all operands to be handles, including
+plaintext constants (which must first be converted via `plaintextToEncrypted`).
+A planned evolution is to support **mixed operand operations** natively, allowing
+a plaintext value to be passed directly alongside an encrypted handle without a
+prior conversion step. This removes boilerplate and makes confidential arithmetic
+feel as natural as standard Solidity.
+
 ## Scale Out, Not Up
 
 The current version runs a single Runner processing computation requests
