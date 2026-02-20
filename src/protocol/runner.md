@@ -7,9 +7,11 @@ description:
 # Runner
 
 The Runner is a Rust service running in Intel TDX that executes confidential
-computations on encrypted data. It pulls computation requests from a NATS queue,
-decrypts the input handles, performs the operation, re-encrypts the results, and
-stores them back in the [Handle Gateway](/protocol/gateway).
+computations on encrypted data. It pulls computation requests from a
+[NATS](https://nats.io) queue — populated by the [Ingestor](/protocol/ingestor)
+from on-chain events — decrypts the input handles, performs the operation,
+re-encrypts the results, and stores them back in the
+[Handle Gateway](/protocol/gateway).
 
 ## Role in the Protocol
 

@@ -122,36 +122,36 @@ export function getSidebar() {
         text: 'PROTOCOL',
         items: [
           {
-            text: 'Protocol Vision',
-            link: '/protocol/protocol-vision',
-          },
-          {
             text: 'Global Architecture Overview',
             link: '/protocol/global-architecture-overview',
           },
           {
-            text: 'KMS',
-            link: '/protocol/kms',
+            text: 'Protocol Vision',
+            link: '/protocol/protocol-vision',
           },
           {
-            text: 'Runner',
-            link: '/protocol/runner',
-          },
-          {
-            text: 'Computation Primitives',
-            link: '/protocol/computation-primitives',
-          },
-          {
-            text: 'Gateway',
-            link: '/protocol/gateway',
+            text: 'Nox Smart Contracts',
+            link: '/protocol/nox-smart-contracts',
           },
           {
             text: 'Ingestor',
             link: '/protocol/ingestor',
           },
           {
-            text: 'Nox Smart Contracts',
-            link: '/protocol/nox-smart-contracts',
+            text: 'Runner',
+            link: '/protocol/runner',
+          },
+          {
+            text: 'Gateway',
+            link: '/protocol/gateway',
+          },
+          {
+            text: 'KMS',
+            link: '/protocol/kms',
+          },
+          {
+            text: 'Computation Primitives',
+            link: '/protocol/computation-primitives',
           },
         ],
       },

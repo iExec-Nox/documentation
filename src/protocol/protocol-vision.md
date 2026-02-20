@@ -1,7 +1,7 @@
 ---
 title: Protocol Vision
 description:
-  Long-term architecture of Nox, including distributed KMS, multichain support,
+  Long-term architecture of Nox, including distributed KMS, omnichain support,
   decentralized operations, multi-privacy technologies, DeFi composability, and
   open computation primitives
 ---
@@ -19,14 +19,16 @@ constraints.
 Nox fills this gap: a privacy layer that brings confidentiality to DeFi without
 sacrificing the composability and decentralization that make it powerful.
 
-The long-term vision for Nox evolves the protocol along five axes:
+The long-term vision for Nox evolves the protocol along six axes:
 
 - **Privacy by convergence**: combine TEE, threshold cryptography, MPC, and
   zero-knowledge proofs, each applied where it offers the best tradeoff
-- **Trust distribution**: eliminate every single point of trust by distributing
+- **Trust distribution**: progressively reduce trust assumptions by distributing
   and decentralizing components
-- **Horizontal scalability**: support multiple Runners, multiple chains, and
-  growing throughput
+- **Omnichain expansion**: extend Nox to any EVM chain, sharing a single
+  backend across all supported networks
+- **Horizontal scalability**: support multiple Runners and growing computation
+  throughput
 - **Composability**: enable confidential tokens to interact with the entire DeFi
   ecosystem, confidential or not
 - **Developer openness**: allow anyone to create, deploy, and monetize new
@@ -139,8 +141,34 @@ share, and the requesting party recombines the partial results via Lagrange
 interpolation. No individual node, and no network message, ever contains the
 complete key.
 
-For the detailed cryptographic protocol (ECIES, HKDF parameters, delegation
-flow), see the [KMS](/protocol/kms) page.
+### Key Rotation
+
+A threshold architecture also enables **safe key rotation** without service
+interruption. When the protocol's private key needs to be replaced (scheduled
+rotation, node compromise, or algorithm migration), the new key shares can be
+distributed to KMS nodes through a proactive secret sharing protocol: each node
+receives a new share derived from the existing ones without ever exposing the
+current private key. All existing ciphertexts are re-encrypted under the new key
+as part of the rotation process. The on-chain Registry is updated atomically,
+ensuring that no request is processed with a stale key.
+
+### Algorithm Evolution
+
+The current implementation uses ECIES on secp256k1. The target architecture
+plans to migrate toward **post-quantum algorithms standardized by NIST**:
+
+- **[ML-KEM](https://csrc.nist.gov/pubs/fips/203/final)** (FIPS 203, formerly
+  CRYSTALS-Kyber) for encryption: handles are encrypted using a
+  lattice-based key encapsulation mechanism resistant to quantum attacks
+- **[ML-DSA](https://csrc.nist.gov/pubs/fips/204/final)** (FIPS 204, formerly
+  CRYSTALS-Dilithium) for signatures: component attestations and message
+  authentication use a quantum-resistant signature scheme
+
+ML-KEM is operated in **MPC threshold mode** for decryption: each KMS node
+participates in the key decapsulation using its own share, and the result is
+reconstructed without any node learning the plaintext or the full private key.
+This combines the long-term security guarantees of post-quantum cryptography
+with the trust distribution properties of threshold cryptography.
 
 ## Hardware-Rooted Chain of Trust
 
@@ -153,7 +181,8 @@ verification**, and **controlled code evolution**.
 ### Proving Every Byte
 
 Each component (Runner, KMS node, Gateway, Ingestor) runs inside an **Intel TDX
-enclave**. Before joining the protocol, each component must:
+enclave**. Before joining the protocol, each component goes through four
+verification steps:
 
 1. **Code hash stored on-chain**: the exact hash of the authorized binary is
    recorded in the on-chain Registry. Only code whose hash matches can be
@@ -358,7 +387,7 @@ flowchart TB
 
 The handle structure already encodes a **4-byte chain ID** (bytes 26-29),
 ensuring that handles are bound to a specific chain and cannot be reused across
-chains. This makes multichain support a natural extension of the architecture
+chains. This makes omnichain support a natural extension of the architecture
 rather than a protocol redesign.
 
 The goal is to let Nox secure confidential data on any blockchain while sharing

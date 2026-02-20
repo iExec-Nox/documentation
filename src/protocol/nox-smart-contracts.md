@@ -16,7 +16,10 @@ Smart contracts are the on-chain entry point for all confidential operations.
 Users call the `Nox` library from their contracts, which routes through the
 `NoxCompute` contract. It validates handle proofs, verifies type compatibility
 between operands, grants transient access on result handles, and emits events
-(monitored by the [Ingestor](/protocol/ingestor)).
+that queue the computation for off-chain execution. At this point, the
+transaction is complete on-chain but the encrypted result does not yet exist:
+it will be computed by the [Runner](/protocol/runner) after the
+[Ingestor](/protocol/ingestor) picks up the event.
 
 ## How It Works
 
