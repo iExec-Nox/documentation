@@ -25,8 +25,8 @@ The long-term vision for Nox evolves the protocol along six axes:
   zero-knowledge proofs, each applied where it offers the best tradeoff
 - **Trust distribution**: progressively reduce trust assumptions by distributing
   and decentralizing components
-- **Omnichain expansion**: extend Nox to any EVM chain, sharing a single
-  backend across all supported networks
+- **Omnichain expansion**: extend Nox to any EVM chain, sharing a single backend
+  across all supported networks
 - **Horizontal scalability**: support multiple Runners and growing computation
   throughput
 - **Composability**: enable confidential tokens to interact with the entire DeFi
@@ -158,8 +158,8 @@ The current implementation uses ECIES on secp256k1. The target architecture
 plans to migrate toward **post-quantum algorithms standardized by NIST**:
 
 - **[ML-KEM](https://csrc.nist.gov/pubs/fips/203/final)** (FIPS 203, formerly
-  CRYSTALS-Kyber) for encryption: handles are encrypted using a
-  lattice-based key encapsulation mechanism resistant to quantum attacks
+  CRYSTALS-Kyber) for encryption: handles are encrypted using a lattice-based
+  key encapsulation mechanism resistant to quantum attacks
 - **[ML-DSA](https://csrc.nist.gov/pubs/fips/204/final)** (FIPS 204, formerly
   CRYSTALS-Dilithium) for signatures: component attestations and message
   authentication use a quantum-resistant signature scheme
@@ -338,10 +338,10 @@ contract code. Developers interact with encrypted values through opaque handles
 
 The library's current model requires all operands to be handles, including
 plaintext constants (which must first be converted via `plaintextToEncrypted`).
-A planned evolution is to support **mixed operand operations** natively, allowing
-a plaintext value to be passed directly alongside an encrypted handle without a
-prior conversion step. This removes boilerplate and makes confidential arithmetic
-feel as natural as standard Solidity.
+A planned evolution is to support **mixed operand operations** natively,
+allowing a plaintext value to be passed directly alongside an encrypted handle
+without a prior conversion step. This removes boilerplate and makes confidential
+arithmetic feel as natural as standard Solidity.
 
 ## Scale Out, Not Up
 

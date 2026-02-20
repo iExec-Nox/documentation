@@ -5,9 +5,8 @@ layout: home
 hero:
   text: 'Composable Privacy for DeFi'
   tagline:
-    'The first truly on-chain composable privacy layer omnichain,
-    multi-privacy. Like HTTPS made secure connections invisible, Nox makes
-    privacy the default.'
+    'The first truly on-chain composable privacy layer omnichain, multi-privacy.
+    Like HTTPS made secure connections invisible, Nox makes privacy the default.'
   image:
     src: /illustration-large.webp
     alt: Nox Protocol

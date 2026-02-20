@@ -9,7 +9,8 @@ description:
 
 The Ingestor is a Rust service running in Intel TDX that continuously monitors
 the blockchain for events emitted by the `NoxCompute` contract and publishes
-them to a [NATS JetStream](https://nats.io) queue for processing by the [Runner](/protocol/runner).
+them to a [NATS JetStream](https://nats.io) queue for processing by the
+[Runner](/protocol/runner).
 
 ## Role in the Protocol
 
