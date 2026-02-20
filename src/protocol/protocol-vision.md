@@ -436,7 +436,7 @@ where confidentiality is a spectrum rather than a binary choice.
 
 ## Learn More
 
-- [KMS](/protocol/kms) - Cryptographic protocol and threshold architecture
-- [Runner](/protocol/runner) - Computation engine
 - [Global Architecture Overview](/protocol/global-architecture-overview) - Full
   component descriptions and data flows
+- [Runner](/protocol/runner) - Computation engine
+- [KMS](/protocol/kms) - Cryptographic protocol and threshold architecture

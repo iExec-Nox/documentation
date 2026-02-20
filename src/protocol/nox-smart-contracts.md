@@ -40,11 +40,15 @@ sequenceDiagram
     I->>I: Forward to Runner via NATS
 ```
 
-::: info Handles are asynchronous pointers A handle returned by `Nox.add(a, b)`
-is a deterministic identifier — not the encrypted result. The actual computation
-happens off-chain after the [Ingestor](/protocol/ingestor) picks up the event.
-The ciphertext will be available in the [Gateway](/protocol/gateway) once the
-[Runner](/protocol/runner) has processed it. :::
+::: info Handles are asynchronous pointers
+
+A handle returned by `Nox.add(a, b)` is a deterministic identifier — not the
+encrypted result. The actual computation happens off-chain after the
+[Ingestor](/protocol/ingestor) picks up the event. The ciphertext will be
+available in the [Gateway](/protocol/gateway) once the
+[Runner](/protocol/runner) has processed it.
+
+:::
 
 ## NoxCompute
 
@@ -152,9 +156,12 @@ euint256 result = Nox.add(handleA, handleB);
 `plaintextToEncrypted` emits its own event. The Runner encrypts the value
 off-chain and stores it in the Gateway before it can be used as an operand.
 
-::: info Roadmap Native support for mixed operands (plaintext alongside
-encrypted handles, without a prior conversion) is planned. See
+::: info
+
+Roadmap Native support for mixed operands (plaintext alongside encrypted
+handles, without a prior conversion) is planned. See
 [Protocol Vision — Solidity Library](/protocol/protocol-vision#solidity-library).
+
 :::
 
 ### Encrypted Types
@@ -203,10 +210,13 @@ to the calling contract. This is intentional for two reasons:
   access model. It is the responsibility of the calling contract to decide which
   handles need to persist and who should be allowed to use or decrypt them.
 
-::: warning Persist the ACL or lose the handle If your contract needs to reuse a
-result handle in a future transaction (store it in state, pass it to another
-function, or allow a user to decrypt it), you must explicitly grant persistent
-access before the transaction ends:
+::: warning Persist the ACL or lose the handle
+
+If your contract needs to reuse a result handle in a future transaction (store
+it in state, pass it to another function, or allow a user to decrypt it), you
+must explicitly grant persistent access before the transaction ends
+
+:::
 
 ```solidity
 euint256 result = Nox.add(a, b);
@@ -215,7 +225,7 @@ ACL.addViewer(euint256.unwrap(result), user);       // allow user to decrypt
 ```
 
 Without this, the handle reference will exist in state but nobody will have
-permission to use it. :::
+permission to use it.
 
 ## Handle Structure
 

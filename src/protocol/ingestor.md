@@ -78,9 +78,7 @@ Each `TransactionEvent` contains the operation type and the associated handles
 - **Optimistic processing**: blocks are processed as soon as they appear,
   without waiting for confirmations. This enables low-latency event detection.
   If a processed event belongs to a block that is later reorganized (fork), the
-  corresponding handle is removed from the canonical chain. The off-chain
-  components detect the reorganization and purge the orphaned handle from the
-  Gateway.
+  corresponding handle is removed from the canonical chain.
 - **Deduplication**: NATS JetStream message IDs based on content checksums
   prevent duplicate processing when the Ingestor restarts and re-reads recent
   blocks.
