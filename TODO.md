@@ -30,7 +30,7 @@
 ## Global Architecture Overview
 
 - [x] **Ordre dans le menu** : mettre cette page en premier, avec un lien rapide vers la page Vision (ou en faire l'intro de la Vision)
-- [ ] **Zoom sur les graphes** : permettre un zoom/fullscreen au clic sur les diagrammes
+- [x] **Zoom sur les graphes** : permettre un zoom/fullscreen au clic sur les diagrammes
 - [ ] **Premier schéma** : trop "joli", pris pour une image décorative. Attention au "1" qui traîne et au seul texte horizontal
 - [ ] **Préciser** le passage à la "current architecture" (le lecteur ne sait pas qu'on change de contexte)
 - [ ] Section **"A confidential computation in Nox"** : proposer un schéma simplifié en premier, avec un lien vers le schéma détaillé
@@ -52,11 +52,11 @@
 
 ## Computation Primitives
 
-- [ ] Re-préciser que chaque primitive est **exposée par une librairie Solidity** à disposition des builders, mais traitée **off-chain en asynchrone** par un Runner
+- [x] Re-préciser que chaque primitive est **exposée par une librairie Solidity** à disposition des builders, mais traitée **off-chain en asynchrone** par un Runner
 - [ ] Ajouter un **warning** : le builder de smart contract est responsable de la bonne utilisation des primitives et de la gestion des règles métier / erreurs
-- [ ] **Graphe non lisible** : améliorer la lisibilité du diagramme
+- [x] **Graphe non lisible** : améliorer la lisibilité du diagramme
 - [ ] Clarifier : retourne-t-on **0 si pas de résultat** ? (résultat à `false` ?)
-- [ ] Clarifier : `result = false` seulement sur **overflow/underflow**, ou aussi sur **type de data invalide** ?
+- [x] Clarifier : `result = false` seulement sur **overflow/underflow**, ou aussi sur **type de data invalide** ?
 - [ ] Page trop longue : **mettre les advanced functions moins en avant** pour ne pas les perdre à mesure qu'on ajoute des méthodes
 - [ ] Ajouter un **warning sur les types Solidity supportés** côté off-chain
 
@@ -64,13 +64,13 @@
 
 ## Ingestor
 
-- [ ] **Ordre dans le menu** : envisager de mettre l'Ingestor avant les Runners
-- [ ] Incohérence : cette page parle de **NATS JetStream**, la page Runner parle de **NATS queue** — harmoniser le vocabulaire
+- [x] **Ordre dans le menu** : envisager de mettre l'Ingestor avant les Runners
+- [x] Incohérence : cette page parle de **NATS JetStream**, la page Runner parle de **NATS queue** — harmoniser le vocabulaire
 - [ ] **Message Format** : re-préciser que c'est le message émis on-chain et capturé off-chain. Bizarre d'avoir le format du message sans avoir le format du `TransactionEvent`
-- [ ] **Optimistic processing** : préciser ce qu'il se passe si on a traité un event qui était un fork
+- [x] **Optimistic processing** : préciser ce qu'il se passe si on a traité un event qui était un fork
   - Le client pourrait retrouver un résultat et croire que l'opération a abouti, alors que la transaction n'a jamais été resoumise ou traitée avec un timestamp différent
-- [ ] Clarifier : faut-il **n'update le cipher d'un handle que lorsque le block est confirmé** ?
-  - Risque que le Runner définisse 2 fois la même valeur pour le ciphertext. L'API Gateway ou Runner doit gérer ce cas (si et seulement si même valeur)
+- [x] Clarifier : faut-il **n'update le cipher d'un handle que lorsque le block est confirmé** ?
+- [x] Risque que le Runner définisse 2 fois la même valeur pour le ciphertext. L'API Gateway ou Runner doit gérer ce cas (si et seulement si même valeur)
 
 ---
 

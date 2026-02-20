@@ -12,6 +12,13 @@ encrypted data. Each operation takes encrypted input handles, decrypts them
 inside the TEE, performs the computation, re-encrypts the results, and stores
 them in the [Handle Gateway](/protocol/gateway).
 
+Each primitive is exposed to smart contract developers via the
+[Nox Solidity Library](/protocol/nox-smart-contracts#nox-library). Computations
+are triggered on-chain (by emitting an event) but executed **asynchronously
+off-chain** by a Runner: the transaction completes immediately, and the
+encrypted result becomes available in the Gateway once the Runner has processed
+the event.
+
 All arithmetic uses **wrapping semantics**, matching Solidity's `unchecked`
 behavior. On overflow or underflow, values wrap around the type boundary instead
 of reverting.
@@ -148,7 +155,13 @@ returns the maximum representable value of the type (saturates toward
 
 Same operations as core arithmetic, but returning two handles:
 `(success: Bool, result: same_type)`. When `success` is `false`, the `result` is
-always `0`. The `success` flag is `true` when no overflow/underflow occurred.
+always `0`. The `success` flag signals **arithmetic errors only** (overflow,
+underflow, or division by zero for SafeDiv). Type compatibility between operands
+is enforced on-chain by `NoxCompute` before the event reaches the Runner. If a
+user bypasses the SDK and submits a value that does not match the declared type
+directly to the Gateway, the Runner forcefully casts it according to the same
+type rules defined in
+[TypeUtils.sol](https://github.com/iExec-Nox/nox-contracts/blob/main/contracts/shared/TypeUtils.sol#L8).
 Each takes 2 input handles and produces 2 output handles.
 
 #### SafeAdd

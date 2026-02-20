@@ -34,6 +34,40 @@ export default {
     });
 
     if (typeof window !== 'undefined') {
+      // Mermaid diagram zoom modal
+      const modal = document.createElement('div');
+      modal.className = 'mermaid-zoom-modal';
+      document.body.appendChild(modal);
+
+      modal.addEventListener('click', () => {
+        modal.classList.remove('open');
+        document.body.style.overflow = '';
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('open')) {
+          modal.classList.remove('open');
+          document.body.style.overflow = '';
+        }
+      });
+
+      document.addEventListener('click', (event) => {
+        const target = event.target as Element;
+        const mermaidContainer = target.closest('.mermaid');
+        if (mermaidContainer) {
+          const svg = mermaidContainer.querySelector('svg');
+          if (svg) {
+            const clone = svg.cloneNode(true) as SVGElement;
+            clone.removeAttribute('width');
+            clone.removeAttribute('height');
+            modal.innerHTML = '';
+            modal.appendChild(clone);
+            modal.classList.add('open');
+            document.body.style.overflow = 'hidden';
+          }
+        }
+      });
+
       // Ensure dataLayer exists
       window.dataLayer = window.dataLayer || [];
 
