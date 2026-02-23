@@ -35,6 +35,8 @@ described here are subject to change as the technology and ecosystem mature.
   ecosystem, confidential or not
 - **Developer openness**: allow anyone to create, deploy, and monetize new
   confidential computation primitives
+- **Developer experience**: make confidential computing as accessible as
+  standard Solidity development
 
 ## Combining Privacy Technologies
 
@@ -305,21 +307,6 @@ integrity.
 This openness applies to both infrastructure and innovation: operators earn by
 running the network, developers earn by extending it.
 
-### Developer Surface
-
-The primary developer surface for Nox is the
-[Solidity Library](/references/solidity-library): a set of Solidity types and
-functions that expose the protocol's computation primitives directly in smart
-contract code. Developers interact with encrypted values through opaque handles
-(`euint256`, `ebool`, etc.) without ever manipulating ciphertexts directly.
-
-The library's current model requires all operands to be handles, including
-plaintext constants (which must first be converted via `plaintextToEncrypted`).
-A planned evolution is to support **mixed operand operations** natively,
-allowing a plaintext value to be passed directly alongside an encrypted handle
-without a prior conversion step. This removes boilerplate and makes confidential
-arithmetic feel as natural as standard Solidity.
-
 ## One Privacy Layer, Every Chain
 
 ```mermaid
@@ -357,6 +344,31 @@ shared and chain-agnostic.
 Throughput scales horizontally: multiple Runners operated by independent
 operators process computation requests in parallel, allowing capacity to grow
 with demand without any single point of bottleneck.
+
+## Developer Experience
+
+Confidential computing should feel like standard Solidity development. The
+target architecture invests in tooling and SDK improvements to remove friction
+at every step of the developer workflow.
+
+### Solidity Library
+
+Developers interact with encrypted values through opaque handles (`euint256`,
+`ebool`, etc.) without ever manipulating ciphertexts directly. The current model
+requires all operands to be handles, including plaintext constants (which must
+first be converted via `plaintextToEncrypted`). A planned evolution is to
+support **mixed operand operations** natively, allowing a plaintext value to be
+passed directly alongside an encrypted handle without a prior conversion step.
+This removes boilerplate and makes confidential arithmetic feel as natural as
+standard Solidity.
+
+### Hardhat and Foundry Plugins
+
+The target architecture provides first-class plugin support for the two dominant
+Solidity development frameworks. Developers will be able to write, test, and
+debug contracts using encrypted types directly within their existing Hardhat or
+Foundry workflows, without setting up a separate environment or relying on
+manual mocking of encrypted values.
 
 ## Learn More
 
