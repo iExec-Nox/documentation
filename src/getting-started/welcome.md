@@ -21,7 +21,7 @@ maintain confidentiality—all without breaking composability.
 - **Native Composability**: Privacy that doesn't break DeFi composability
 - **Developer-Friendly**: Familiar Solidity syntax with privacy primitives
 - **No Special Wallets**: Works with standard Ethereum wallets and tools
-- **Multichain**: Deploy on multiple blockchain networks
+- **Omnichain**: Deploy on multiple blockchain networks
 - **Production-Ready**: Built for real-world DeFi applications
 
 ## How Nox works
