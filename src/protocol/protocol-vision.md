@@ -27,7 +27,7 @@ described here are subject to change as the technology and ecosystem mature.
   zero-knowledge proofs, each applied where it offers the best tradeoff
 - **Trust distribution**: progressively reduce trust assumptions by distributing
   and decentralizing components
-- **Omnichain expansion**: extend Nox to any EVM chain, sharing a single backend
+- **Omnichain expansion**: extend Nox to any blockchain, sharing a single backend
   across all supported networks
 - **Horizontal scalability**: support multiple Runners and growing computation
   throughput
@@ -320,40 +320,11 @@ allowing a plaintext value to be passed directly alongside an encrypted handle
 without a prior conversion step. This removes boilerplate and makes confidential
 arithmetic feel as natural as standard Solidity.
 
-## Scale Out, Not Up
-
-The current version runs a single Runner processing computation requests
-sequentially. The target architecture scales horizontally with **multiple
-Runners** coordinated by a **TDX Orchestrator**.
-
-```mermaid
-flowchart LR
-    MQ[Message Queue] --> O[Orchestrator]
-    O --> R1[Runner 1]
-    O --> R2[Runner 2]
-    O --> R3[Runner N]
-    R1 --> GW[Handle Gateway]
-    R2 --> GW
-    R3 --> GW
-```
-
-The Orchestrator is itself a TEE-attested component that:
-
-- **Dequeues** computation requests from the message queue
-- **Assigns** each request to an available Runner
-- **Monitors** Runner availability and execution progress
-- **Reassigns** tasks if a Runner fails or times out
-
-Runners are distributed among independent operators, each running inside its own
-Intel TDX TEE. This allows the protocol to scale throughput linearly with the
-number of Runners, while the Orchestrator ensures that every computation request
-is eventually processed.
-
-## Every Chain, One Privacy Layer
+## One Privacy Layer, Every Chain
 
 ```mermaid
 flowchart TB
-    subgraph chains ["Blockchains"]
+    subgraph chains ["Any Blockchain"]
         direction LR
         C1["Ethereum"]
         C2["Arbitrum"]
@@ -377,21 +348,15 @@ flowchart TB
     style nox fill:#7c3aed,color:#fff
 ```
 
-The handle structure already encodes a **4-byte chain ID** (bytes 26-29),
-ensuring that handles are bound to a specific chain and cannot be reused across
-chains. This makes omnichain support a natural extension of the architecture
-rather than a protocol redesign.
+The target architecture extends Nox to any blockchain through a single shared
+backend: the same KMS, Runners, and Gateway serve all supported networks.
+Adding a new chain requires only deploying the on-chain contracts on the target
+network. The protocol core (encryption, key management, computation) remains
+shared and chain-agnostic.
 
-The goal is to let Nox secure confidential data on any blockchain while sharing
-backend infrastructure. Extending Nox to a new chain requires deploying the
-on-chain contracts on the target chain and adapting the backend components that
-interact with the blockchain (event monitoring, transaction submission, chain ID
-routing). The protocol core (encryption, key management, computation execution)
-remains shared and agnostic to the data's chain of origin.
-
-This shared infrastructure means that adding a new chain does not require
-duplicating the entire backend, allowing the protocol to expand to new chains
-with marginal operational cost.
+Throughput scales horizontally: multiple Runners operated by independent
+operators process computation requests in parallel, allowing capacity to grow
+with demand without any single point of bottleneck.
 
 ## Learn More
 
