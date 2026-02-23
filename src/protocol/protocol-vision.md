@@ -98,9 +98,17 @@ Together, these technologies cover each other's weaknesses:
 
 ## No Single Key, No Single Point of Failure
 
+### Algorithm Evolution
+
+The current implementation uses ECIES on secp256k1. The target architecture
+plans to migrate toward **quantum-resistant algorithms**, ensuring long-term
+security of encrypted handles.
+
+### Threshold Distribution
+
 ```mermaid
 flowchart TB
-    subgraph split ["Key Splitting (n shares)"]
+    subgraph split ["Key Split across n nodes"]
         direction LR
         S1["KMS Node 1"]
         S2["KMS Node 2"]
@@ -118,7 +126,7 @@ flowchart TB
     S2 --> |partial result| Client
     S3 --> |partial result| Client
 
-    Client --> OUT["Recombine via Lagrange<br/>Key never reconstructed"]
+    Client --> OUT["Recombine partial results<br/>Key never reconstructed"]
 
     style split fill:#1e293b,color:#fff
     style Client fill:#7c3aed,color:#fff
@@ -126,51 +134,18 @@ flowchart TB
 ```
 
 The protocol's private key is Nox's most sensitive asset: whoever holds it can
-decrypt every handle in the system. In the current version, a single KMS node
-holds this key. The target architecture eliminates this single point of trust
-through **threshold cryptography**.
-
-The private key is split into **n shares** using
-[Shamir's Secret Sharing](https://en.wikipedia.org/wiki/Shamir%27s_secret_sharing)
-(SSS), a scheme where a random polynomial of degree `t-1` encodes the secret as
-its constant term. Each KMS node receives one share (a point on the polynomial).
-At least **t nodes** must collaborate to perform any cryptographic operation.
-Fewer than `t` shares reveal nothing about the private key.
-
-The critical property is that the private key is **never reconstructed**. During
-decryption delegation, each KMS node computes a partial result using its own
-share, and the requesting party recombines the partial results via Lagrange
-interpolation. No individual node, and no network message, ever contains the
-complete key.
+decrypt every handle in the system. The target architecture eliminates this
+single point of trust through **threshold cryptography**: the key is split
+across **n KMS nodes**, and at least **t nodes** must collaborate to perform any
+cryptographic operation. The full key is never reconstructed anywhere, not on
+any node, not in any message.
 
 ### Key Rotation
 
 A threshold architecture also enables **safe key rotation** without service
-interruption. When the protocol's private key needs to be replaced (scheduled
-rotation, node compromise, or algorithm migration), the new key shares can be
-distributed to KMS nodes through a proactive secret sharing protocol: each node
-receives a new share derived from the existing ones without ever exposing the
-current private key. All existing ciphertexts are re-encrypted under the new key
-as part of the rotation process. The on-chain Registry is updated atomically,
-ensuring that no request is processed with a stale key.
-
-### Algorithm Evolution
-
-The current implementation uses ECIES on secp256k1. The target architecture
-plans to migrate toward **post-quantum algorithms standardized by NIST**:
-
-- **[ML-KEM](https://csrc.nist.gov/pubs/fips/203/final)** (FIPS 203, formerly
-  CRYSTALS-Kyber) for encryption: handles are encrypted using a lattice-based
-  key encapsulation mechanism resistant to quantum attacks
-- **[ML-DSA](https://csrc.nist.gov/pubs/fips/204/final)** (FIPS 204, formerly
-  CRYSTALS-Dilithium) for signatures: component attestations and message
-  authentication use a quantum-resistant signature scheme
-
-ML-KEM is operated in **MPC threshold mode** for decryption: each KMS node
-participates in the key decapsulation using its own share, and the result is
-reconstructed without any node learning the plaintext or the full private key.
-This combines the long-term security guarantees of post-quantum cryptography
-with the trust distribution properties of threshold cryptography.
+interruption: key shares can be refreshed across nodes without ever exposing the
+current private key, and existing ciphertexts are re-encrypted under the new key
+as part of the process.
 
 ## Hardware-Rooted Chain of Trust
 
@@ -191,8 +166,8 @@ verification steps:
    accepted by the protocol
 2. **Remote Attestation (RA)**: the TDX hardware generates a signed attestation
    report, proving that the execution environment is genuine, that the running
-   code matches the expected hash, and that the TEE state has not been
-   tampered with
+   code matches the expected hash, and that the TEE state has not been tampered
+   with
 3. **On-chain registration**: the attestation report is verified and the
    component's identity (public key + attestation hash) is recorded in the
    on-chain **Registry** contract
@@ -370,9 +345,9 @@ The Orchestrator is itself a TEE-attested component that:
 - **Reassigns** tasks if a Runner fails or times out
 
 Runners are distributed among independent operators, each running inside its own
-Intel TDX TEE. This allows the protocol to scale throughput linearly with
-the number of Runners, while the Orchestrator ensures that every computation
-request is eventually processed.
+Intel TDX TEE. This allows the protocol to scale throughput linearly with the
+number of Runners, while the Orchestrator ensures that every computation request
+is eventually processed.
 
 ## Every Chain, One Privacy Layer
 
