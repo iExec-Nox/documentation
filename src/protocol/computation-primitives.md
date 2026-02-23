@@ -14,10 +14,10 @@ them in the [Handle Gateway](/protocol/gateway).
 
 Each primitive is exposed to smart contract developers via the
 [Nox Solidity Library](/protocol/nox-smart-contracts#nox-library). Computations
-are triggered on-chain (by emitting an event) but executed **asynchronously
-off-chain** by a Runner: the transaction completes immediately, and the
-encrypted result becomes available in the Gateway once the Runner has processed
-the event.
+are triggered on-chain (by emitting an event) but executed **off-chain** by a
+Runner, which processes them sequentially: the transaction completes
+immediately, and the encrypted result becomes available in the Gateway once the
+Runner has processed the event.
 
 All arithmetic uses **wrapping semantics**, matching Solidity's `unchecked`
 behavior. On overflow or underflow, values wrap around the type boundary instead

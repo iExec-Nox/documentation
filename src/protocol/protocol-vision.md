@@ -19,7 +19,9 @@ constraints.
 Nox fills this gap: a privacy layer that brings confidentiality to DeFi without
 sacrificing the composability and decentralization that make it powerful.
 
-The long-term vision for Nox evolves the protocol along six axes:
+The long-term vision for Nox evolves the protocol along six axes. This page
+reflects the current direction of the protocol: the architecture and priorities
+described here are subject to change as the technology and ecosystem mature.
 
 - **Privacy by convergence**: combine TEE, threshold cryptography, MPC, and
   zero-knowledge proofs, each applied where it offers the best tradeoff

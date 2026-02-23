@@ -40,13 +40,13 @@ sequenceDiagram
     I->>I: Forward to Runner via NATS
 ```
 
-::: info Handles are asynchronous pointers
+::: info Handles are deferred pointers
 
 A handle returned by `Nox.add(a, b)` is a deterministic identifier — not the
 encrypted result. The actual computation happens off-chain after the
-[Ingestor](/protocol/ingestor) picks up the event. The ciphertext will be
-available in the [Gateway](/protocol/gateway) once the
-[Runner](/protocol/runner) has processed it.
+[Ingestor](/protocol/ingestor) picks up the event, and is processed
+sequentially by a [Runner](/protocol/runner). The ciphertext will be available
+in the [Gateway](/protocol/gateway) once the Runner has processed it.
 
 :::
 
