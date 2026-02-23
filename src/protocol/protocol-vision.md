@@ -194,10 +194,10 @@ verification steps:
 3. **On-chain registration**: the attestation report is verified and the
    component's identity (public key + attestation hash) is recorded in the
    on-chain **Registry** contract
-4. **Runtime authentication**: components communicate via **gRPC**, signing
-   every message with the attested private key. The receiving component verifies
-   the signature against the on-chain Registry, confirming that the sender has
-   been properly attested
+4. **Runtime authentication**: components communicate by signing every message
+   with the attested private key. The receiving component verifies the signature
+   against the on-chain Registry, confirming that the sender has been properly
+   attested
 
 ```mermaid
 sequenceDiagram
@@ -210,7 +210,7 @@ sequenceDiagram
     HW-->>C: Signed attestation (code hash + HW signature)
     C->>BC: Register (public key + attestation)
     BC->>BC: Verify attestation and hash, store identity
-    C->>R: gRPC request (signed with attested key)
+    C->>R: Signed request (attested key)
     R->>BC: Verify sender's key in Registry
     BC-->>R: Confirmed
     R->>R: Process request
