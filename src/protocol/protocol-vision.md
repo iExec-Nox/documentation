@@ -27,8 +27,8 @@ described here are subject to change as the technology and ecosystem mature.
   zero-knowledge proofs, each applied where it offers the best tradeoff
 - **Trust distribution**: progressively reduce trust assumptions by distributing
   and decentralizing components
-- **Omnichain expansion**: extend Nox to any blockchain, sharing a single backend
-  across all supported networks
+- **Omnichain expansion**: extend Nox to any blockchain, sharing a single
+  backend across all supported networks
 - **Horizontal scalability**: support multiple Runners and growing computation
   throughput
 - **Composability**: enable confidential tokens to interact with the entire DeFi
@@ -36,7 +36,7 @@ described here are subject to change as the technology and ecosystem mature.
 - **Developer openness**: allow anyone to create, deploy, and monetize new
   confidential computation primitives
 
-## Privacy by Convergence
+## Combining Privacy Technologies
 
 ```mermaid
 block-beta
@@ -96,9 +96,9 @@ Together, these technologies cover each other's weaknesses:
   cheap to verify, allowing throughput to grow without proportionally increasing
   gas fees
 
-## No Single Key, No Single Point of Failure
+## Distributed Key Management
 
-### Algorithm Evolution
+### Quantum-Resistant Cryptography
 
 The current implementation uses ECIES on secp256k1. The target architecture
 plans to migrate toward **quantum-resistant algorithms**, ensuring long-term
@@ -147,7 +147,7 @@ interruption: key shares can be refreshed across nodes without ever exposing the
 current private key, and existing ciphertexts are re-encrypted under the new key
 as part of the process.
 
-## Hardware-Rooted Chain of Trust
+## Every Component Is Verified
 
 Before the protocol can allow third parties to operate components, it must
 guarantee that each component runs legitimate code, inside a genuine hardware
@@ -155,7 +155,7 @@ TEE, and that this trust persists over time. The Nox chain of trust rests on
 three pillars: **code integrity verification**, **physical infrastructure
 verification**, and **controlled code evolution**.
 
-### Proving Every Byte
+### Code Integrity
 
 Each component (Runner, KMS node, Gateway, Ingestor) runs inside an **Intel TDX
 TEE**. Before joining the protocol, each component goes through four
@@ -193,7 +193,7 @@ sequenceDiagram
     R->>R: Process request
 ```
 
-### Proof of Cloud: Proving Where It Runs
+### Proof of Cloud: Physical Location Verification
 
 TEE attestation proves **what** code is running, but not **where** it is
 running. An operator with physical access to the hardware could attempt attacks
@@ -224,7 +224,7 @@ to plaintext data because they lack physical access to the TEE hardware, and
 this physical separation is cryptographically verifiable rather than merely
 assumed.
 
-### Upgrading Without Breaking Trust
+### Governed Upgrades
 
 The protocol must be able to evolve (bug fixes, new features, optimizations)
 while keeping the chain of trust intact. The target architecture governs
@@ -273,7 +273,7 @@ operator. Nox is designed to be permissionless at every level: anyone can
 operate infrastructure, and anyone can extend the protocol with new
 functionality.
 
-### Become an Operator
+### Run the Network
 
 Any party can run any type of component (Runner, Ingestor, KMS node, Gateway),
 provided they:
@@ -289,7 +289,7 @@ attestations) triggers **slashing**: partial or total loss of staked tokens.
 Every component type can be operated by independent parties, making the protocol
 progressively decentralized as new operators join the network.
 
-### Build, Deploy, Monetize
+### Extend the Protocol
 
 The protocol is not meant to implement every possible confidential operation.
 The target architecture opens the development of **computation primitives** to
@@ -305,7 +305,7 @@ integrity.
 This openness applies to both infrastructure and innovation: operators earn by
 running the network, developers earn by extending it.
 
-### Solidity Library
+### Developer Surface
 
 The primary developer surface for Nox is the
 [Solidity Library](/references/solidity-library): a set of Solidity types and
@@ -349,8 +349,8 @@ flowchart TB
 ```
 
 The target architecture extends Nox to any blockchain through a single shared
-backend: the same KMS, Runners, and Gateway serve all supported networks.
-Adding a new chain requires only deploying the on-chain contracts on the target
+backend: the same KMS, Runners, and Gateway serve all supported networks. Adding
+a new chain requires only deploying the on-chain contracts on the target
 network. The protocol core (encryption, key management, computation) remains
 shared and chain-agnostic.
 
