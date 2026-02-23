@@ -174,14 +174,14 @@ with the trust distribution properties of threshold cryptography.
 
 Before the protocol can allow third parties to operate components, it must
 guarantee that each component runs legitimate code, inside a genuine hardware
-enclave, and that this trust persists over time. The Nox chain of trust rests on
+TEE, and that this trust persists over time. The Nox chain of trust rests on
 three pillars: **code integrity verification**, **physical infrastructure
 verification**, and **controlled code evolution**.
 
 ### Proving Every Byte
 
 Each component (Runner, KMS node, Gateway, Ingestor) runs inside an **Intel TDX
-enclave**. Before joining the protocol, each component goes through four
+TEE**. Before joining the protocol, each component goes through four
 verification steps:
 
 1. **Code hash stored on-chain**: the exact hash of the authorized binary is
@@ -189,7 +189,7 @@ verification steps:
    accepted by the protocol
 2. **Remote Attestation (RA)**: the TDX hardware generates a signed attestation
    report, proving that the execution environment is genuine, that the running
-   code matches the expected hash, and that the enclave state has not been
+   code matches the expected hash, and that the TEE state has not been
    tampered with
 3. **On-chain registration**: the attestation report is verified and the
    component's identity (public key + attestation hash) is recorded in the
@@ -321,7 +321,7 @@ them on the network, and monetize them.
 
 A computation primitive is an operation executed by Runners inside the TEE: it
 receives encrypted handles as input, performs a computation on the plaintext
-inside the enclave, and produces new encrypted handles as output. The developer
+inside the TEE, and produces new encrypted handles as output. The developer
 defines the logic, the protocol guarantees confidentiality and execution
 integrity.
 
@@ -368,7 +368,7 @@ The Orchestrator is itself a TEE-attested component that:
 - **Reassigns** tasks if a Runner fails or times out
 
 Runners are distributed among independent operators, each running inside its own
-Intel TDX enclave. This allows the protocol to scale throughput linearly with
+Intel TDX TEE. This allows the protocol to scale throughput linearly with
 the number of Runners, while the Orchestrator ensures that every computation
 request is eventually processed.
 
