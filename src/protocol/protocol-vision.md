@@ -418,24 +418,6 @@ This shared infrastructure means that adding a new chain does not require
 duplicating the entire backend, allowing the protocol to expand to new chains
 with marginal operational cost.
 
-## Private Tokens Meet Public DeFi
-
-Confidentiality is only valuable if it integrates with the existing ecosystem. A
-confidential token isolated from the rest of DeFi would be unusable. Nox's
-vision is to make confidential tokens **composable** with the entire DeFi
-ecosystem, whether confidential or not.
-
-In practice, this means enabling a Nox confidential token to be used as
-collateral in a lending protocol, swapped on a DEX, or deposited into a yield
-vault, even when those protocols do not natively support confidentiality. The
-protocol manages the transition between the confidential and non-confidential
-worlds transparently, decrypting only the information strictly necessary for
-interaction with the target protocol.
-
-This composability also extends to confidential DeFi (cDeFi) protocols, enabling
-interactions between different privacy layers and creating a unified ecosystem
-where confidentiality is a spectrum rather than a binary choice.
-
 ## Learn More
 
 - [Global Architecture Overview](/protocol/global-architecture-overview) - Full
