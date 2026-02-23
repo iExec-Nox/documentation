@@ -160,7 +160,7 @@ underflow, or division by zero for SafeDiv). Type compatibility between operands
 is enforced on-chain by `NoxCompute` before the event reaches the Runner. If a
 user bypasses the SDK and submits a value that does not match the declared type
 directly to the Gateway, the Runner forcefully casts it according to the same
-type rules defined in
+type rules described in the `NoxType` enum in
 [TypeUtils.sol](https://github.com/iExec-Nox/nox-contracts/blob/main/contracts/shared/TypeUtils.sol#L8).
 Each takes 2 input handles and produces 2 output handles.
 

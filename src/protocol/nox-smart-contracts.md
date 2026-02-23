@@ -167,7 +167,7 @@ handles, without a prior conversion) is planned. See
 ### Encrypted Types
 
 The protocol supports all standard Solidity types in encrypted form. The full
-type mapping is defined in
+type mapping is described in the `NoxType` enum in
 [TypeUtils.sol](https://github.com/iExec-Nox/nox-contracts/blob/main/contracts/shared/TypeUtils.sol#L8).
 
 ## ACL (Access Control List)
@@ -240,7 +240,7 @@ same handle.
     prehandle (truncated)      Chain ID     Type   Version
 ```
 
-The full type mapping (byte 30) is defined in
+The full type mapping (byte 30) is described in the `NoxType` enum in
 [TypeUtils.sol](https://github.com/iExec-Nox/nox-contracts/blob/main/contracts/shared/TypeUtils.sol#L8).
 
 ### Required Properties
