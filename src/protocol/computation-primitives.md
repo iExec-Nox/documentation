@@ -279,7 +279,7 @@ Compare two encrypted values and return an encrypted boolean. Each takes 2 input
 handles and produces 1 Bool output handle. Comparison semantics depend on the
 type: unsigned for `UintN`, signed for `IntN`.
 
-#### Eq
+#### Eq (Equal)
 
 ```solidity
 function eq(euint256 lhs, euint256 rhs) returns (ebool);
@@ -292,7 +292,7 @@ Returns `true` when `a == b`.
 | `Eq(42, 42)`    | `true`  | Equal values     |
 | `Eq(0, 255)`    | `false` | Different values |
 
-#### Ne
+#### Ne (Not equal)
 
 ```solidity
 function ne(euint256 lhs, euint256 rhs) returns (ebool);
@@ -305,7 +305,7 @@ Returns `true` when `a != b`.
 | `Ne(42, 42)`    | `false` | Equal values     |
 | `Ne(0, 255)`    | `true`  | Different values |
 
-#### Lt
+#### Lt (Less than)
 
 ```solidity
 function lt(euint256 lhs, euint256 rhs) returns (ebool);
@@ -323,7 +323,7 @@ Returns `true` when `a < b`.
 | `Lt(-56, 10)`   | `true`  | -56 < 10 (signed)   |
 | `Lt(127, -128)` | `false` | 127 < -128 is false |
 
-#### Le
+#### Le (Less than or equal)
 
 ```solidity
 function le(euint256 lhs, euint256 rhs) returns (ebool);
@@ -336,7 +336,7 @@ Returns `true` when `a <= b`.
 | `Le(10, 10)`    | `true`  | Equal values       |
 | `Le(200, 10)`   | `false` | 200 <= 10 is false |
 
-#### Gt
+#### Gt (Greater than)
 
 ```solidity
 function gt(euint256 lhs, euint256 rhs) returns (ebool);
@@ -354,7 +354,7 @@ Returns `true` when `a > b`.
 | `Gt(10, -56)`   | `true`  | 10 > -56 (signed)   |
 | `Gt(-128, 127)` | `false` | -128 > 127 is false |
 
-#### Ge
+#### Ge (Greater than or equal)
 
 ```solidity
 function ge(euint256 lhs, euint256 rhs) returns (ebool);
