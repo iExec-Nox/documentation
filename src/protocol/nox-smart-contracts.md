@@ -186,7 +186,7 @@ off-chain and stores it in the Gateway before it can be used as an operand.
 
 ::: info
 
-Roadmap Native support for mixed operands (plaintext alongside encrypted
+**Roadmap:** Native support for mixed operands (plaintext alongside encrypted
 handles, without a prior conversion) is planned. See
 [Protocol Vision — Solidity Library](/protocol/protocol-vision#solidity-library).
 
