@@ -15,10 +15,10 @@ computation requests, access control, and protocol component registration.
 Smart contracts are the on-chain entry point for all confidential operations.
 Users call the `Nox` library from their contracts, which routes through the
 `NoxCompute` contract. It validates handle proofs, verifies type compatibility
-between operands, grants transient access to result handles, and emits events
-to the computation queue for off-chain execution. At this point, the
-transaction is complete on-chain but the encrypted result does not yet exist: it
-will be computed by the [Runner](/protocol/runner) after the
+between operands, grants transient access to result handles, and emits events to
+the computation queue for off-chain execution. At this point, the transaction is
+complete on-chain but the encrypted result does not yet exist: it will be
+computed by the [Runner](/protocol/runner) after the
 [Ingestor](/protocol/ingestor) picks up the event.
 
 ## How It Works
@@ -77,9 +77,9 @@ HandleProof(bytes32 handle, address owner, address app, uint256 createdAt)
 ### KMS Public Key
 
 `NoxCompute` stores the KMS public key used by the protocol to encrypt
-computation inputs for the Runner. The public key is set at deployment, can be updated by a protocol administrator,
-and can be retrieved from the contract by clients to encrypt inputs before
-submission.
+computation inputs for the Runner. The public key is set at deployment, can be
+updated by a protocol administrator, and can be retrieved from the contract by
+clients to encrypt inputs before submission.
 
 ```solidity
 function kmsPublicKey() external view returns (bytes memory);
