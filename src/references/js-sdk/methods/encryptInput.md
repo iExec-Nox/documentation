@@ -5,16 +5,16 @@ description: Encrypt a value and create an on-chain handle
 
 # encryptInput
 
-Encrypts a plaintext value and registers it with the Handle Gateway. The Gateway
+Encrypts a plaintext value and registers it with the Handle Gateway. The latter
 stores the encrypted data and returns a **handle** — a 32-byte on-chain
 identifier — along with a **handleProof** that smart contracts can use to verify
-the handle was created by a legitimate Gateway.
+the handle was created by a legitimate Handle Gateway.
 
 ### What happens under the hood
 
 1. The SDK encodes the value according to the given Solidity type.
-2. It sends the encoded value plus the caller's address to the Gateway.
-3. The Gateway encrypts and stores the data, then returns a deterministic handle
+2. It sends the encoded value plus the caller's address to the Handle Gateway.
+3. The Handle Gateway encrypts and stores the data, then returns a deterministic handle
    and a signed EIP-712 proof.
 
 The handle can then be passed to a smart contract alongside the `handleProof`
@@ -107,7 +107,7 @@ await handleClient.encryptInput(// [!code focus]
 **Type:** `SolidityType`
 
 The Solidity type the value will be treated as on-chain. The type code is
-embedded in the handle (byte 30) so the Gateway and contracts know how to
+embedded in the handle (byte 30) so the Handle Gateway and contracts know how to
 interpret the encrypted data.
 
 Supported types:
@@ -195,6 +195,6 @@ handle.
 
 **Type:** `string` (`0x`-prefixed hex string)
 
-An EIP-712 signed proof from the Gateway attesting that the handle was created
+An EIP-712 signed proof from the Handle Gateway attesting that the handle was created
 legitimately. Pass this proof alongside the handle when calling smart contract
 functions that verify encrypted inputs.

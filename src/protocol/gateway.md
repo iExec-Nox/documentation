@@ -1,5 +1,5 @@
 ---
-title: Gateway
+title: Handle Gateway
 description: Handle Gateway for encryption, storage and access to encrypted data
 ---
 
@@ -13,15 +13,15 @@ database of handles, and coordinates decryption delegation with the
 
 ## Role in the Protocol
 
-The Gateway sits between users/Runners and the encrypted data store. It has
-three main responsibilities:
+The Handle Gateway sits between users/Runners and the encrypted data store.
+It has three main responsibilities:
 
-1. **Encrypt and store** plaintext values submitted by users (via SDK) as
-   handles
-2. **Delegate decryption** by coordinating with the KMS and serving the
-   cryptographic material to authorized users and Runners
-3. **Store** computation results submitted by Runners
-4. **Verify** access control by checking the on-chain ACL contract
+1. **Encrypt** plaintext values submitted by users (via SDK),
+   then **store** them as handles.
+2. **Verify** access control by checking the on-chain ACLs.
+3. **Delegate decryption** by coordinating with the KMS and serving the
+   cryptographic material to authorized users and Runners.
+4. **Store** encrypted computation results submitted by Runners as handles.
 
 ## How It Works
 
@@ -31,12 +31,12 @@ three main responsibilities:
 sequenceDiagram
     participant U as User (SDK)
     participant GW as Handle Gateway
-    participant KMS
+    participant SC as NoxCompute
 
+    GW->>SC: ETH call kmsPublicKey() during startup
+    SC-->>GW: protocol public encryption key
     U->>GW: POST /v0/secrets (plaintext, type, owner)
-    GW->>KMS: GET /v0/public-key
-    KMS-->>GW: pubkey_KMS
-    GW->>GW: ECIES encrypt with pubkey_KMS
+    GW->>GW: ECIES encryption with KMS public key
     GW->>GW: Store (handle, ciphertext, K, nonce) in DB
     GW->>GW: Sign HandleProof (EIP-712)
     GW-->>U: handle + proof
@@ -126,7 +126,7 @@ Authorization: EIP712 Base64({
 })
 ```
 
-The Gateway verifies the signature, checks the on-chain ACL, then coordinates
+The Handle Gateway verifies the signature, checks the on-chain ACL, then coordinates
 with the KMS to perform decryption delegation.
 
 **Response:**
@@ -232,9 +232,8 @@ at rest.
 | Column       | Constraint | Description                                    |
 | ------------ | ---------- | ---------------------------------------------- |
 | `handle`     | PK, Unique | 32-byte handle identifier                      |
-| `owner`      |            | Ethereum address of the data owner             |
 | `ciphertext` |            | Encrypted value                                |
-| `K`          | Unique     | Ephemeral public key for decryption delegation |
+| `public_key` | Unique     | Ephemeral public key for decryption delegation |
 | `nonce`      |            | 12-byte AES-GCM nonce                          |
 | `createdAt`  |            | Creation timestamp                             |
 

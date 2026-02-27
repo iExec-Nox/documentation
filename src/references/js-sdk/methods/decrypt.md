@@ -16,7 +16,7 @@ signature, not an on-chain transaction.
 
 1. The SDK generates an ephemeral RSA keypair and builds an EIP-712 message.
 2. Your wallet signs the message (no transaction, no gas).
-3. The Gateway verifies the signature and checks the on-chain ACL.
+3. The Handle Gateway verifies the signature and checks the on-chain ACL.
 4. The KMS returns the encrypted data wrapped with your RSA public key.
 5. The SDK decrypts locally — the plaintext never travels over the network.
 

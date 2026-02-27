@@ -142,7 +142,7 @@ export function getSidebar() {
             link: '/protocol/runner',
           },
           {
-            text: 'Gateway',
+            text: 'Handle Gateway',
             link: '/protocol/gateway',
           },
           {
