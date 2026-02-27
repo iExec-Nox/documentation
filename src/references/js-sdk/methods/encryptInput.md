@@ -146,7 +146,10 @@ await handleClient.encryptInput('Hello, Nox!', 'string', '0x123...abc'); // [!co
 **Type:** `string` (Ethereum address)
 
 The address of the smart contract that will use this handle. The handle is bound
-to this contract for access control purposes.
+to this contract: only the application contract can validate the `handleProof`
+on-chain. After successful validation, it receives transient access on the ACL
+for this handle. The contract must then explicitly persist that access and grant
+permissions to any address that needs to use or decrypt the handle.
 
 ```ts twoslash
 declare global {

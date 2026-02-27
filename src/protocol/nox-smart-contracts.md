@@ -15,10 +15,10 @@ computation requests, access control, and protocol component registration.
 Smart contracts are the on-chain entry point for all confidential operations.
 Users call the `Nox` library from their contracts, which routes through the
 `NoxCompute` contract. It validates handle proofs, verifies type compatibility
-between operands, grants transient access on result handles, and emits events
-that queue the computation for off-chain execution. At this point, the
-transaction is complete on-chain but the encrypted result does not yet exist: it
-will be computed by the [Runner](/protocol/runner) after the
+between operands, grants transient access to result handles, and emits events to
+the computation queue for off-chain execution. At this point, the transaction is
+complete on-chain but the encrypted result does not yet exist: it will be
+computed by the [Runner](/protocol/runner) after the
 [Ingestor](/protocol/ingestor) picks up the event.
 
 ## How It Works
@@ -77,8 +77,9 @@ HandleProof(bytes32 handle, address owner, address app, uint256 createdAt)
 ### KMS Public Key
 
 `NoxCompute` stores the KMS public key used by the protocol to encrypt
-computation inputs for the Runner. It is set at deployment and can be queried
-on-chain.
+computation inputs for the Runner. The public key is set at deployment, can be
+updated by a protocol administrator, and can be retrieved from the contract by
+clients to encrypt inputs before submission.
 
 ```solidity
 function kmsPublicKey() external view returns (bytes memory);
@@ -120,7 +121,34 @@ function ge(euint256 lhs, euint256 rhs) returns (ebool);
 function select(ebool cond, euint256 ifTrue, euint256 ifFalse) returns (euint256);
 ```
 
+**Safe arithmetic:**
+
+The `safe*` variants (`safeAdd`, `safeSub`, `safeMul`, `safeDiv`) protect
+against overflow and underflow in confidential arithmetic. Each returns two
+values:
+
+- An `ebool` flag: `true` if the operation completed without overflow or
+  underflow, `false` otherwise
+- A `euint256` result: the computed value when the operation succeeded
+
+This is necessary because the protocol cannot revert on overflow — the operands
+are encrypted, so their values are not visible on-chain. The `ebool` flag lets
+the calling contract handle the overflow case conditionally using `Nox.select`:
+
+```solidity
+(ebool ok, euint256 result) = Nox.safeAdd(balanceA, balanceB);
+// Apply the result only if there was no overflow
+euint256 finalBalance = Nox.select(ok, result, balanceA);
+```
+
 **Advanced functions:**
+
+Advanced functions are aggregations of multiple arithmetic operations bundled
+into a single call. Instead of chaining individual operations (each emitting a
+separate event and triggering a dedicated off-chain computation job), these
+functions perform the full operation atomically: one event is emitted and the
+Runner executes the entire sequence in a single pass. This reduces both on-chain
+gas costs and off-chain processing overhead.
 
 ```solidity
 // Confidential token transfer
@@ -158,7 +186,7 @@ off-chain and stores it in the Gateway before it can be used as an operand.
 
 ::: info
 
-Roadmap Native support for mixed operands (plaintext alongside encrypted
+**Roadmap:** Native support for mixed operands (plaintext alongside encrypted
 handles, without a prior conversion) is planned. See
 [Protocol Vision — Solidity Library](/protocol/protocol-vision#solidity-library).
 
