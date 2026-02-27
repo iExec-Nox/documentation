@@ -159,8 +159,8 @@ verification**, and **controlled code evolution**.
 
 ### Code Integrity
 
-Each component (Runner, KMS node, Handle Gateway, Ingestor) runs inside an **Intel TDX
-TEE**. Before joining the protocol, each component goes through four
+Each component (Runner, KMS node, Handle Gateway, Ingestor) runs inside an
+**Intel TDX TEE**. Before joining the protocol, each component goes through four
 verification steps:
 
 1. **Code hash stored on-chain**: the exact hash of the authorized binary is
@@ -277,8 +277,8 @@ functionality.
 
 ### Run the Network
 
-Any party can run any type of component (Runner, Ingestor, KMS node, Haneld Gateway),
-provided they:
+Any party can run any type of component (Runner, Ingestor, KMS node, Haneld
+Gateway), provided they:
 
 1. Pass remote attestation (proving they run legitimate code inside a genuine
    TEE)
@@ -336,8 +336,8 @@ flowchart TB
 ```
 
 The target architecture extends Nox to any blockchain through a single shared
-backend: the same KMS, Runners, and Handle Gateway serve all supported networks. Adding
-a new chain requires only deploying the on-chain contracts on the target
+backend: the same KMS, Runners, and Handle Gateway serve all supported networks.
+Adding a new chain requires only deploying the on-chain contracts on the target
 network. The protocol core (encryption, key management, computation) remains
 shared and chain-agnostic.
 

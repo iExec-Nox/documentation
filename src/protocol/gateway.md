@@ -13,11 +13,11 @@ database of handles, and coordinates decryption delegation with the
 
 ## Role in the Protocol
 
-The Handle Gateway sits between users/Runners and the encrypted data store.
-It has three main responsibilities:
+The Handle Gateway sits between users/Runners and the encrypted data store. It
+has three main responsibilities:
 
-1. **Encrypt** plaintext values submitted by users (via SDK),
-   then **store** them as handles.
+1. **Encrypt** plaintext values submitted by users (via SDK), then **store**
+   them as handles.
 2. **Verify** access control by checking the on-chain ACLs.
 3. **Delegate decryption** by coordinating with the KMS and serving the
    cryptographic material to authorized users and Runners.
@@ -126,8 +126,8 @@ Authorization: EIP712 Base64({
 })
 ```
 
-The Handle Gateway verifies the signature, checks the on-chain ACL, then coordinates
-with the KMS to perform decryption delegation.
+The Handle Gateway verifies the signature, checks the on-chain ACL, then
+coordinates with the KMS to perform decryption delegation.
 
 **Response:**
 

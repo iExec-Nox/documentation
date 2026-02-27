@@ -14,8 +14,8 @@ the handle was created by a legitimate Handle Gateway.
 
 1. The SDK encodes the value according to the given Solidity type.
 2. It sends the encoded value plus the caller's address to the Handle Gateway.
-3. The Handle Gateway encrypts and stores the data, then returns a deterministic handle
-   and a signed EIP-712 proof.
+3. The Handle Gateway encrypts and stores the data, then returns a deterministic
+   handle and a signed EIP-712 proof.
 
 The handle can then be passed to a smart contract alongside the `handleProof`
 for on-chain verification. From that point, the contract works with the handle
@@ -195,6 +195,6 @@ handle.
 
 **Type:** `string` (`0x`-prefixed hex string)
 
-An EIP-712 signed proof from the Handle Gateway attesting that the handle was created
-legitimately. Pass this proof alongside the handle when calling smart contract
-functions that verify encrypted inputs.
+An EIP-712 signed proof from the Handle Gateway attesting that the handle was
+created legitimately. Pass this proof alongside the handle when calling smart
+contract functions that verify encrypted inputs.

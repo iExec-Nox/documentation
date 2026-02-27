@@ -9,9 +9,9 @@ description:
 
 Nox is a confidential computation protocol for DeFi. It allows smart contracts
 to operate on encrypted data without ever exposing plaintext on-chain. The
-protocol coordinates six components: on-chain smart contracts, an event
-listener (Ingestor), a message queue (NATS), a computation engine (Runner), an
-encrypted data store (Handle Gateway), and a key management service (KMS).
+protocol coordinates six components: on-chain smart contracts, an event listener
+(Ingestor), a message queue (NATS), a computation engine (Runner), an encrypted
+data store (Handle Gateway), and a key management service (KMS).
 
 ![Nox Protocol Architecture](/nox-protocol.png)
 
@@ -82,10 +82,11 @@ using opaque **handles** (32-byte identifiers that reference the encrypted data
 stored in the Handle Gateway).
 
 1. The user sends a plaintext value to the **Handle Gateway** via the SDK
-2. The Handle Gateway encrypts it with [ECIES](/protocol/kms#ecies-encryption-scheme)
-   using the KMS public key and stores the ciphertext in PostgreSQL.
-3. The Handle Gateway returns a **handle** and an **EIP-712 signed proof** attesting
-   the handle's validity.
+2. The Handle Gateway encrypts it with
+   [ECIES](/protocol/kms#ecies-encryption-scheme) using the KMS public key and
+   stores the ciphertext in PostgreSQL.
+3. The Handle Gateway returns a **handle** and an **EIP-712 signed proof**
+   attesting the handle's validity.
 4. The user calls a function on a smart contract that uses the **NoxCompute**
    library (e.g. `Nox.add(handleA, handleB)`)
 5. NoxCompute validates handle proofs and type compatibility, computes a
@@ -106,14 +107,14 @@ secure environment.
 2. The **Runner** pulls the next message from the queue.
 3. The Runner requests the encrypted operands from the **Handle Gateway**,
    providing an ephemeral RSA public key.
-4. The Handle Gateway retrieves the ciphertext from its database and coordinates with
-   the **KMS** to perform [decryption delegation](/protocol/kms): the KMS
+4. The Handle Gateway retrieves the ciphertext from its database and coordinates
+   with the **KMS** to perform [decryption delegation](/protocol/kms): the KMS
    computes the ECDH shared secret and encrypts it with the Runner's RSA key.
 5. The Runner decrypts the inputs locally (RSA decrypt the shared secret, HKDF
-   key derivation, AES-GCM decrypt), executes the computation, and encrypts
-   the result with ECIES using the KMS public key.
-6. The Runner submits the encrypted result to the Handle Gateway and acknowledges
-   the `TransactionMessage` received from **NATS JetStream**.
+   key derivation, AES-GCM decrypt), executes the computation, and encrypts the
+   result with ECIES using the KMS public key.
+6. The Runner submits the encrypted result to the Handle Gateway and
+   acknowledges the `TransactionMessage` received from **NATS JetStream**.
 
 ### Phase 3: Output
 
@@ -122,10 +123,10 @@ delegation so that only the authorized user can recover the plaintext.
 
 1. The user generates an ephemeral RSA keypair and sends a decryption request to
    the Handle Gateway, authenticated with an EIP-712 signature.
-2. The Handle Gateway verifies the signature and checks the **on-chain ACL** to confirm
-   the user has viewer permission on the handle.
-3. The Handle Gateway requests decryption delegation from the KMS: the KMS computes the
-   shared secret and encrypts it with the user's RSA public key
+2. The Handle Gateway verifies the signature and checks the **on-chain ACL** to
+   confirm the user has viewer permission on the handle.
+3. The Handle Gateway requests decryption delegation from the KMS: the KMS
+   computes the shared secret and encrypts it with the user's RSA public key
 4. The user receives the ciphertext, encrypted shared secret, and nonce, then
    decrypts locally: RSA decrypt the shared secret, derive the AES key via HKDF,
    and AES-GCM decrypt the ciphertext
@@ -156,7 +157,8 @@ handles **deterministic**: the same operation on the same inputs in the same
 transaction always produces the same handle.
 
 For user inputs created via the Handle Gateway, the prehandle is a random value.
-The handle is validated on-chain via an EIP-712 signed proof from the Handle Gateway.
+The handle is validated on-chain via an EIP-712 signed proof from the Handle
+Gateway.
 
 For the full handle specification, see
 [Nox Smart Contracts](/protocol/nox-smart-contracts#handle-structure).
@@ -177,8 +179,8 @@ When NoxCompute creates a result handle, it automatically grants **transient**
 access to the calling contract. The contract must persist this permission with
 `ACL.allow()` if the handle needs to be used in subsequent transactions.
 
-The Handle Gateway checks ACL permissions on-chain (via `isViewer`) before serving
-decryption material to a user.
+The Handle Gateway checks ACL permissions on-chain (via `isViewer`) before
+serving decryption material to a user.
 
 ## Encryption
 

@@ -10,8 +10,8 @@ The Runner is a Rust service running in Intel TDX that executes confidential
 computations on encrypted data. It pulls computation requests from a
 [NATS JetStream](https://nats.io) queue — populated by the
 [Ingestor](/protocol/ingestor) from on-chain events — decrypts the input
-handles, performs the operation, encrypts the results, and stores them back
-in the [Handle Gateway](/protocol/gateway).
+handles, performs the operation, encrypts the results, and stores them back in
+the [Handle Gateway](/protocol/gateway).
 
 ## Role in the Protocol
 
@@ -21,11 +21,10 @@ supported Solidity types, it produces results identical to their on-chain
 equivalents. The off-chain execution model also opens the door to operations not
 natively supported by the EVM (e.g. larger integer types).
 
-::: info Current Implementation
-The current implementation runs a **single Runner**. In the long-term
-architecture, multiple Runners will operate in parallel, coordinated by a TDX
-orchestrator that assigns tasks and supervises execution.
-:::
+::: info Current Implementation The current implementation runs a **single
+Runner**. In the long-term architecture, multiple Runners will operate in
+parallel, coordinated by a TDX orchestrator that assigns tasks and supervises
+execution. :::
 
 ## How It Works
 
@@ -52,8 +51,8 @@ sequenceDiagram
 1. **Pull event** from NATS: the Runner fetches the next `TransactionMessage`
    containing input handles, output handles, and the operation to perform.
 2. **Fetch operands** from the Handle Gateway: the Runner sends its RSA public
-   key, and the Handle Gateway handles KMS delegation internally, returning
-   the ciphertext, encrypted shared secret, and nonce for each input handle.
+   key, and the Handle Gateway handles KMS delegation internally, returning the
+   ciphertext, encrypted shared secret, and nonce for each input handle.
 3. **Decrypt** inputs locally (RSA decrypt shared secret, HKDF, AES-GCM).
 4. **Execute** the computation primitive.
 5. **Encrypt** results with ECIES using the protocol public key.
@@ -65,8 +64,9 @@ sequenceDiagram
 
 This operation has no input handles and does not need to call the Handle Gateway
 to fetch operands. The plaintext value and target type of the data to encrypt
-are embedded directly in the NATS event. The Runner performs the ECIES encryption,
-then forwards encrypted data and crypto materials to the Handle Gateway.
+are embedded directly in the NATS event. The Runner performs the ECIES
+encryption, then forwards encrypted data and crypto materials to the Handle
+Gateway.
 
 ```mermaid
 sequenceDiagram
