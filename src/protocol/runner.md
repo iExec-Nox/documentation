@@ -21,10 +21,13 @@ supported Solidity types, it produces results identical to their on-chain
 equivalents. The off-chain execution model also opens the door to operations not
 natively supported by the EVM (e.g. larger integer types).
 
-::: info Current Implementation The current implementation runs a **single
-Runner**. In the long-term architecture, multiple Runners will operate in
-parallel, coordinated by a TDX orchestrator that assigns tasks and supervises
-execution. :::
+::: info Current Implementation
+
+The current implementation runs a **single Runner**. In the long-term
+architecture, multiple Runners will operate in parallel, coordinated by a TDX
+orchestrator that assigns tasks and supervises execution.
+
+:::
 
 ## How It Works
 
