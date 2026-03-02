@@ -14,7 +14,7 @@ database of handles, and coordinates decryption delegation with the
 ## Role in the Protocol
 
 The Handle Gateway sits between users/Runners and the encrypted data store. It
-has three main responsibilities:
+has four main responsibilities:
 
 1. **Encrypt** plaintext values submitted by users (via SDK), then **store**
    them as handles.

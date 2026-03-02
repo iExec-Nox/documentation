@@ -277,7 +277,7 @@ functionality.
 
 ### Run the Network
 
-Any party can run any type of component (Runner, Ingestor, KMS node, Haneld
+Any party can run any type of component (Runner, Ingestor, KMS node, Handle
 Gateway), provided they:
 
 1. Pass remote attestation (proving they run legitimate code inside a genuine
