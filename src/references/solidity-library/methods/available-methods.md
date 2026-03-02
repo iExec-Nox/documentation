@@ -5,7 +5,7 @@ description: Available methods in Nox Solidity Library
 
 TODO
 
-::: info Computation Primitives
+::: info
 
 For the full specification of each operation (inputs, outputs, edge cases,
 wrapping behavior), see the

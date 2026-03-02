@@ -218,4 +218,4 @@ For the full cryptographic protocol, see [KMS](/protocol/kms).
 - [Computation Primitives](/protocol/computation-primitives): full reference of
   all operations
 - [Protocol Vision](/protocol/protocol-vision): long-term architecture and
-  roadmap
+  design principles
