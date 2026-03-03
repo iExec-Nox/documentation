@@ -9,8 +9,7 @@ description:
 
 The Nox Solidity library lets you write smart contracts that operate on
 encrypted data. You import the `Nox` library, use encrypted types like
-`euint256` instead of `uint256`, and the protocol handles encryption, key
-management, and off-chain computation transparently.
+`euint256` instead of `uint256`, and the protocol handles encryption and off-chain computation transparently.
 
 ## How It Works
 
