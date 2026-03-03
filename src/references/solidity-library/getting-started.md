@@ -81,7 +81,7 @@ so there is no need for a separate import.
 
 ## Encrypted Types
 
-Encrypted types are user-defined value types backed by `bytes32`. Each type
+Encrypted types are custom defined value types backed by `bytes32`. Each type
 wraps a **handle**, a 32-byte identifier that references encrypted data stored
 off-chain in the Handle Gateway.
 
