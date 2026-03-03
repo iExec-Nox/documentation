@@ -11,7 +11,7 @@ encrypted data is stored in the [Handle Gateway](/protocol/gateway).
 
 ::: info
 
-Trivial encryption is useful for initializing state variables and constants. For
+Plaintext to handle convertion is useful for initializing state variables and constants. For
 user-provided values, prefer
 [fromExternal](/references/solidity-library/methods/core-primitives/fromExternal)
 with the [JS SDK](/references/js-sdk) to avoid exposing plaintext on-chain.
