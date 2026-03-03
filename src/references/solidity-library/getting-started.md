@@ -26,7 +26,7 @@ Working with confidential data in Solidity follows three steps:
 
 3. **Manage access**: grant permissions with `Nox.allow()` so handles can be
    reused in future transactions, and `Nox.addViewer()` so users can decrypt
-   results via the JS SDK.
+   results off-chain via the JS SDK.
 
 ::: info
 
