@@ -361,6 +361,41 @@ input {
 }
 
 /**
+ * Component: Mermaid zoom
+ * -------------------------------------------------------------------------- */
+
+.mermaid svg {
+  cursor: zoom-in;
+}
+
+.mermaid-zoom-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  cursor: zoom-out;
+  padding: 2rem;
+}
+
+.mermaid-zoom-modal.open {
+  display: flex;
+}
+
+.mermaid-zoom-modal svg {
+  max-width: 90vw;
+  max-height: 90vh;
+  width: auto !important;
+  height: auto !important;
+  cursor: default;
+  background: var(--vp-c-bg);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+/**
  * Component: AskIaButton
  * -------------------------------------------------------------------------- */
 

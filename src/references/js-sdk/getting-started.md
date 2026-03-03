@@ -147,9 +147,9 @@ the appropriate adapter.
 
 ::: warning
 
-Bundle size This factory imports both the ethers and viem adapters. If you only
-use one library, prefer `createEthersHandleClient` or `createViemHandleClient`
-to keep your bundle smaller.
+**Bundle size:** This factory imports both the ethers and viem adapters. If you
+only use one library, prefer `createEthersHandleClient` or
+`createViemHandleClient` to keep your bundle smaller.
 
 :::
 

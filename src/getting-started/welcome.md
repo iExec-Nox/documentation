@@ -21,10 +21,10 @@ maintain confidentiality—all without breaking composability.
 - **Native Composability**: Privacy that doesn't break DeFi composability
 - **Developer-Friendly**: Familiar Solidity syntax with privacy primitives
 - **No Special Wallets**: Works with standard Ethereum wallets and tools
-- **Multichain**: Deploy on multiple blockchain networks
+- **Omnichain**: Deploy on multiple blockchain networks
 - **Production-Ready**: Built for real-world DeFi applications
 
-## How Nox works
+## How Nox Works
 
 Nox enables confidential DeFi through a distributed architecture built on three
 core concepts:
@@ -45,7 +45,7 @@ core concepts:
    enclaves. These hardware-protected environments ensure that even
    infrastructure providers cannot access the plaintext data during execution.
 
-## The Nox toolkit
+## The Nox Toolkit
 
 **Solidity Library:** Add privacy to your contracts using familiar Solidity
 syntax—no specialized wallets or off-chain steps required.
@@ -84,9 +84,8 @@ seamlessly integrate with the broader DeFi ecosystem:
   removing transparency blockers, making DeFi and RWA products ready for
   discretion-sensitive capital
 
-The next chapters guide you through our **Hello World journey**. This quick
-start teaches you everything about Nox. You'll learn **protecting sensitive
-data** and **building and deploying confidential smart contracts**.
+The next chapters guide you through our **Hello World journey**: how to protect
+sensitive data and build and deploy confidential smart contracts.
 
 ## Start Building
 

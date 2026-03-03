@@ -119,7 +119,7 @@ export default withMermaid(
         },
         {
           text: 'Protocol',
-          link: '/protocol/protocol-vision',
+          link: '/protocol/global-architecture-overview',
           activeMatch: '^/protocol/',
         },
       ],

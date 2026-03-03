@@ -12,6 +12,13 @@ encrypted data. Each operation takes encrypted input handles, decrypts them
 inside the TEE, performs the computation, re-encrypts the results, and stores
 them in the [Handle Gateway](/protocol/gateway).
 
+Each primitive is exposed to smart contract developers via the
+[Nox Solidity Library](/protocol/nox-smart-contracts#nox-library). Computations
+are triggered on-chain (by emitting an event) but executed **off-chain** by a
+Runner, which processes them sequentially: the transaction completes
+immediately, and the encrypted result becomes available in the Gateway once the
+Runner has processed the event.
+
 All arithmetic uses **wrapping semantics**, matching Solidity's `unchecked`
 behavior. On overflow or underflow, values wrap around the type boundary instead
 of reverting.
@@ -148,7 +155,13 @@ returns the maximum representable value of the type (saturates toward
 
 Same operations as core arithmetic, but returning two handles:
 `(success: Bool, result: same_type)`. When `success` is `false`, the `result` is
-always `0`. The `success` flag is `true` when no overflow/underflow occurred.
+always `0`. The `success` flag signals **arithmetic errors only** (overflow,
+underflow, or division by zero for SafeDiv). Type compatibility between operands
+is enforced on-chain by `NoxCompute` before the event reaches the Runner. If a
+user bypasses the SDK and submits a value that does not match the declared type
+directly to the Gateway, the Runner forcefully casts it according to the same
+type rules described in the `NoxType` enum in
+[TypeUtils.sol](https://github.com/iExec-Nox/nox-contracts/blob/main/contracts/shared/TypeUtils.sol#L8).
 Each takes 2 input handles and produces 2 output handles.
 
 #### SafeAdd
@@ -266,7 +279,7 @@ Compare two encrypted values and return an encrypted boolean. Each takes 2 input
 handles and produces 1 Bool output handle. Comparison semantics depend on the
 type: unsigned for `UintN`, signed for `IntN`.
 
-#### Eq
+#### Eq (Equal)
 
 ```solidity
 function eq(euint256 lhs, euint256 rhs) returns (ebool);
@@ -279,7 +292,7 @@ Returns `true` when `a == b`.
 | `Eq(42, 42)`    | `true`  | Equal values     |
 | `Eq(0, 255)`    | `false` | Different values |
 
-#### Ne
+#### Ne (Not equal)
 
 ```solidity
 function ne(euint256 lhs, euint256 rhs) returns (ebool);
@@ -292,7 +305,7 @@ Returns `true` when `a != b`.
 | `Ne(42, 42)`    | `false` | Equal values     |
 | `Ne(0, 255)`    | `true`  | Different values |
 
-#### Lt
+#### Lt (Less than)
 
 ```solidity
 function lt(euint256 lhs, euint256 rhs) returns (ebool);
@@ -310,7 +323,7 @@ Returns `true` when `a < b`.
 | `Lt(-56, 10)`   | `true`  | -56 < 10 (signed)   |
 | `Lt(127, -128)` | `false` | 127 < -128 is false |
 
-#### Le
+#### Le (Less than or equal)
 
 ```solidity
 function le(euint256 lhs, euint256 rhs) returns (ebool);
@@ -323,7 +336,7 @@ Returns `true` when `a <= b`.
 | `Le(10, 10)`    | `true`  | Equal values       |
 | `Le(200, 10)`   | `false` | 200 <= 10 is false |
 
-#### Gt
+#### Gt (Greater than)
 
 ```solidity
 function gt(euint256 lhs, euint256 rhs) returns (ebool);
@@ -341,7 +354,7 @@ Returns `true` when `a > b`.
 | `Gt(10, -56)`   | `true`  | 10 > -56 (signed)   |
 | `Gt(-128, 127)` | `false` | -128 > 127 is false |
 
-#### Ge
+#### Ge (Greater than or equal)
 
 ```solidity
 function ge(euint256 lhs, euint256 rhs) returns (ebool);
