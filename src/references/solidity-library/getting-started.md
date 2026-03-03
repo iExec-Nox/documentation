@@ -32,7 +32,7 @@ Working with confidential data in Solidity follows three steps:
 
 Operations on encrypted handles are not executed on-chain. The contract emits
 events, and the off-chain [Runner](/protocol/runner) performs the actual
-computation inside a TEE. The encrypted result is stored in the
+computation asynchronously inside a TEE enclave. The encrypted result is stored in the
 [Handle Gateway](/protocol/gateway) under the deterministic handle computed
 on-chain.
 
