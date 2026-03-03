@@ -5,8 +5,8 @@ description: Encrypted arithmetic operations with wrapping semantics
 
 # Arithmetic
 
-Arithmetic operations on two encrypted values of the same type. All arithmetic uses
-**wrapping semantics**, matching Solidity's `unchecked` behavior. See
+Arithmetic operations on two encrypted values of the same type. All arithmetic
+uses **wrapping semantics**, matching Solidity's `unchecked` behavior. See
 [Computation Primitives](/protocol/computation-primitives) for detailed overflow
 behavior and edge cases.
 

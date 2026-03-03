@@ -9,7 +9,8 @@ description:
 
 The Nox Solidity library lets you write smart contracts that operate on
 encrypted data. You import the `Nox` library, use encrypted types like
-`euint256` instead of `uint256`, and the protocol handles encryption and off-chain computation transparently.
+`euint256` instead of `uint256`, and the protocol handles encryption and
+off-chain computation transparently.
 
 ## How It Works
 
@@ -32,9 +33,9 @@ Working with confidential data in Solidity follows three steps:
 
 Operations on encrypted handles are not executed on-chain. The contract emits
 events, and the off-chain [Runner](/protocol/runner) performs the actual
-computation asynchronously inside a TEE enclave. The encrypted result is stored in the
-[Handle Gateway](/protocol/gateway) under the deterministic handle computed
-on-chain.
+computation asynchronously inside a TEE enclave. The encrypted result is stored
+in the [Handle Gateway](/protocol/gateway) under the deterministic handle
+computed on-chain.
 
 :::
 
