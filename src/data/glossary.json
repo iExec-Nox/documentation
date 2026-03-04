@@ -81,7 +81,7 @@
     {"term":"Off-chain","definition":"Storage or computations performed off the blockchain. Ciphertexts are stored off-chain in the Handle Gateway database.","category":"Technical"},
     {"term":"On-chain","definition":"Data or operations stored/executed directly on the blockchain. Handles are stored on-chain, ciphertexts off-chain.","category":"Technical"},
     {"term":"Ownership","definition":"Handle ownership determined by the associated public key. Can be transferred via the sponsoring mechanism.","category":"Technical"},
-    {"term":"Payload","definition":"Data submitted in a transaction containing necessary information (public key, handles, etc.). Used notably for sponsoring.","category":"Technical"},
+    {"term":"Payload","definition":"Data submitted in a transaction containing necessary information (public key, handles, etc.).","category":"Technical"},
     {"term":"Phase 0","definition":"First workflow phase: registration and attestation of TEE components in the on-chain Registry.","category":"Technical"},
     {"term":"Phase 1","definition":"Initialization phase: KMS nodes execute the DKG protocol to collectively create threshold keys.","category":"Technical"},
     {"term":"Phase 2","definition":"Encryption phase: the Handle Gateway encrypts user data and creates corresponding handles.","category":"Technical"},
