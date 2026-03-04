@@ -2,19 +2,7 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import glossaryData from '@/data/glossary.json';
 
-const categories = [
-  'All',
-  'General',
-  'Architecture',
-  'Technical',
-  'Security',
-  'Market',
-] as const;
-
-type Category = (typeof categories)[number];
-
 const searchTerm = ref('');
-const selectedCategory = ref<Category>('All');
 const showScrollTop = ref(false);
 
 function handleScroll() {
@@ -36,10 +24,7 @@ const filteredTerms = computed(() => {
       const matchesSearch =
         item.term.toLowerCase().includes(searchLower) ||
         item.definition.toLowerCase().includes(searchLower);
-      const matchesCategory =
-        selectedCategory.value === 'All' ||
-        item.category === selectedCategory.value;
-      return matchesSearch && matchesCategory;
+      return matchesSearch;
     })
     .sort((a, b) => {
       if (searchTerm.value) {
@@ -77,20 +62,6 @@ const totalCount = glossaryData.terms.length;
         class="glossary-search"
       />
 
-      <div class="glossary-categories">
-        <button
-          v-for="category in categories"
-          :key="category"
-          type="button"
-          :class="[
-            'glossary-cat-btn',
-            selectedCategory === category && 'active',
-          ]"
-          @click="selectedCategory = category"
-        >
-          {{ category }}
-        </button>
-      </div>
     </div>
 
     <!-- List -->
@@ -188,39 +159,6 @@ const totalCount = glossaryData.terms.length;
   box-shadow: 0 0 0 3px var(--vp-c-brand-soft);
 }
 
-/* ── Category filter buttons ── */
-.glossary-categories {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-}
-
-.glossary-cat-btn {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.375rem 0.875rem;
-  border: 2px solid var(--vp-c-border);
-  border-radius: 9999px;
-  background: var(--vp-c-bg-soft);
-  color: var(--vp-c-text-2);
-  font-size: 0.8125rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s;
-  line-height: 1.4;
-}
-
-.glossary-cat-btn:hover {
-  border-color: var(--vp-c-brand-1);
-  color: var(--vp-c-brand-1);
-}
-
-.glossary-cat-btn.active {
-  background: var(--vp-c-brand-1);
-  border-color: var(--vp-c-brand-1);
-  color: #fff;
-}
-
 /* ── Glossary list ── */
 .glossary-list {
   display: flex;
@@ -294,8 +232,8 @@ const totalCount = glossaryData.terms.length;
 }
 
 .cat-architecture {
-  background: var(--vp-c-blue-soft);
-  color: var(--vp-c-blue-1);
+  background: var(--vp-c-info-soft);
+  color: var(--vp-c-info-1);
 }
 
 .cat-technical {
