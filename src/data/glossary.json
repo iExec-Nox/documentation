@@ -48,7 +48,7 @@
     {"term":"Selective Disclosure","definition":"Ability to reveal information only to authorized parties (auditors, regulators) via the ACL system, without public exposure.","category":"Security"},
     {"term":"Sponsoring","definition":"Mechanism allowing to create a handle for someone else by paying the fees on their behalf. Ownership goes to the public key declared in the payload.","category":"Technical"},
     {"term":"TEE (Trusted Execution Environment)","definition":"Secure execution environment with hardware isolation (Intel TDX). Guarantees privacy and integrity of sensitive operations.","category":"Technical"},
-    {"term":"TEEComputeManager","definition":"Main on-chain smart contract for receiving and coordinating confidential computation requests.","category":"Architecture"},
+    {"term":"NoxCompute","definition":"Main on-chain smart contract for receiving and coordinating confidential computation requests.","category":"Architecture"},
     {"term":"Threshold Cryptography","definition":"Threshold cryptography where the private key is fragmented among n nodes. At least t nodes must collaborate for any operation.","category":"Security"},
     {"term":"TradFi","definition":"Traditional Finance - Traditional finance (banks, funds). Major target of cToken which requires privacy to enter DeFi.","category":"Market"},
     {"term":"TVL (Total Value Locked)","definition":"Total value locked in a DeFi protocol. Key metric to measure adoption. ETH = $69B, ARB = $2.9B.","category":"Market"},
