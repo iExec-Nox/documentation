@@ -129,7 +129,7 @@ declare global {
   }
 }
 import { createViemHandleClient } from '@iexec-nox/handle';
-import type { Handle } from '@iexec-nox/handle';
+import type { Handle, SolidityType } from '@iexec-nox/handle';
 import { createWalletClient, custom } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
 
@@ -139,7 +139,7 @@ const walletClient = createWalletClient({
 });
 
 const handleClient = await createViemHandleClient(walletClient);
-declare const handle: Handle;
+declare const handle: Handle<SolidityType>;
 // ---cut---
 const { value, solidityType } = await handleClient.decrypt(handle);
 

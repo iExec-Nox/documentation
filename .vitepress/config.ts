@@ -27,18 +27,7 @@ export default withMermaid(
     },
     srcDir: './src',
     markdown: {
-      codeTransformers: [
-        // TODO: Remove twoslashOptions once @iexec-nox/handle is published on npm
-        // and installed as a dependency. The custom typeRoots and types/iexec-nox__handle/
-        // shim will no longer be needed.
-        transformerTwoslash({
-          twoslashOptions: {
-            compilerOptions: {
-              typeRoots: ['./node_modules/@types', './types'],
-            },
-          },
-        }),
-      ],
+      codeTransformers: [transformerTwoslash()],
       config(md) {
         md.use(groupIconMdPlugin);
       },
