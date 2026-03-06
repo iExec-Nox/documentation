@@ -34,7 +34,7 @@
     },
     {
       "term": "Composability",
-      "definition": "One of Nox's 5 pillars: ability to integrate with the existing DeFi ecosystem and third-party protocols.",
+      "definition": "One of Nox's pillars: ability to integrate with the existing DeFi ecosystem and third-party protocols.",
       "category": "General"
     },
     {
@@ -44,7 +44,7 @@
     },
     {
       "term": "Confidential Token",
-      "definition": "Name used for external product communication. Wrapped version of an ERC-20 with encrypted balances and amounts.",
+      "definition": "Wrapped version of an ERC-20 with encrypted balances and amounts.",
       "category": "General"
     },
     {
@@ -55,11 +55,6 @@
     {
       "term": "Custom Functions",
       "definition": "Third category of primitives: custom functions developed by protocol users.",
-      "category": "Technical"
-    },
-    {
-      "term": "DKG (Distributed Key Generation)",
-      "definition": "Protocol executed by KMS nodes during Phase 1 to collectively create a threshold key pair. The private key is fragmented (t-of-n).",
       "category": "Technical"
     },
     {
@@ -83,11 +78,6 @@
       "category": "Technical"
     },
     {
-      "term": "Forward Secrecy",
-      "definition": "Security property ensured by ephemeral keys: even if a TEE is compromised, it can only decrypt requests assigned after the compromise.",
-      "category": "Security"
-    },
-    {
       "term": "Handle",
       "definition": "Unique 32-byte identifier stored on-chain that points to an off-chain ciphertext. Structure: truncated hash (26 bytes) + Chain ID (4) + Type (1) + Version (1).",
       "category": "Technical"
@@ -104,7 +94,7 @@
     },
     {
       "term": "Ingestor",
-      "definition": "Dedicated service (Rust+Alloy) that monitors the blockchain to detect primitive events (Add, Sub, Transfer...) and sends them to the message queue.",
+      "definition": "Dedicated service that monitors the blockchain to detect primitive events (Add, Sub, Transfer...) and sends them to the message queue.",
       "category": "Architecture"
     },
     {
@@ -114,7 +104,7 @@
     },
     {
       "term": "Interoperability",
-      "definition": "One of Nox's 5 pillars: compatibility with existing blockchains, notably Ethereum and Arbitrum.",
+      "definition": "One of Nox's pillars: compatibility with existing blockchains, notably Arbitrum.",
       "category": "General"
     },
     {
@@ -153,13 +143,8 @@
       "category": "Technical"
     },
     {
-      "term": "PoCo",
-      "definition": "Proof of Contribution - Consensus mechanism of iExec Classic. Not used in Nox which adopts a different architecture.",
-      "category": "Technical"
-    },
-    {
       "term": "preHandle",
-      "definition": "Hash calculated via keccak256(operator, operands, teeComputeManager, msg.sender, block.timestamp, nonce) before being truncated to form the final handle.",
+      "definition": "Hash calculated via keccak256(operator, operands, NoxCompte, msg.sender, block.timestamp, outputIndex) before being truncated to form the final handle.",
       "category": "Technical"
     },
     {
@@ -193,7 +178,7 @@
       "category": "Technical"
     },
     {
-      "term": "TEEComputeManager",
+      "term": "NoxCompute",
       "definition": "Main on-chain smart contract for receiving and coordinating confidential computation requests.",
       "category": "Architecture"
     },
