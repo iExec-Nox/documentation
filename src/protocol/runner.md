@@ -11,7 +11,7 @@ computations on encrypted data. It pulls computation requests from a
 [NATS JetStream](https://nats.io) queue — populated by the
 [Ingestor](/protocol/ingestor) from on-chain events — decrypts the input
 handles, performs the operation, encrypts the results, and stores them back in
-the [Handle Gateway](/protocol/gateway).
+the [Handle Gateway](/protocol/handle-gateway).
 
 ## Role in the Protocol
 
@@ -119,7 +119,7 @@ edge cases and examples, see the
 
 - [Computation Primitives](/protocol/computation-primitives) - Full reference of
   all operations with signatures and edge cases
-- [Handle Gateway](/protocol/gateway) - Handle storage and encryption
+- [Handle Gateway](/protocol/handle-gateway) - Handle storage and encryption
 - [KMS](/protocol/kms) - Key management and decryption delegation
 - [Nox Smart Contracts](/protocol/nox-smart-contracts) - On-chain computation
   requests

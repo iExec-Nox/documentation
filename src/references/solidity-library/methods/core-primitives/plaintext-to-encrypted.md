@@ -7,7 +7,7 @@ description: Convert plaintext values to encrypted handles
 
 Convert plaintext values to encrypted handles. The contract emits an event, and
 the [Runner](/protocol/runner) encrypts the value off-chain inside a TEE. The
-encrypted data is stored in the [Handle Gateway](/protocol/gateway).
+encrypted data is stored in the [Handle Gateway](/protocol/handle-gateway).
 
 ::: info
 

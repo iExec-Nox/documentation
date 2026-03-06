@@ -10,7 +10,7 @@ description:
 This page describes all operations the [Runner](/protocol/runner) can execute on
 encrypted data. Each operation takes encrypted input handles, decrypts them
 inside the TEE, performs the computation, re-encrypts the results, and stores
-them in the [Handle Gateway](/protocol/gateway).
+them in the [Handle Gateway](/protocol/handle-gateway).
 
 Each primitive is exposed to smart contract developers via the
 [Nox Solidity Library](/protocol/nox-smart-contracts#nox-library). Computations
@@ -509,4 +509,4 @@ else:
 - [Runner](/protocol/runner) - Executes these operations inside Intel TDX
 - [Nox Smart Contracts](/protocol/nox-smart-contracts) - Solidity interface (Nox
   library)
-- [Gateway](/protocol/gateway) - Handle storage and encryption
+- [Handle Gateway](/protocol/handle-gateway) - Handle storage and encryption
