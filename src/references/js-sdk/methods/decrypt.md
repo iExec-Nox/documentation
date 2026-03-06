@@ -16,7 +16,7 @@ signature, not an on-chain transaction.
 
 1. The SDK generates an ephemeral RSA keypair and builds an EIP-712 message.
 2. Your wallet signs the message (no transaction, no gas).
-3. The Gateway verifies the signature and checks the on-chain ACL.
+3. The Handle Gateway verifies the signature and checks the on-chain ACL.
 4. The KMS returns the encrypted data wrapped with your RSA public key.
 5. The SDK decrypts locally — the plaintext never travels over the network.
 
@@ -129,7 +129,7 @@ declare global {
   }
 }
 import { createViemHandleClient } from '@iexec-nox/handle';
-import type { Handle } from '@iexec-nox/handle';
+import type { Handle, SolidityType } from '@iexec-nox/handle';
 import { createWalletClient, custom } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
 
@@ -139,7 +139,7 @@ const walletClient = createWalletClient({
 });
 
 const handleClient = await createViemHandleClient(walletClient);
-declare const handle: Handle;
+declare const handle: Handle<SolidityType>;
 // ---cut---
 const { value, solidityType } = await handleClient.decrypt(handle);
 

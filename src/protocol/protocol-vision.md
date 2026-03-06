@@ -77,12 +77,12 @@ Each technology excels in a specific domain and fails in others. The only path
 to a privacy layer that is simultaneously fast, trustless, and scalable is to
 combine them, using each where it is strongest:
 
-| Technology                        | Where it applies               | Strength                                                                          |
-| --------------------------------- | ------------------------------ | --------------------------------------------------------------------------------- |
-| **TEE (Intel TDX)**               | Runner, Gateway, Ingestor, KMS | Fast computation on encrypted data inside hardware-isolated enclaves              |
-| **Threshold cryptography**        | KMS                            | Distributed key management with no single point of trust                          |
-| **MPC (Multi-Party Computation)** | KMS                            | Collaborative computation across multiple nodes without reconstructing secrets    |
-| **ZK (Zero-Knowledge Proofs)**    | On-chain verification          | Gas-efficient proof verification, replacing expensive on-chain verification logic |
+| Technology                        | Where it applies                      | Strength                                                                          |
+| --------------------------------- | ------------------------------------- | --------------------------------------------------------------------------------- |
+| **TEE (Intel TDX)**               | Runner, Handle Gateway, Ingestor, KMS | Fast computation on encrypted data inside hardware-isolated enclaves              |
+| **Threshold cryptography**        | KMS                                   | Distributed key management with no single point of trust                          |
+| **MPC (Multi-Party Computation)** | KMS                                   | Collaborative computation across multiple nodes without reconstructing secrets    |
+| **ZK (Zero-Knowledge Proofs)**    | On-chain verification                 | Gas-efficient proof verification, replacing expensive on-chain verification logic |
 
 Together, these technologies cover each other's weaknesses:
 
@@ -118,7 +118,7 @@ flowchart TB
         SN["KMS Node n"]
     end
 
-    Client["Client (Runner, Gateway...)"]
+    Client["Client (Runner, Handle Gateway...)"]
 
     Client --> |request| S1
     Client --> |request| S2
@@ -159,8 +159,8 @@ verification**, and **controlled code evolution**.
 
 ### Code Integrity
 
-Each component (Runner, KMS node, Gateway, Ingestor) runs inside an **Intel TDX
-TEE**. Before joining the protocol, each component goes through four
+Each component (Runner, KMS node, Handle Gateway, Ingestor) runs inside an
+**Intel TDX TEE**. Before joining the protocol, each component goes through four
 verification steps:
 
 1. **Code hash stored on-chain**: the exact hash of the authorized binary is
@@ -277,8 +277,8 @@ functionality.
 
 ### Run the Network
 
-Any party can run any type of component (Runner, Ingestor, KMS node, Gateway),
-provided they:
+Any party can run any type of component (Runner, Ingestor, KMS node, Handle
+Gateway), provided they:
 
 1. Pass remote attestation (proving they run legitimate code inside a genuine
    TEE)
@@ -323,7 +323,7 @@ flowchart TB
         direction LR
         KMS["KMS"]
         Runners["Runners"]
-        GW["Gateway"]
+        GW["Handle Gateway"]
     end
 
     C1 --> nox
@@ -336,8 +336,8 @@ flowchart TB
 ```
 
 The target architecture extends Nox to any blockchain through a single shared
-backend: the same KMS, Runners, and Gateway serve all supported networks. Adding
-a new chain requires only deploying the on-chain contracts on the target
+backend: the same KMS, Runners, and Handle Gateway serve all supported networks.
+Adding a new chain requires only deploying the on-chain contracts on the target
 network. The protocol core (encryption, key management, computation) remains
 shared and chain-agnostic.
 
