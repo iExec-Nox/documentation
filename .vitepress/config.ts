@@ -27,18 +27,7 @@ export default withMermaid(
     },
     srcDir: './src',
     markdown: {
-      codeTransformers: [
-        // TODO: Remove twoslashOptions once @iexec-nox/handle is published on npm
-        // and installed as a dependency. The custom typeRoots and types/iexec-nox__handle/
-        // shim will no longer be needed.
-        transformerTwoslash({
-          twoslashOptions: {
-            compilerOptions: {
-              typeRoots: ['./node_modules/@types', './types'],
-            },
-          },
-        }),
-      ],
+      codeTransformers: [transformerTwoslash()],
       config(md) {
         md.use(groupIconMdPlugin);
       },
@@ -103,9 +92,9 @@ export default withMermaid(
       // https://vitepress.dev/reference/default-theme-config
       nav: [
         {
-          text: 'Overview',
-          link: '/overview/introduction',
-          activeMatch: '^/overview/',
+          text: 'Get Started',
+          link: '/getting-started/welcome',
+          activeMatch: '^/getting-started/',
         },
         {
           text: 'Guides',
@@ -119,7 +108,7 @@ export default withMermaid(
         },
         {
           text: 'Protocol',
-          link: '/protocol/protocol-vision',
+          link: '/protocol/global-architecture-overview',
           activeMatch: '^/protocol/',
         },
       ],

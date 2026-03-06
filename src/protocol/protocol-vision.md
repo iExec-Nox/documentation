@@ -1,7 +1,7 @@
 ---
 title: Protocol Vision
 description:
-  Long-term architecture of Nox, including distributed KMS, multichain support,
+  Long-term architecture of Nox, including distributed KMS, omnichain support,
   decentralized operations, multi-privacy technologies, DeFi composability, and
   open computation primitives
 ---
@@ -19,20 +19,26 @@ constraints.
 Nox fills this gap: a privacy layer that brings confidentiality to DeFi without
 sacrificing the composability and decentralization that make it powerful.
 
-The long-term vision for Nox evolves the protocol along five axes:
+The long-term vision for Nox evolves the protocol along six axes. This page
+reflects the current direction of the protocol: the architecture and priorities
+described here are subject to change as the technology and ecosystem mature.
 
 - **Privacy by convergence**: combine TEE, threshold cryptography, MPC, and
   zero-knowledge proofs, each applied where it offers the best tradeoff
-- **Trust distribution**: eliminate every single point of trust by distributing
+- **Trust distribution**: progressively reduce trust assumptions by distributing
   and decentralizing components
-- **Horizontal scalability**: support multiple Runners, multiple chains, and
-  growing throughput
+- **Omnichain expansion**: extend Nox to any blockchain, sharing a single
+  backend across all supported networks
+- **Horizontal scalability**: support multiple Runners and growing computation
+  throughput
 - **Composability**: enable confidential tokens to interact with the entire DeFi
   ecosystem, confidential or not
 - **Developer openness**: allow anyone to create, deploy, and monetize new
   confidential computation primitives
+- **Developer experience**: make confidential computing as accessible as
+  standard Solidity development
 
-## Privacy by Convergence
+## Combining Privacy Technologies
 
 ```mermaid
 block-beta
@@ -71,12 +77,12 @@ Each technology excels in a specific domain and fails in others. The only path
 to a privacy layer that is simultaneously fast, trustless, and scalable is to
 combine them, using each where it is strongest:
 
-| Technology                        | Where it applies               | Strength                                                                          |
-| --------------------------------- | ------------------------------ | --------------------------------------------------------------------------------- |
-| **TEE (Intel TDX)**               | Runner, Gateway, Ingestor, KMS | Fast computation on encrypted data inside hardware-isolated enclaves              |
-| **Threshold cryptography**        | KMS                            | Distributed key management with no single point of trust                          |
-| **MPC (Multi-Party Computation)** | KMS                            | Collaborative computation across multiple nodes without reconstructing secrets    |
-| **ZK (Zero-Knowledge Proofs)**    | On-chain verification          | Gas-efficient proof verification, replacing expensive on-chain verification logic |
+| Technology                        | Where it applies                      | Strength                                                                          |
+| --------------------------------- | ------------------------------------- | --------------------------------------------------------------------------------- |
+| **TEE (Intel TDX)**               | Runner, Handle Gateway, Ingestor, KMS | Fast computation on encrypted data inside hardware-isolated enclaves              |
+| **Threshold cryptography**        | KMS                                   | Distributed key management with no single point of trust                          |
+| **MPC (Multi-Party Computation)** | KMS                                   | Collaborative computation across multiple nodes without reconstructing secrets    |
+| **ZK (Zero-Knowledge Proofs)**    | On-chain verification                 | Gas-efficient proof verification, replacing expensive on-chain verification logic |
 
 Together, these technologies cover each other's weaknesses:
 
@@ -92,11 +98,19 @@ Together, these technologies cover each other's weaknesses:
   cheap to verify, allowing throughput to grow without proportionally increasing
   gas fees
 
-## No Single Key, No Single Point of Failure
+## Distributed Key Management
+
+### Quantum-Resistant Cryptography
+
+The current implementation uses ECIES on secp256k1. The target architecture
+plans to migrate toward **quantum-resistant algorithms**, ensuring long-term
+security of encrypted handles.
+
+### Threshold Distribution
 
 ```mermaid
 flowchart TB
-    subgraph split ["Key Splitting (n shares)"]
+    subgraph split ["Key Split across n nodes"]
         direction LR
         S1["KMS Node 1"]
         S2["KMS Node 2"]
@@ -104,7 +118,7 @@ flowchart TB
         SN["KMS Node n"]
     end
 
-    Client["Client (Runner, Gateway...)"]
+    Client["Client (Runner, Handle Gateway...)"]
 
     Client --> |request| S1
     Client --> |request| S2
@@ -114,7 +128,7 @@ flowchart TB
     S2 --> |partial result| Client
     S3 --> |partial result| Client
 
-    Client --> OUT["Recombine via Lagrange<br/>Key never reconstructed"]
+    Client --> OUT["Recombine partial results<br/>Key never reconstructed"]
 
     style split fill:#1e293b,color:#fff
     style Client fill:#7c3aed,color:#fff
@@ -122,53 +136,47 @@ flowchart TB
 ```
 
 The protocol's private key is Nox's most sensitive asset: whoever holds it can
-decrypt every handle in the system. In the current version, a single KMS node
-holds this key. The target architecture eliminates this single point of trust
-through **threshold cryptography**.
+decrypt every handle in the system. The target architecture eliminates this
+single point of trust through **threshold cryptography**: the key is split
+across **n KMS nodes**, and at least **t nodes** must collaborate to perform any
+cryptographic operation. The full key is never reconstructed anywhere, not on
+any node, not in any message.
 
-The private key is split into **n shares** using
-[Shamir's Secret Sharing](https://en.wikipedia.org/wiki/Shamir%27s_secret_sharing)
-(SSS), a scheme where a random polynomial of degree `t-1` encodes the secret as
-its constant term. Each KMS node receives one share (a point on the polynomial).
-At least **t nodes** must collaborate to perform any cryptographic operation.
-Fewer than `t` shares reveal nothing about the private key.
+### Key Rotation
 
-The critical property is that the private key is **never reconstructed**. During
-decryption delegation, each KMS node computes a partial result using its own
-share, and the requesting party recombines the partial results via Lagrange
-interpolation. No individual node, and no network message, ever contains the
-complete key.
+A threshold architecture also enables **safe key rotation** without service
+interruption: key shares can be refreshed across nodes without ever exposing the
+current private key, and existing ciphertexts are re-encrypted under the new key
+as part of the process.
 
-For the detailed cryptographic protocol (ECIES, HKDF parameters, delegation
-flow), see the [KMS](/protocol/kms) page.
-
-## Hardware-Rooted Chain of Trust
+## Every Component Is Verified
 
 Before the protocol can allow third parties to operate components, it must
 guarantee that each component runs legitimate code, inside a genuine hardware
-enclave, and that this trust persists over time. The Nox chain of trust rests on
+TEE, and that this trust persists over time. The Nox chain of trust rests on
 three pillars: **code integrity verification**, **physical infrastructure
 verification**, and **controlled code evolution**.
 
-### Proving Every Byte
+### Code Integrity
 
-Each component (Runner, KMS node, Gateway, Ingestor) runs inside an **Intel TDX
-enclave**. Before joining the protocol, each component must:
+Each component (Runner, KMS node, Handle Gateway, Ingestor) runs inside an
+**Intel TDX TEE**. Before joining the protocol, each component goes through four
+verification steps:
 
 1. **Code hash stored on-chain**: the exact hash of the authorized binary is
    recorded in the on-chain Registry. Only code whose hash matches can be
    accepted by the protocol
 2. **Remote Attestation (RA)**: the TDX hardware generates a signed attestation
    report, proving that the execution environment is genuine, that the running
-   code matches the expected hash, and that the enclave state has not been
-   tampered with
+   code matches the expected hash, and that the TEE state has not been tampered
+   with
 3. **On-chain registration**: the attestation report is verified and the
    component's identity (public key + attestation hash) is recorded in the
    on-chain **Registry** contract
-4. **Runtime authentication**: components communicate via **gRPC**, signing
-   every message with the attested private key. The receiving component verifies
-   the signature against the on-chain Registry, confirming that the sender has
-   been properly attested
+4. **Runtime authentication**: components communicate by signing every message
+   with the attested private key. The receiving component verifies the signature
+   against the on-chain Registry, confirming that the sender has been properly
+   attested
 
 ```mermaid
 sequenceDiagram
@@ -181,13 +189,13 @@ sequenceDiagram
     HW-->>C: Signed attestation (code hash + HW signature)
     C->>BC: Register (public key + attestation)
     BC->>BC: Verify attestation and hash, store identity
-    C->>R: gRPC request (signed with attested key)
+    C->>R: Signed request (attested key)
     R->>BC: Verify sender's key in Registry
     BC-->>R: Confirmed
     R->>R: Process request
 ```
 
-### Proof of Cloud: Proving Where It Runs
+### Proof of Cloud: Physical Location Verification
 
 TEE attestation proves **what** code is running, but not **where** it is
 running. An operator with physical access to the hardware could attempt attacks
@@ -218,7 +226,7 @@ to plaintext data because they lack physical access to the TEE hardware, and
 this physical separation is cryptographically verifiable rather than merely
 assumed.
 
-### Upgrading Without Breaking Trust
+### Governed Upgrades
 
 The protocol must be able to evolve (bug fixes, new features, optimizations)
 while keeping the chain of trust intact. The target architecture governs
@@ -267,10 +275,10 @@ operator. Nox is designed to be permissionless at every level: anyone can
 operate infrastructure, and anyone can extend the protocol with new
 functionality.
 
-### Become an Operator
+### Run the Network
 
-Any party can run any type of component (Runner, Ingestor, KMS node, Gateway),
-provided they:
+Any party can run any type of component (Runner, Ingestor, KMS node, Handle
+Gateway), provided they:
 
 1. Pass remote attestation (proving they run legitimate code inside a genuine
    TEE)
@@ -283,7 +291,7 @@ attestations) triggers **slashing**: partial or total loss of staked tokens.
 Every component type can be operated by independent parties, making the protocol
 progressively decentralized as new operators join the network.
 
-### Build, Deploy, Monetize
+### Extend the Protocol
 
 The protocol is not meant to implement every possible confidential operation.
 The target architecture opens the development of **computation primitives** to
@@ -292,47 +300,18 @@ them on the network, and monetize them.
 
 A computation primitive is an operation executed by Runners inside the TEE: it
 receives encrypted handles as input, performs a computation on the plaintext
-inside the enclave, and produces new encrypted handles as output. The developer
+inside the TEE, and produces new encrypted handles as output. The developer
 defines the logic, the protocol guarantees confidentiality and execution
 integrity.
 
 This openness applies to both infrastructure and innovation: operators earn by
 running the network, developers earn by extending it.
 
-## Scale Out, Not Up
-
-The current version runs a single Runner processing computation requests
-sequentially. The target architecture scales horizontally with **multiple
-Runners** coordinated by a **TDX Orchestrator**.
-
-```mermaid
-flowchart LR
-    MQ[Message Queue] --> O[Orchestrator]
-    O --> R1[Runner 1]
-    O --> R2[Runner 2]
-    O --> R3[Runner N]
-    R1 --> GW[Handle Gateway]
-    R2 --> GW
-    R3 --> GW
-```
-
-The Orchestrator is itself a TEE-attested component that:
-
-- **Dequeues** computation requests from the message queue
-- **Assigns** each request to an available Runner
-- **Monitors** Runner availability and execution progress
-- **Reassigns** tasks if a Runner fails or times out
-
-Runners are distributed among independent operators, each running inside its own
-Intel TDX enclave. This allows the protocol to scale throughput linearly with
-the number of Runners, while the Orchestrator ensures that every computation
-request is eventually processed.
-
-## Every Chain, One Privacy Layer
+## One Privacy Layer, Every Chain
 
 ```mermaid
 flowchart TB
-    subgraph chains ["Blockchains"]
+    subgraph chains ["Any Blockchain"]
         direction LR
         C1["Ethereum"]
         C2["Arbitrum"]
@@ -344,7 +323,7 @@ flowchart TB
         direction LR
         KMS["KMS"]
         Runners["Runners"]
-        GW["Gateway"]
+        GW["Handle Gateway"]
     end
 
     C1 --> nox
@@ -356,43 +335,44 @@ flowchart TB
     style nox fill:#7c3aed,color:#fff
 ```
 
-The handle structure already encodes a **4-byte chain ID** (bytes 26-29),
-ensuring that handles are bound to a specific chain and cannot be reused across
-chains. This makes multichain support a natural extension of the architecture
-rather than a protocol redesign.
+The target architecture extends Nox to any blockchain through a single shared
+backend: the same KMS, Runners, and Handle Gateway serve all supported networks.
+Adding a new chain requires only deploying the on-chain contracts on the target
+network. The protocol core (encryption, key management, computation) remains
+shared and chain-agnostic.
 
-The goal is to let Nox secure confidential data on any blockchain while sharing
-backend infrastructure. Extending Nox to a new chain requires deploying the
-on-chain contracts on the target chain and adapting the backend components that
-interact with the blockchain (event monitoring, transaction submission, chain ID
-routing). The protocol core (encryption, key management, computation execution)
-remains shared and agnostic to the data's chain of origin.
+Throughput scales horizontally: multiple Runners operated by independent
+operators process computation requests in parallel, allowing capacity to grow
+with demand without any single point of bottleneck.
 
-This shared infrastructure means that adding a new chain does not require
-duplicating the entire backend, allowing the protocol to expand to new chains
-with marginal operational cost.
+## Developer Experience
 
-## Private Tokens Meet Public DeFi
+Confidential computing should feel like standard Solidity development. The
+target architecture invests in tooling and SDK improvements to remove friction
+at every step of the developer workflow.
 
-Confidentiality is only valuable if it integrates with the existing ecosystem. A
-confidential token isolated from the rest of DeFi would be unusable. Nox's
-vision is to make confidential tokens **composable** with the entire DeFi
-ecosystem, whether confidential or not.
+### Solidity Library
 
-In practice, this means enabling a Nox confidential token to be used as
-collateral in a lending protocol, swapped on a DEX, or deposited into a yield
-vault, even when those protocols do not natively support confidentiality. The
-protocol manages the transition between the confidential and non-confidential
-worlds transparently, decrypting only the information strictly necessary for
-interaction with the target protocol.
+Developers interact with encrypted values through opaque handles (`euint256`,
+`ebool`, etc.) without ever manipulating ciphertexts directly. The current model
+requires all operands to be handles, including plaintext constants (which must
+first be converted via `plaintextToEncrypted`). A planned evolution is to
+support **mixed operand operations** natively, allowing a plaintext value to be
+passed directly alongside an encrypted handle without a prior conversion step.
+This removes boilerplate and makes confidential arithmetic feel as natural as
+standard Solidity.
 
-This composability also extends to confidential DeFi (cDeFi) protocols, enabling
-interactions between different privacy layers and creating a unified ecosystem
-where confidentiality is a spectrum rather than a binary choice.
+### Hardhat and Foundry Plugins
+
+The target architecture provides first-class plugin support for the two dominant
+Solidity development frameworks. Developers will be able to write, test, and
+debug contracts using encrypted types directly within their existing Hardhat or
+Foundry workflows, without setting up a separate environment or relying on
+manual mocking of encrypted values.
 
 ## Learn More
 
-- [KMS](/protocol/kms) - Cryptographic protocol and threshold architecture
-- [Runner](/protocol/runner) - Computation engine
 - [Global Architecture Overview](/protocol/global-architecture-overview) - Full
   component descriptions and data flows
+- [Runner](/protocol/runner) - Computation engine
+- [KMS](/protocol/kms) - Cryptographic protocol and threshold architecture

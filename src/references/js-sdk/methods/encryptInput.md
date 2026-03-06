@@ -5,17 +5,17 @@ description: Encrypt a value and create an on-chain handle
 
 # encryptInput
 
-Encrypts a plaintext value and registers it with the Handle Gateway. The Gateway
+Encrypts a plaintext value and registers it with the Handle Gateway. The latter
 stores the encrypted data and returns a **handle** — a 32-byte on-chain
 identifier — along with a **handleProof** that smart contracts can use to verify
-the handle was created by a legitimate Gateway.
+the handle was created by a legitimate Handle Gateway.
 
 ### What happens under the hood
 
 1. The SDK encodes the value according to the given Solidity type.
-2. It sends the encoded value plus the caller's address to the Gateway.
-3. The Gateway encrypts and stores the data, then returns a deterministic handle
-   and a signed EIP-712 proof.
+2. It sends the encoded value plus the caller's address to the Handle Gateway.
+3. The Handle Gateway encrypts and stores the data, then returns a deterministic
+   handle and a signed EIP-712 proof.
 
 The handle can then be passed to a smart contract alongside the `handleProof`
 for on-chain verification. From that point, the contract works with the handle
@@ -107,7 +107,7 @@ await handleClient.encryptInput(// [!code focus]
 **Type:** `SolidityType`
 
 The Solidity type the value will be treated as on-chain. The type code is
-embedded in the handle (byte 30) so the Gateway and contracts know how to
+embedded in the handle (byte 30) so the Handle Gateway and contracts know how to
 interpret the encrypted data.
 
 Supported types:
@@ -146,7 +146,10 @@ await handleClient.encryptInput('Hello, Nox!', 'string', '0x123...abc'); // [!co
 **Type:** `string` (Ethereum address)
 
 The address of the smart contract that will use this handle. The handle is bound
-to this contract for access control purposes.
+to this contract: only the application contract can validate the `handleProof`
+on-chain. After successful validation, it receives transient access on the ACL
+for this handle. The contract must then explicitly persist that access and grant
+permissions to any address that needs to use or decrypt the handle.
 
 ```ts twoslash
 declare global {
@@ -195,6 +198,6 @@ handle.
 
 **Type:** `string` (`0x`-prefixed hex string)
 
-An EIP-712 signed proof from the Gateway attesting that the handle was created
-legitimately. Pass this proof alongside the handle when calling smart contract
-functions that verify encrypted inputs.
+An EIP-712 signed proof from the Handle Gateway attesting that the handle was
+created legitimately. Pass this proof alongside the handle when calling smart
+contract functions that verify encrypted inputs.

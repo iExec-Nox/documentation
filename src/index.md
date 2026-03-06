@@ -5,19 +5,18 @@ layout: home
 hero:
   text: 'Composable Privacy for DeFi'
   tagline:
-    'The first truly on-chain composable privacy layer multichain,
-    multi-privacy. Like HTTPS made secure connections invisible, Nox makes
-    privacy the default.'
+    'The first truly on-chain composable privacy layer omnichain, multi-privacy.
+    Like HTTPS made secure connections invisible, Nox makes privacy the default.'
   image:
     src: /illustration-large.webp
     alt: Nox Protocol
   actions:
     - theme: brand
       text: Get Started
-      link: /overview/introduction
+      link: /getting-started/welcome
     - theme: alt
       text: Hello World Tutorial
-      link: /overview/hello-world
+      link: /getting-started/hello-world
 
 features:
   - icon:
@@ -35,7 +34,7 @@ features:
     details:
       Deploy your first confidential smart contract in minutes. One import, one
       function call — privacy becomes native.
-    link: /overview/hello-world
+    link: /getting-started/hello-world
   - icon:
       <svg class="_stroke" width="38" height="36" viewBox="0 0 38 36"
       fill="none" xmlns="http://www.w3.org/2000/svg"> <path d="M5.16675

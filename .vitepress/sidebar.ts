@@ -2,20 +2,20 @@ import type { DefaultTheme } from 'vitepress';
 
 export function getSidebar() {
   return {
-    '/overview/': [
+    '/getting-started/': [
       {
-        text: 'OVERVIEW',
+        text: 'GET STARTED',
         items: [
-          { text: 'Introduction', link: '/overview/introduction' },
-          { text: 'Hello World', link: '/overview/hello-world' },
+          { text: 'Welcome', link: '/getting-started/welcome' },
+          { text: 'Hello World', link: '/getting-started/hello-world' },
           {
             text: 'Developer',
             items: [
-              { text: 'Release Note', link: '/overview/release-notes' },
-              { text: 'Status', link: '/overview/status' },
+              { text: 'Release Note', link: '/getting-started/release-notes' },
+              { text: 'Status', link: '/getting-started/status' },
             ],
           },
-          { text: 'Use Cases', link: '/overview/use-cases' },
+          { text: 'Use Cases', link: '/getting-started/use-cases' },
         ],
       },
     ],
@@ -97,18 +97,48 @@ export function getSidebar() {
             link: '/references/solidity-library/getting-started',
           },
           {
-            text: 'Methods',
+            text: 'Core Primitives',
             collapsed: true,
             items: [
               {
-                text: 'Available Methods',
-                link: '/references/solidity-library/methods/available-methods',
+                text: 'Plaintext to Encrypted',
+                link: '/references/solidity-library/methods/core-primitives/plaintext-to-encrypted',
+              },
+              {
+                text: 'fromExternal',
+                link: '/references/solidity-library/methods/core-primitives/fromExternal',
+              },
+              {
+                text: 'Arithmetic',
+                link: '/references/solidity-library/methods/core-primitives/arithmetic',
+              },
+              {
+                text: 'Safe Arithmetic',
+                link: '/references/solidity-library/methods/core-primitives/safe-arithmetic',
+              },
+              {
+                text: 'Comparisons',
+                link: '/references/solidity-library/methods/core-primitives/comparisons',
+              },
+              {
+                text: 'select',
+                link: '/references/solidity-library/methods/core-primitives/select',
+              },
+              {
+                text: 'Access Control',
+                link: '/references/solidity-library/methods/core-primitives/access-control',
               },
             ],
           },
           {
-            text: 'Advanced Configuration',
-            link: '/references/handle-sdk/advanced-configuration',
+            text: 'Advanced Functions',
+            collapsed: true,
+            items: [
+              {
+                text: 'Token Operations',
+                link: '/references/solidity-library/methods/advanced/token-operations',
+              },
+            ],
           },
         ],
       },
@@ -122,36 +152,36 @@ export function getSidebar() {
         text: 'PROTOCOL',
         items: [
           {
-            text: 'Protocol Vision',
-            link: '/protocol/protocol-vision',
-          },
-          {
             text: 'Global Architecture Overview',
             link: '/protocol/global-architecture-overview',
           },
           {
-            text: 'KMS',
-            link: '/protocol/kms',
+            text: 'Protocol Vision',
+            link: '/protocol/protocol-vision',
           },
           {
-            text: 'Runner',
-            link: '/protocol/runner',
-          },
-          {
-            text: 'Computation Primitives',
-            link: '/protocol/computation-primitives',
-          },
-          {
-            text: 'Gateway',
-            link: '/protocol/gateway',
+            text: 'Nox Smart Contracts',
+            link: '/protocol/nox-smart-contracts',
           },
           {
             text: 'Ingestor',
             link: '/protocol/ingestor',
           },
           {
-            text: 'Nox Smart Contracts',
-            link: '/protocol/nox-smart-contracts',
+            text: 'Runner',
+            link: '/protocol/runner',
+          },
+          {
+            text: 'Handle Gateway',
+            link: '/protocol/handle-gateway',
+          },
+          {
+            text: 'KMS',
+            link: '/protocol/kms',
+          },
+          {
+            text: 'Computation Primitives',
+            link: '/protocol/computation-primitives',
           },
         ],
       },

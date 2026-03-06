@@ -13,30 +13,44 @@ computation requests, access control, and protocol component registration.
 ## Role in the Protocol
 
 Smart contracts are the on-chain entry point for all confidential operations.
-Users call the `TEEPrimitives` library from their contracts, which routes
-through the `TEEComputeManager`. The manager validates handle proofs, verifies
-type compatibility between operands, grants transient access on result handles,
-and emits events (monitored by the [Ingestor](/protocol/ingestor)).
+Users call the `Nox` library from their contracts, which routes through the
+`NoxCompute` contract. It validates handle proofs, verifies type compatibility
+between operands, grants transient access to result handles, and emits events to
+the computation queue for off-chain execution. At this point, the transaction is
+complete on-chain but the encrypted result does not yet exist: it will be
+computed by the [Runner](/protocol/runner) after the
+[Ingestor](/protocol/ingestor) picks up the event.
 
 ## How It Works
 
 ```mermaid
 sequenceDiagram
     participant U as User Contract
-    participant TEE as TEEComputeManager
+    participant TEE as NoxCompute
     participant ACL as ACL
-    participant I as Ingestor
+    participant I as Ingestor (off-chain)
 
-    U->>TEE: Call via TEEPrimitives (e.g. add(a, b))
+    U->>TEE: Call via Nox (e.g. Nox.add(a, b))
     TEE->>TEE: Validate handle proofs
     TEE->>TEE: Verify type compatibility
     TEE->>ACL: Grant transient access on result handle
     TEE->>TEE: Emit computation event (e.g. Add)
-    I->>TEE: Monitor events
+    Note over TEE: On-chain execution ends here.<br/>Result handle exists but has no ciphertext yet.
+    I->>TEE: Poll events (off-chain)
     I->>I: Forward to Runner via NATS
 ```
 
-## TEEComputeManager
+::: info Handles are deferred pointers
+
+A handle returned by `Nox.add(a, b)` is a deterministic identifier — not the
+encrypted result. The actual computation happens off-chain after the
+[Ingestor](/protocol/ingestor) picks up the event, and is processed sequentially
+by a [Runner](/protocol/runner). The ciphertext will be available in the
+[Handle Gateway](/protocol/handle-gateway) once the Runner has processed it.
+
+:::
+
+## NoxCompute
 
 The main entry point for confidential computations. It receives requests from
 user contracts, validates handle proofs, emits events that trigger off-chain
@@ -53,24 +67,35 @@ HandleProof(bytes32 handle, address owner, address app, uint256 createdAt)
 
 **EIP-712 domain:**
 
-| Field             | Value                              |
-| ----------------- | ---------------------------------- |
-| name              | `"TEEComputeManager"`              |
-| version           | `"1"`                              |
-| chainId           | Deployment chain ID                |
-| verifyingContract | TEEComputeManager contract address |
+| Field             | Value                       |
+| ----------------- | --------------------------- |
+| name              | `"NoxCompute"`              |
+| version           | `"1"`                       |
+| chainId           | Deployment chain ID         |
+| verifyingContract | NoxCompute contract address |
 
-### TEEPrimitives Library
+### KMS Public Key
 
-Smart contracts use the `TEEPrimitives` library to interact with encrypted
-values. All functions emit events that the [Ingestor](/protocol/ingestor)
-monitors to trigger off-chain computation by the [Runner](/protocol/runner).
+`NoxCompute` stores the KMS public key used by the protocol to encrypt
+computation inputs for the Runner. The public key is set at deployment, can be
+updated by a protocol administrator, and can be retrieved from the contract by
+clients to encrypt inputs before submission.
+
+```solidity
+function kmsPublicKey() external view returns (bytes memory);
+```
+
+### Nox Library
+
+Smart contracts use the `Nox` library to interact with encrypted values. All
+functions emit events that the [Ingestor](/protocol/ingestor) monitors to
+trigger off-chain computation by the [Runner](/protocol/runner).
 
 **Core functions:**
 
 ```solidity
 // Encrypt plaintext into a handle
-function plaintextToEncrypted(euint256 value) returns (euint256);
+function plaintextToEncrypted(bytes32 value) returns (euint256);
 
 // Arithmetic
 function add(euint256 lhs, euint256 rhs) returns (euint256);
@@ -96,7 +121,34 @@ function ge(euint256 lhs, euint256 rhs) returns (ebool);
 function select(ebool cond, euint256 ifTrue, euint256 ifFalse) returns (euint256);
 ```
 
+**Safe arithmetic:**
+
+The `safe*` variants (`safeAdd`, `safeSub`, `safeMul`, `safeDiv`) protect
+against overflow and underflow in confidential arithmetic. Each returns two
+values:
+
+- An `ebool` flag: `true` if the operation completed without overflow or
+  underflow, `false` otherwise
+- A `euint256` result: the computed value when the operation succeeded
+
+This is necessary because the protocol cannot revert on overflow — the operands
+are encrypted, so their values are not visible on-chain. The `ebool` flag lets
+the calling contract handle the overflow case conditionally using `Nox.select`:
+
+```solidity
+(ebool ok, euint256 result) = Nox.safeAdd(balanceA, balanceB);
+// Apply the result only if there was no overflow
+euint256 finalBalance = Nox.select(ok, result, balanceA);
+```
+
 **Advanced functions:**
+
+Advanced functions are aggregations of multiple arithmetic operations bundled
+into a single call. Instead of chaining individual operations (each emitting a
+separate event and triggering a dedicated off-chain computation job), these
+functions perform the full operation atomically: one event is emitted and the
+Runner executes the entire sequence in a single pass. This reduces both on-chain
+gas costs and off-chain processing overhead.
 
 ```solidity
 // Confidential token transfer
@@ -112,10 +164,39 @@ function burn(euint256 amount, euint256 balanceFrom, euint256 totalSupply)
     returns (euint256 newBalanceFrom, euint256 newTotalSupply, euint256 burntAmount);
 ```
 
+### Mixing Plaintext and Encrypted Values
+
+All Nox operations require **both operands to be handles**. To combine an
+encrypted value with a plaintext constant, first convert the plaintext to a
+handle using `plaintextToEncrypted`:
+
+```solidity
+// Goal: compute encryptedBalance + 100
+euint256 handleA = ...; // existing encrypted handle
+
+// Step 1: wrap the plaintext constant into a handle
+euint256 handleB = Nox.plaintextToEncrypted(bytes32(uint256(100)));
+
+// Step 2: now both operands are handles
+euint256 result = Nox.add(handleA, handleB);
+```
+
+`plaintextToEncrypted` emits its own event. The Runner encrypts the value
+off-chain and stores it in the Handle Gateway before it can be used as an
+operand.
+
+::: info
+
+**Roadmap:** Native support for mixed operands (plaintext alongside encrypted
+handles, without a prior conversion) is planned. See
+[Protocol Vision — Solidity Library](/protocol/protocol-vision#solidity-library).
+
+:::
+
 ### Encrypted Types
 
 The protocol supports all standard Solidity types in encrypted form. The full
-type mapping is defined in
+type mapping is described in the `NoxType` enum in
 [TypeUtils.sol](https://github.com/iExec-Nox/nox-contracts/blob/main/contracts/shared/TypeUtils.sol#L8).
 
 ## ACL (Access Control List)
@@ -147,6 +228,34 @@ function isAllowed(bytes32 handle, address account) view returns (bool);
 function allowPublicDecryption(bytes32 handle) external;
 ```
 
+### Transient vs. Persistent Access
+
+When `NoxCompute` creates a result handle, it grants only **transient** access
+to the calling contract. This is intentional for two reasons:
+
+- **Gas efficiency**: writing persistent ACL entries for every intermediate
+  result handle would be expensive. Transient access requires no storage write.
+- **Separation of concerns**: `NoxCompute` has no knowledge of the application's
+  access model. It is the responsibility of the calling contract to decide which
+  handles need to persist and who should be allowed to use or decrypt them.
+
+::: warning Persist the ACL or lose the handle
+
+If your contract needs to reuse a result handle in a future transaction (store
+it in state, pass it to another function, or allow a user to decrypt it), you
+must explicitly grant persistent access before the transaction ends
+
+:::
+
+```solidity
+euint256 result = Nox.add(a, b);
+ACL.allow(euint256.unwrap(result), address(this)); // persist for your contract
+ACL.addViewer(euint256.unwrap(result), user);       // allow user to decrypt
+```
+
+Without this, the handle reference will exist in state but nobody will have
+permission to use it.
+
 ## Handle Structure
 
 A handle is a unique 32-byte identifier that references an encrypted value in
@@ -160,15 +269,15 @@ same handle.
     prehandle (truncated)      Chain ID     Type   Version
 ```
 
-The full type mapping (byte 30) is defined in
+The full type mapping (byte 30) is described in the `NoxType` enum in
 [TypeUtils.sol](https://github.com/iExec-Nox/nox-contracts/blob/main/contracts/shared/TypeUtils.sol#L8).
 
 ### Required Properties
 
 - **Determinism**: same operation + same inputs + same chain = same handle
 - **Cross-chain uniqueness**: the chain ID prevents handle reuse across chains
-- **Deployment isolation**: the TEEComputeManager address is included in the
-  hash, binding the handle to a specific protocol instance
+- **Deployment isolation**: the NoxCompute address is included in the hash,
+  binding the handle to a specific protocol instance
 - **Verifiable type**: the type can be extracted in O(1) without external calls
 - **Versioning**: allows format evolution while maintaining backward
   compatibility
@@ -184,25 +293,26 @@ depending on the handle origin:
 bytes32 prehandle = keccak256(abi.encodePacked(
     operator,           // Operator enum (Add, Sub, Div, ...)
     operands,           // Array of input handles
-    address(this),      // TEEComputeManager address
+    address(this),      // NoxCompute address
     msg.sender,         // Calling contract
     block.timestamp,
     outputIndex         // For multi-output operations (0, 1, ...)
 ));
 ```
 
-**User input** (off-chain, via Gateway `POST /v0/secrets`):
+**User input** (off-chain, via Handle Gateway `POST /v0/secrets`):
 
 ```solidity
 bytes32 prehandle = randomValue;
 ```
 
-For user inputs, the prehandle is a random value generated by the Gateway. The
-handle is then validated on-chain via an EIP-712 signed `HandleProof`.
+For user inputs, the prehandle is a random value generated by the Handle
+Gateway. The handle is then validated on-chain via an EIP-712 signed
+`HandleProof`.
 
 ## Learn More
 
 - [Runner](/protocol/runner) - Executes the off-chain computations
-- [Gateway](/protocol/gateway) - Manages encrypted handle data
+- [Handle Gateway](/protocol/handle-gateway) - Manages encrypted handle data
 - [Ingestor](/protocol/ingestor) - Monitors contract events
 - [Global Architecture Overview](/protocol/global-architecture-overview)
