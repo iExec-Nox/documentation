@@ -42,7 +42,7 @@ contract ConfidentialVault {
 The Nox library organizes its functions into three layers, each building on the
 previous one.
 
-![Confidential Functions by Nox](/confidential-primtive.png)
+![Confidential Functions by Nox](/confidential-primitive.png)
 
 ### Core Primitives
 

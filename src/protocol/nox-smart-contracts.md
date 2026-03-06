@@ -46,7 +46,7 @@ A handle returned by `Nox.add(a, b)` is a deterministic identifier — not the
 encrypted result. The actual computation happens off-chain after the
 [Ingestor](/protocol/ingestor) picks up the event, and is processed sequentially
 by a [Runner](/protocol/runner). The ciphertext will be available in the
-[Handle Gateway](/protocol/gateway) once the Runner has processed it.
+[Handle Gateway](/protocol/handle-gateway) once the Runner has processed it.
 
 :::
 
@@ -313,6 +313,6 @@ Gateway. The handle is then validated on-chain via an EIP-712 signed
 ## Learn More
 
 - [Runner](/protocol/runner) - Executes the off-chain computations
-- [Handle Gateway](/protocol/gateway) - Manages encrypted handle data
+- [Handle Gateway](/protocol/handle-gateway) - Manages encrypted handle data
 - [Ingestor](/protocol/ingestor) - Monitors contract events
 - [Global Architecture Overview](/protocol/global-architecture-overview)

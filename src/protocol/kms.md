@@ -139,5 +139,5 @@ derives the AES-256 key via HKDF, and decrypts the ciphertext locally.
 ## Learn More
 
 - [Global Architecture Overview](/protocol/global-architecture-overview)
-- [Gateway](/protocol/gateway)
+- [Handle Gateway](/protocol/handle-gateway)
 - [Runner](/protocol/runner)

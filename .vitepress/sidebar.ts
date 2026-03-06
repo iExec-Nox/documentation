@@ -173,7 +173,7 @@ export function getSidebar() {
           },
           {
             text: 'Handle Gateway',
-            link: '/protocol/gateway',
+            link: '/protocol/handle-gateway',
           },
           {
             text: 'KMS',

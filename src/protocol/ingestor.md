@@ -89,7 +89,7 @@ Each `TransactionEvent` contains the operation type and the associated handles
 ## Learn More
 
 - [Runner](/protocol/runner) - Processes the computation requests
-- [Gateway](/protocol/gateway) - Stores encrypted handle data
+- [Handle Gateway](/protocol/handle-gateway) - Stores encrypted handle data
 - [Nox Smart Contracts](/protocol/nox-smart-contracts) - Emits the monitored
   events
 - [Global Architecture Overview](/protocol/global-architecture-overview)

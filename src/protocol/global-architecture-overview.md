@@ -211,7 +211,8 @@ For the full cryptographic protocol, see [KMS](/protocol/kms).
 
 - [KMS](/protocol/kms): cryptographic protocol and decryption delegation
 - [Runner](/protocol/runner): computation engine and supported operations
-- [Handle Gateway](/protocol/gateway): encryption, storage, and API reference
+- [Handle Gateway](/protocol/handle-gateway): encryption, storage, and API
+  reference
 - [Ingestor](/protocol/ingestor): blockchain monitoring and event pipeline
 - [Nox Smart Contracts](/protocol/nox-smart-contracts): on-chain contracts,
   handle structure, and ACL
