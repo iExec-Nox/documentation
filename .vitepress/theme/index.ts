@@ -5,7 +5,7 @@ import TwoslashFloatingVue from '@shikijs/vitepress-twoslash/client';
 import Layout from './Layout.vue';
 import Required from './components/Required.vue';
 import Optional from './components/Optional.vue';
-import RemixEmbed from '@/components/RemixEmbed.vue';
+import RemixButton from '@/components/RemixButton.vue';
 import Glossary from './components/Glossary.vue';
 import type { EnhanceAppContext } from 'vitepress';
 import googleAnalytics from 'vitepress-plugin-google-analytics';
@@ -29,7 +29,7 @@ export default {
   enhanceApp({ app }: EnhanceAppContext) {
     app.component('Required', Required);
     app.component('Optional', Optional);
-    app.component('RemixEmbed', RemixEmbed);
+    app.component('RemixButton', RemixButton);
     app.component('Glossary', Glossary);
     app.use(TwoslashFloatingVue as any);
 
