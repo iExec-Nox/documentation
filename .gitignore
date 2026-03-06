@@ -13,4 +13,8 @@ components.d.ts
 #mac
 .DS_Store
 protocol-docs
+
+#Claude
+.cursorrules
+CLAUDE.md
 .cursor
