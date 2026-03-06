@@ -5,7 +5,7 @@ pragma solidity ^0.8.24;
 // and only the owner can take it out. This version keeps the
 // balance encrypted so nobody can see how much is inside.
 
-import {Nox, euint256, externalEuint256, ebool} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol";
+import {Nox, euint256, externalEuint256} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol";
 
 contract ConfidentialPiggyBank {
     euint256 public balance;
@@ -30,9 +30,7 @@ contract ConfidentialPiggyBank {
     function withdraw(externalEuint256 inputHandle, bytes calldata inputProof) external {
         require(msg.sender == owner);
         euint256 amount = Nox.fromExternal(inputHandle, inputProof);
-
-        (ebool ok, euint256 newBalance) = Nox.safeSub(balance, amount);
-        balance = Nox.select(ok, newBalance, balance);
+        balance = Nox.sub(balance, amount);
         Nox.allowThis(balance);
         Nox.allow(balance, owner);
     }

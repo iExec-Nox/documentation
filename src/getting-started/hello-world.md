@@ -57,25 +57,21 @@ remain visible on-chain, only **balances and amounts** are encrypted.
 
 :::steps
 
-1. ### Import Nox
+1. ### Import Nox and update types
 
-   Add the Nox library. A single import gives you everything you need:
-
-   ```solidity
-   import {Nox, euint256, externalEuint256, ebool} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol"; // [!code ++]
-   ```
-
-2. ### Replace types with encrypted equivalents
-
-   Swap `uint256` for `euint256`. On-chain, the value is now stored as a 32-byte
-   **handle** that points to encrypted data. The actual value is never visible.
+   Add the Nox library and swap `uint256` for `euint256`. On-chain, the value is
+   now stored as a 32-byte **handle** that points to encrypted data. The actual
+   value is never visible.
 
    ```solidity
-   uint256 private balance; // [!code --]
-   euint256 public balance; // [!code ++]
+   import {Nox, euint256, externalEuint256} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol"; // [!code ++]
+
+   contract ConfidentialPiggyBank {
+       uint256 private balance; // [!code --]
+       euint256 public balance; // [!code ++]
    ```
 
-3. ### Initialize encrypted state
+2. ### Initialize encrypted state
 
    Unlike plain `uint256` (which defaults to `0`), an `euint256` must be
    explicitly initialized to a valid encrypted handle. Use `Nox.toEuint256()` in
@@ -85,65 +81,72 @@ remain visible on-chain, only **balances and amounts** are encrypted.
    constructor() {
        owner = msg.sender;
        balance = Nox.toEuint256(0); // [!code ++]
-       Nox.allowThis(balance); // [!code ++]
-       Nox.allow(balance, owner); // [!code ++]
    }
    ```
 
-4. ### Accept encrypted inputs
+3. ### Convert `deposit()`
 
-   Users encrypt values off-chain with the JS SDK and send a handle + proof to
-   your contract. Replace plain `uint256` parameters with `externalEuint256` + a
-   proof:
+   Users encrypt values off-chain with the JS SDK and send a **handle** (a
+   reference to the encrypted data) along with a **proof** that the encryption
+   is valid. Replace the plain parameter with `externalEuint256`, then call
+   `Nox.fromExternal()` to verify the proof and convert the external handle into
+   an `euint256` the contract can use. Finally, use `Nox.add()` instead of `+=`:
 
    ```solidity
    function deposit(uint256 amount) external { // [!code --]
+       balance += amount; // [!code --]
+   } // [!code --]
    function deposit(externalEuint256 inputHandle, bytes calldata inputProof) external { // [!code ++]
+       euint256 amount = Nox.fromExternal(inputHandle, inputProof); // [!code ++]
+       balance = Nox.add(balance, amount); // [!code ++]
+   } // [!code ++]
    ```
 
-   Then validate the proof with `Nox.fromExternal()` to get a typed handle:
+4. ### Convert `withdraw()`
+
+   The `require(amount <= balance)` check cannot work on encrypted values.
+   Replace it with `Nox.sub()`, which subtracts two encrypted values:
 
    ```solidity
-   euint256 amount = Nox.fromExternal(inputHandle, inputProof);
+   function withdraw(uint256 amount) external { // [!code --]
+       require(msg.sender == owner); // [!code --]
+       require(amount <= balance); // [!code --]
+       balance -= amount; // [!code --]
+   } // [!code --]
+   function withdraw(externalEuint256 inputHandle, bytes calldata inputProof) external { // [!code ++]
+       require(msg.sender == owner); // [!code ++]
+       euint256 amount = Nox.fromExternal(inputHandle, inputProof); // [!code ++]
+       balance = Nox.sub(balance, amount); // [!code ++]
+   } // [!code ++]
    ```
 
-5. ### Use Nox for computations
-
-   Standard operators (`+=`, `-=`) don't work on encrypted types. Use `Nox.*`
-   functions instead. These trigger off-chain computation inside a TEE, the
-   plaintext is **never exposed on-chain**:
-
-   ```solidity
-   balance += amount; // [!code --]
-   balance = Nox.add(balance, amount); // [!code ++]
-   ```
-
-   For the withdrawal, `require(amount <= balance)` would leak information (a
-   revert reveals the condition failed). Use `Nox.safeSub()` instead: it handles
-   underflow detection on encrypted values without reverting.
-
-   ```solidity
-   require(amount <= balance); // [!code --]
-   balance -= amount; // [!code --]
-   (ebool ok, euint256 newBalance) = Nox.safeSub(balance, amount); // [!code ++]
-   balance = Nox.select(ok, newBalance, balance); // [!code ++]
-   ```
-
-   - `Nox.safeSub()` subtracts and returns `(ebool ok, euint256 result)`. If
-     `amount > balance`, `ok` is false and `result` is zero
-   - `Nox.select()` picks between two values based on an encrypted boolean: on
-     underflow the balance stays unchanged, no information is leaked
-
-6. ### Grant access
+5. ### Grant permissions
 
    By default, only the handle creator has access. After each operation that
-   produces a new handle, grant permissions so the contract can keep computing
-   on it and the owner can decrypt it:
+   produces a new handle, you need to grant two permissions:
+   - `Nox.allowThis(balance)`: lets the **contract** reuse the handle in future
+     computations
+   - `Nox.allow(balance, owner)`: lets the **owner** decrypt the balance
+     off-chain
+
+   Add both calls at the end of the constructor, `deposit()`, and `withdraw()`:
 
    ```solidity
    Nox.allowThis(balance);
    Nox.allow(balance, owner);
    ```
+
+:::
+
+<!-- prettier-ignore -->
+::: warning Overflow and wrapping behavior
+
+`Nox.add()` and `Nox.sub()` use wrapping arithmetic: if the result exceeds the
+type's range, it wraps around instead of reverting. For production contracts,
+use `Nox.safeAdd()` / `Nox.safeSub()` combined with `Nox.select()` to handle
+overflows and underflows gracefully without leaking information. See the
+[Solidity Library reference](/references/solidity-library/getting-started) for
+details.
 
 :::
 
@@ -165,7 +168,7 @@ pragma solidity ^0.8.24;
 // and only the owner can take it out. This version keeps the
 // balance encrypted so nobody can see how much is inside.
 
-import {Nox, euint256, externalEuint256, ebool} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol";
+import {Nox, euint256, externalEuint256} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol";
 
 contract ConfidentialPiggyBank {
     euint256 public balance;
@@ -188,9 +191,7 @@ contract ConfidentialPiggyBank {
     function withdraw(externalEuint256 inputHandle, bytes calldata inputProof) external {
         require(msg.sender == owner);
         euint256 amount = Nox.fromExternal(inputHandle, inputProof);
-
-        (ebool ok, euint256 newBalance) = Nox.safeSub(balance, amount);
-        balance = Nox.select(ok, newBalance, balance);
+        balance = Nox.sub(balance, amount);
         Nox.allowThis(balance);
         Nox.allow(balance, owner);
     }
