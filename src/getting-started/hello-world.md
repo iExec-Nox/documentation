@@ -9,11 +9,12 @@ import piggyBankCode from '../contracts/ConfidentialPiggyBank.sol?raw';
 
 # Hello World
 
-In this tutorial, you will write a simple piggy bank contract, then make it
-confidential with Nox. By the end, balances and amounts will be fully encrypted:
-nobody can see how much is inside.
+A piggy bank is a simple savings container: you put money in, and only the owner
+can take it out. In this tutorial, you will first write a classic piggy bank,
+then turn it into a confidential one using Nox. By the end, balances and amounts
+will be fully encrypted: nobody can see how much is inside.
 
-## Step 1: A simple piggy bank
+## Write a simple contract
 
 Start with a standard Solidity contract. Nothing encrypted yet:
 
@@ -48,76 +49,85 @@ contract PiggyBank {
 This works, but the balance is visible to anyone reading the blockchain. Let's
 fix that.
 
-## Step 2: Import Nox
+## Turn it into a confidential contract
 
-Replace the standard imports with the Nox library. A single import gives you
-everything you need:
+Nox provides **confidentiality**, not anonymity. Addresses and function calls
+remain visible on-chain, only **balances and amounts** are encrypted.
 
-```solidity
-import {Nox, euint256, externalEuint256, ebool} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol"; // [!code ++]
-```
+:::steps
 
-## Step 3: Replace types with encrypted equivalents
+1. ### Import Nox
 
-Swap `uint256` for `euint256`. On-chain, the value is now stored as a 32-byte
-**handle** that points to encrypted data. The actual value is never visible.
+   Add the Nox library. A single import gives you everything you need:
 
-```solidity
-uint256 private balance; // [!code --]
-euint256 private balance; // [!code ++]
-```
+   ```solidity
+   import {Nox, euint256, externalEuint256, ebool} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol"; // [!code ++]
+   ```
 
-## Step 4: Accept encrypted inputs
+2. ### Replace types with encrypted equivalents
 
-Users encrypt values off-chain with the JS SDK and send a handle + proof to your
-contract. Replace plain `uint256` parameters with `externalEuint256` + a proof:
+   Swap `uint256` for `euint256`. On-chain, the value is now stored as a 32-byte
+   **handle** that points to encrypted data. The actual value is never visible.
 
-```solidity
-function deposit(uint256 amount) external { // [!code --]
-function deposit(externalEuint256 inputHandle, bytes calldata inputProof) external { // [!code ++]
-```
+   ```solidity
+   uint256 private balance; // [!code --]
+   euint256 private balance; // [!code ++]
+   ```
 
-Then validate the proof with `Nox.fromExternal()` to get a typed handle:
+3. ### Accept encrypted inputs
 
-```solidity
-euint256 amount = Nox.fromExternal(inputHandle, inputProof);
-```
+   Users encrypt values off-chain with the JS SDK and send a handle + proof to
+   your contract. Replace plain `uint256` parameters with `externalEuint256` + a
+   proof:
 
-## Step 5: Use Nox for computations
+   ```solidity
+   function deposit(uint256 amount) external { // [!code --]
+   function deposit(externalEuint256 inputHandle, bytes calldata inputProof) external { // [!code ++]
+   ```
 
-Standard operators (`+=`, `-=`) don't work on encrypted types. Use `Nox.*`
-functions instead. These trigger off-chain computation inside a TEE, the
-plaintext is **never exposed on-chain**:
+   Then validate the proof with `Nox.fromExternal()` to get a typed handle:
 
-```solidity
-balance += amount; // [!code --]
-balance = Nox.add(balance, amount); // [!code ++]
-```
+   ```solidity
+   euint256 amount = Nox.fromExternal(inputHandle, inputProof);
+   ```
 
-For the withdrawal, `require(amount <= balance)` would leak information (a
-revert reveals the condition failed). Use `Nox.safeSub()` instead: it handles
-underflow detection on encrypted values without reverting.
+4. ### Use Nox for computations
 
-```solidity
-require(amount <= balance); // [!code --]
-balance -= amount; // [!code --]
-(ebool ok, euint256 newBalance) = Nox.safeSub(balance, amount); // [!code ++]
-balance = Nox.select(ok, newBalance, balance); // [!code ++]
-```
+   Standard operators (`+=`, `-=`) don't work on encrypted types. Use `Nox.*`
+   functions instead. These trigger off-chain computation inside a TEE, the
+   plaintext is **never exposed on-chain**:
 
-- `Nox.safeSub()` subtracts and returns `(ebool ok, euint256 result)`. If
-  `amount > balance`, `ok` is false and `result` is zero
-- `Nox.select()` picks between two values based on an encrypted boolean: on
-  underflow the balance stays unchanged, no information is leaked
+   ```solidity
+   balance += amount; // [!code --]
+   balance = Nox.add(balance, amount); // [!code ++]
+   ```
 
-## Step 6: Grant access
+   For the withdrawal, `require(amount <= balance)` would leak information (a
+   revert reveals the condition failed). Use `Nox.safeSub()` instead: it handles
+   underflow detection on encrypted values without reverting.
 
-By default, only the handle creator has access. After each operation that
-produces a new handle, grant the contract permission to reuse it:
+   ```solidity
+   require(amount <= balance); // [!code --]
+   balance -= amount; // [!code --]
+   (ebool ok, euint256 newBalance) = Nox.safeSub(balance, amount); // [!code ++]
+   balance = Nox.select(ok, newBalance, balance); // [!code ++]
+   ```
 
-```solidity
-Nox.allowThis(balance);
-```
+   - `Nox.safeSub()` subtracts and returns `(ebool ok, euint256 result)`. If
+     `amount > balance`, `ok` is false and `result` is zero
+   - `Nox.select()` picks between two values based on an encrypted boolean: on
+     underflow the balance stays unchanged, no information is leaked
+
+5. ### Grant access
+
+   By default, only the handle creator has access. After each operation that
+   produces a new handle, grant the contract permission to reuse it:
+
+   ```solidity
+   Nox.allowThis(balance);
+   ```
+
+:::
 
 ## Final result
 
@@ -131,8 +141,9 @@ Here is the complete confidential piggy bank:
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Piggy bank with a private balance.
-// Nobody can see how much is inside, only the owner can withdraw.
+// A piggy bank is a simple savings container: you put money in
+// and only the owner can take it out. This version keeps the
+// balance encrypted so nobody can see how much is inside.
 
 import {Nox, euint256, externalEuint256, ebool} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol";
 
@@ -164,6 +175,34 @@ contract ConfidentialPiggyBank {
     }
 }
 ```
+
+## Deploy with Remix
+
+:::steps
+
+1. ### Open in Remix
+
+   Click the **Open in Remix** button above. The contract will load
+   automatically in the Remix editor.
+
+2. ### Compile
+
+   In the left sidebar, go to the **Solidity Compiler** tab (second icon). Click
+   **Compile ConfidentialPiggyBank.sol**. Make sure the compiler version is
+   `0.8.24` or higher.
+
+3. ### Connect your wallet
+
+   Go to the **Deploy & Run Transactions** tab (third icon). In the
+   **Environment** dropdown, select **Injected Provider - MetaMask**. Make sure
+   your wallet is connected to **Arbitrum Sepolia**.
+
+4. ### Deploy
+
+   Click **Deploy**. MetaMask will ask you to confirm the transaction. Once
+   confirmed, your confidential piggy bank is live on testnet.
+
+:::
 
 ## Next steps
 

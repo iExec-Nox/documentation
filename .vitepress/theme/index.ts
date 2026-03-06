@@ -11,6 +11,7 @@ import type { EnhanceAppContext } from 'vitepress';
 import googleAnalytics from 'vitepress-plugin-google-analytics';
 import 'virtual:group-icons.css';
 import '@shikijs/vitepress-twoslash/style.css';
+import '../../node_modules/markdown-it-steps/dist/style.css';
 import './style.css';
 
 declare global {

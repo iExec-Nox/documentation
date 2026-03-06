@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.24;
 
-// Piggy bank with a private balance.
-// Nobody can see how much is inside, only the owner can withdraw.
+// A piggy bank is a simple savings container: you put money in
+// and only the owner can take it out. This version keeps the
+// balance encrypted so nobody can see how much is inside.
 
 import {Nox, euint256, externalEuint256, ebool} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol";
 contract ConfidentialPiggyBank {
