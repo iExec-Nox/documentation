@@ -8,6 +8,7 @@ import {
   groupIconVitePlugin,
 } from 'vitepress-plugin-group-icons';
 import { withMermaid } from 'vitepress-plugin-mermaid';
+import markdownSteps from 'markdown-it-steps';
 
 // https://vitepress.dev/reference/site-config
 export default withMermaid(
@@ -30,6 +31,7 @@ export default withMermaid(
       codeTransformers: [transformerTwoslash()],
       config(md) {
         md.use(groupIconMdPlugin);
+        md.use(markdownSteps);
       },
     },
 

@@ -5,11 +5,13 @@ import TwoslashFloatingVue from '@shikijs/vitepress-twoslash/client';
 import Layout from './Layout.vue';
 import Required from './components/Required.vue';
 import Optional from './components/Optional.vue';
+import RemixButton from '@/components/RemixButton.vue';
 import Glossary from './components/Glossary.vue';
 import type { EnhanceAppContext } from 'vitepress';
 import googleAnalytics from 'vitepress-plugin-google-analytics';
 import 'virtual:group-icons.css';
 import '@shikijs/vitepress-twoslash/style.css';
+import '../../node_modules/markdown-it-steps/dist/style.css';
 import './style.css';
 
 declare global {
@@ -28,6 +30,7 @@ export default {
   enhanceApp({ app }: EnhanceAppContext) {
     app.component('Required', Required);
     app.component('Optional', Optional);
+    app.component('RemixButton', RemixButton);
     app.component('Glossary', Glossary);
     app.use(TwoslashFloatingVue as any);
 
