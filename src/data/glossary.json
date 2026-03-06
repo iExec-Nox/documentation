@@ -14,7 +14,7 @@
     },
     {
       "term": "Remote Attestation",
-      "definition": "Cryptographic proof that a component runs in an authentic hardware TEE with the expected code.",
+      "definition": "Cryptographically verifiable proof that a component runs in a genuine TEE hardware with the expected code.",
       "category": "Security"
     },
     {
@@ -153,8 +153,8 @@
       "category": "General"
     },
     {
-      "term": "RA-TLS",
-      "definition": "Remote Attestation TLS - Protocol combining remote attestation and TLS used for all communications between Nox internal components.",
+      "term": "RA-HTTPS",
+      "definition": "Initiating an HTTPS connection between the SDK and the Handle Gateway after verifying the trustworthiness of Nox components via Remote Attestation.",
       "category": "Technical"
     },
     {
@@ -231,6 +231,11 @@
       "term": "Domain Separator",
       "definition": "Component of the EIP-712 digest including name, version, chainId and contract address. Used to sign Gateway messages.",
       "category": "Technical"
+    },
+    {
+      "term": "Dstack",
+      "definition": "Framework for running Docker containers inside TEEs. Used by Nox to deploy off-chain components (Handle Gateway, Runners, KMS) in Intel TDX CVMs (Confidential Virtual Machines).",
+      "category": "TEE"
     },
     {
       "term": "Enclave",
