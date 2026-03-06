@@ -29,9 +29,9 @@ cryptographic proofs.
 
 ### Handle Proofs
 
-When encrypting data, the Gateway returns a `handleProof` - a signed EIP-712
-payload that proves the handle was created by a legitimate Gateway. This proof
-is used when verifying handles in smart contracts.
+When encrypting data, the Handle Gateway returns a `handleProof` - a signed
+EIP-712 payload that proves the handle was created by a legitimate Handle
+Gateway. This proof is used when verifying handles in smart contracts.
 
 ### Access Control
 

@@ -10,8 +10,8 @@ The Runner is a Rust service running in Intel TDX that executes confidential
 computations on encrypted data. It pulls computation requests from a
 [NATS JetStream](https://nats.io) queue — populated by the
 [Ingestor](/protocol/ingestor) from on-chain events — decrypts the input
-handles, performs the operation, re-encrypts the results, and stores them back
-in the [Handle Gateway](/protocol/gateway).
+handles, performs the operation, encrypts the results, and stores them back in
+the [Handle Gateway](/protocol/gateway).
 
 ## Role in the Protocol
 
@@ -52,24 +52,24 @@ sequenceDiagram
 ```
 
 1. **Pull event** from NATS: the Runner fetches the next `TransactionMessage`
-   containing input handles, output handles, and the operation to perform
+   containing input handles, output handles, and the operation to perform.
 2. **Fetch operands** from the Handle Gateway: the Runner sends its RSA public
-   key, and the Gateway handles KMS delegation internally, returning the
-   ciphertext, encrypted shared secret, and nonce for each input handle
-3. **Decrypt** inputs locally (RSA decrypt shared secret, HKDF, AES-GCM)
-4. **Execute** the computation primitive
-5. **Encrypt** results with ECIES using the protocol public key
-6. **Submit** encrypted results to the Handle Gateway
+   key, and the Handle Gateway handles KMS delegation internally, returning the
+   ciphertext, encrypted shared secret, and nonce for each input handle.
+3. **Decrypt** inputs locally (RSA decrypt shared secret, HKDF, AES-GCM).
+4. **Execute** the computation primitive.
+5. **Encrypt** results with ECIES using the protocol public key.
+6. **Submit** encrypted results to the Handle Gateway.
 7. **Acknowledge** the event in NATS (removes it from the queue) and pull the
-   next one
+   next one.
 
 ### PlaintextToEncrypted (Special Case)
 
-This operation has no input handles and does not call
-`GET /v0/compute/operands`. The plaintext value and target type are embedded
-directly in the NATS event. The Runner forwards the plaintext to the Handle
-Gateway via `POST /v0/secrets`, which performs the ECIES encryption and stores
-the result.
+This operation has no input handles and does not need to call the Handle Gateway
+to fetch operands. The plaintext value and target type of the data to encrypt
+are embedded directly in the NATS event. The Runner performs the ECIES
+encryption, then forwards encrypted data and crypto materials to the Handle
+Gateway.
 
 ```mermaid
 sequenceDiagram
@@ -79,9 +79,8 @@ sequenceDiagram
 
     R->>NATS: Pull next event
     NATS-->>R: TransactionMessage (plaintext + type)
-    R->>GW: POST /v0/secrets (plaintext, type, owner)
-    GW->>GW: ECIES encrypt + store handle
-    GW-->>R: handle + proof
+    R->>R: Encrypt plaintext (ECIES)
+    R->>GW: POST /v0/compute/results
     R->>NATS: Acknowledge (delete event)
 ```
 
@@ -97,7 +96,7 @@ Each operation defines its input/output handles:
 | Comparisons          | 2      | 1       | Two operands → bool result         |
 | Select               | 3      | 1       | (condition, ifTrue, ifFalse) → one |
 | Transfer             | 3      | 3       | (amount, balFrom, balTo) → 3       |
-| Mint                 | 3      | 2       | (amount, balTo, supply) → 2        |
+| Mint                 | 3      | 3       | (amount, balTo, supply) → 3        |
 | Burn                 | 3      | 3       | (amount, balFrom, supply) → 3      |
 
 **Validation rules:**
@@ -120,7 +119,7 @@ edge cases and examples, see the
 
 - [Computation Primitives](/protocol/computation-primitives) - Full reference of
   all operations with signatures and edge cases
-- [Gateway](/protocol/gateway) - Handle storage and encryption
+- [Handle Gateway](/protocol/gateway) - Handle storage and encryption
 - [KMS](/protocol/kms) - Key management and decryption delegation
 - [Nox Smart Contracts](/protocol/nox-smart-contracts) - On-chain computation
   requests

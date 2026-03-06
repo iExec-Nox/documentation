@@ -99,22 +99,6 @@ architecture for production.
 
 ## API
 
-### `GET /v0/public-key`
-
-Returns the KMS public key with an EIP-712 signed proof.
-
-**Response:**
-
-```json
-{
-  "publicKey": "0x...",
-  "proof": "0x..."
-}
-```
-
-The proof uses the EIP-712 domain `ProtocolPublicKey` (version `"1"`) with a
-`PublicKeyProof` struct containing the public key.
-
 ### `POST /v0/delegate`
 
 Performs decryption delegation. Given an ephemeral Elliptic Curve public key `K`

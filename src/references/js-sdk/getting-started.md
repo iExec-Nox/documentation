@@ -27,9 +27,9 @@ Working with confidential data on Nox follows a three-step workflow:
 
 3. **Decrypt** — When a user needs to read the actual value,
    [`decrypt`](/references/js-sdk/methods/decrypt) requests decryption from the
-   Gateway. The SDK signs an EIP-712 authorization message (no gas required). If
-   the on-chain ACL authorizes the request, the plaintext is securely returned
-   to the user — the value never travels in the clear.
+   Handle Gateway. The SDK signs an EIP-712 authorization message (no gas
+   required). If the on-chain ACL authorizes the request, the plaintext is
+   securely returned to the user — the value never travels in the clear.
 
 ## Prerequisites
 
