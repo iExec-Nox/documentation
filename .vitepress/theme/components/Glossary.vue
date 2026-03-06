@@ -3,7 +3,15 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import glossaryData from '@/data/glossary.json';
 
 const searchTerm = ref('');
+const selectedCategory = ref('');
 const showScrollTop = ref(false);
+
+const categories = computed<string[]>(() => {
+  const cats = new Set<string>(
+    glossaryData.terms.map((item: { category: string }) => item.category)
+  );
+  return [...cats].sort((a, b) => a.localeCompare(b, 'en'));
+});
 
 function handleScroll() {
   showScrollTop.value =
@@ -24,7 +32,9 @@ const filteredTerms = computed(() => {
       const matchesSearch =
         item.term.toLowerCase().includes(searchLower) ||
         item.definition.toLowerCase().includes(searchLower);
-      return matchesSearch;
+      const matchesCategory =
+        !selectedCategory.value || item.category === selectedCategory.value;
+      return matchesSearch && matchesCategory;
     })
     .sort((a, b) => {
       if (searchTerm.value) {
@@ -61,6 +71,26 @@ const totalCount = glossaryData.terms.length;
         aria-label="Search glossary"
         class="glossary-search"
       />
+      <div class="glossary-categories">
+        <button
+          :class="['glossary-cat-btn', { active: !selectedCategory }]"
+          @click="selectedCategory = ''"
+        >
+          All
+        </button>
+        <button
+          v-for="cat in categories"
+          :key="cat"
+          :class="[
+            'glossary-cat-btn',
+            `cat-${cat.toLowerCase()}`,
+            { active: selectedCategory === cat },
+          ]"
+          @click="selectedCategory = selectedCategory === cat ? '' : cat"
+        >
+          {{ cat }}
+        </button>
+      </div>
     </div>
 
     <!-- List -->
@@ -155,6 +185,69 @@ const totalCount = glossaryData.terms.length;
   box-shadow: 0 0 0 3px var(--vp-c-brand-soft);
 }
 
+/* ── Category filters ── */
+.glossary-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.glossary-cat-btn {
+  padding: 0.3rem 0.75rem;
+  border: 1px solid var(--vp-c-border);
+  border-radius: 9999px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-2);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    background 0.2s,
+    border-color 0.2s,
+    color 0.2s;
+}
+
+.glossary-cat-btn:hover {
+  border-color: var(--vp-c-brand-1);
+  color: var(--vp-c-text-1);
+}
+
+.glossary-cat-btn.active {
+  background: var(--vp-c-brand-1);
+  border-color: var(--vp-c-brand-1);
+  color: #fff;
+}
+
+.glossary-cat-btn.active.cat-general {
+  background: var(--vp-c-purple-1);
+  border-color: var(--vp-c-purple-1);
+}
+
+.glossary-cat-btn.active.cat-evm {
+  background: var(--vp-c-yellow-1);
+  border-color: var(--vp-c-yellow-1);
+}
+
+.glossary-cat-btn.active.cat-tee {
+  background: var(--vp-c-green-1);
+  border-color: var(--vp-c-green-1);
+}
+
+.glossary-cat-btn.active.cat-off-chain {
+  background: var(--vp-c-info-1);
+  border-color: var(--vp-c-info-1);
+}
+
+.glossary-cat-btn.active.cat-cryptography {
+  background: var(--vp-c-indigo-1);
+  border-color: var(--vp-c-indigo-1);
+}
+
+.glossary-cat-btn.active.cat-market {
+  background: var(--vp-c-red-1);
+  border-color: var(--vp-c-red-1);
+}
+
 /* ── Glossary list ── */
 .glossary-list {
   display: flex;
@@ -227,19 +320,24 @@ const totalCount = glossaryData.terms.length;
   color: var(--vp-c-purple-1);
 }
 
-.cat-architecture {
-  background: var(--vp-c-info-soft);
-  color: var(--vp-c-info-1);
-}
-
-.cat-technical {
+.cat-evm {
   background: var(--vp-c-yellow-soft);
   color: var(--vp-c-yellow-1);
 }
 
-.cat-security {
+.cat-tee {
   background: var(--vp-c-green-soft);
   color: var(--vp-c-green-1);
+}
+
+.cat-off-chain {
+  background: var(--vp-c-info-soft);
+  color: var(--vp-c-info-1);
+}
+
+.cat-cryptography {
+  background: var(--vp-c-indigo-soft);
+  color: var(--vp-c-indigo-1);
 }
 
 .cat-market {
