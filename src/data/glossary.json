@@ -58,7 +58,7 @@
       "category": "Market"
     },
     {
-      "term": "Core Primitives",
+      "term": "Core Primitives (alias: Primitives)",
       "definition": "Basic protocol operations: add(), sub(), div(), PlaintextToEncrypted(), select(). First category of computation primitives.",
       "category": "EVM"
     },
@@ -69,17 +69,17 @@
     },
     {
       "term": "Domain Separator",
-      "definition": "Component of the EIP-712 digest including name, version, chainId and contract address. Used to sign Gateway messages.",
+      "definition": "Component of the EIP-712 digest including name, version, chainId and contract address. Used to sign Handle Gateway messages.",
       "category": "EVM"
     },
     {
       "term": "ECIES",
-      "definition": "Elliptic Curve Integrated Encryption Scheme - Encryption algorithm used by KMS based on elliptic curves.",
+      "definition": "Elliptic Curve Integrated Encryption Scheme - Encryption framework used by KMS that composes different algorithms such as AES-GCM-256.",
       "category": "Cryptography"
     },
     {
       "term": "EIP-712",
-      "definition": "Ethereum standard for typed signatures. Used to verify Gateway signatures with digest including handle, owner, app, and createdAt.",
+      "definition": "Ethereum standard for typed signatures. Used to verify Handle Gateway signatures with digest including handle, owner, app, and createdAt.",
       "category": "EVM"
     },
     {
@@ -89,7 +89,7 @@
     },
     {
       "term": "Enclave",
-      "definition": "Hardware-isolated environment in a TEE where secure components run (Handle Gateway, Runners, KMS Manager).",
+      "definition": "Hardware-isolated environment in a TEE where secure components run (Handle Gateway, Runners, KMS).",
       "category": "TEE"
     },
     {
@@ -118,11 +118,6 @@
       "category": "Off-chain"
     },
     {
-      "term": "HNWI",
-      "definition": "High Net Worth Individual - Wealthy individuals, one of cToken's targets among Capital Allocators.",
-      "category": "Market"
-    },
-    {
       "term": "Ingestor",
       "definition": "Dedicated service that monitors the blockchain to detect primitive events (Add, Sub, Transfer...) and sends them to the message queue.",
       "category": "Off-chain"
@@ -144,7 +139,7 @@
     },
     {
       "term": "KMS (Key Management System)",
-      "definition": "Distributed vault that manages decryption delegation. No single node can decrypt: collaboration of t nodes (threshold) is required.",
+      "definition": "Vault that manages decryption delegation.",
       "category": "Off-chain"
     },
     {
@@ -203,8 +198,8 @@
       "category": "EVM"
     },
     {
-      "term": "Primitives (add/sub/div/select)",
-      "definition": "Basic computation operations available in Core Primitives: addition, subtraction, division, conditional selection.",
+      "term": "Primitives (alias: Core Primitives)",
+      "definition": "Basic computation operations: addition, subtraction, division, conditional selection.",
       "category": "EVM"
     },
     {
