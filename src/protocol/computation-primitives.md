@@ -23,7 +23,7 @@ All arithmetic uses **wrapping semantics**, matching Solidity's `unchecked`
 behavior. On overflow or underflow, values wrap around the type boundary instead
 of reverting.
 
-![Confidential Functions by Nox](/confidential-primtive.png)
+![Confidential Functions by Nox](/confidential-primitive.png)
 
 ## Core Primitives
 
