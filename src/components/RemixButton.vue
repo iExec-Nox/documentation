@@ -19,7 +19,7 @@ const remixUrl = computed(() => {
   if (typeof window === 'undefined') return '';
   const bytes = new TextEncoder().encode(props.code);
   const binary = Array.from(bytes, (b) => String.fromCharCode(b)).join('');
-  return `https://remix.ethereum.org/#code=${btoa(binary)}&language=solidity&optimize=false&runs=200&evmVersion=paris`;
+  return `https://remix.ethereum.org/#code=${btoa(binary)}&language=solidity&autoCompile=true&optimize=false&runs=200&evmVersion=paris`;
 });
 </script>
 
