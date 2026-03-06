@@ -41,6 +41,7 @@ const remixUrl = computed(() => {
 
 .remix-btn:hover {
   background: var(--vp-c-brand-2);
+  color: var(--vp-c-white);
   transform: translateY(-1px);
 }
 
