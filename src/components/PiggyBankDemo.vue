@@ -74,7 +74,7 @@
             </div>
           </div>
           <div class="result-item">
-            <div class="result-label">handleProof</div>
+            <div class="result-label">handle proof</div>
             <div class="result-content">
               <code>{{ handleProof }}</code>
               <button

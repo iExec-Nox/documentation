@@ -72,10 +72,25 @@ remain visible on-chain, only **balances and amounts** are encrypted.
 
    ```solidity
    uint256 private balance; // [!code --]
-   euint256 private balance; // [!code ++]
+   euint256 public balance; // [!code ++]
    ```
 
-3. ### Accept encrypted inputs
+3. ### Initialize encrypted state
+
+   Unlike plain `uint256` (which defaults to `0`), an `euint256` must be
+   explicitly initialized to a valid encrypted handle. Use `Nox.toEuint256()` in
+   the constructor:
+
+   ```solidity
+   constructor() {
+       owner = msg.sender;
+       balance = Nox.toEuint256(0); // [!code ++]
+       Nox.allowThis(balance); // [!code ++]
+       Nox.allow(balance, owner); // [!code ++]
+   }
+   ```
+
+4. ### Accept encrypted inputs
 
    Users encrypt values off-chain with the JS SDK and send a handle + proof to
    your contract. Replace plain `uint256` parameters with `externalEuint256` + a
@@ -92,7 +107,7 @@ remain visible on-chain, only **balances and amounts** are encrypted.
    euint256 amount = Nox.fromExternal(inputHandle, inputProof);
    ```
 
-4. ### Use Nox for computations
+5. ### Use Nox for computations
 
    Standard operators (`+=`, `-=`) don't work on encrypted types. Use `Nox.*`
    functions instead. These trigger off-chain computation inside a TEE, the
@@ -119,24 +134,28 @@ remain visible on-chain, only **balances and amounts** are encrypted.
    - `Nox.select()` picks between two values based on an encrypted boolean: on
      underflow the balance stays unchanged, no information is leaked
 
-5. ### Grant access
+6. ### Grant access
 
    By default, only the handle creator has access. After each operation that
-   produces a new handle, grant the contract permission to reuse it:
+   produces a new handle, grant permissions so the contract can keep computing
+   on it and the owner can decrypt it:
 
    ```solidity
    Nox.allowThis(balance);
+   Nox.allow(balance, owner);
    ```
 
 :::
 
 ## Final result
 
+Here is the complete confidential piggy bank. Click **Open in Remix** to load
+it, compile with Solidity `0.8.24+`, connect MetaMask to **Arbitrum Sepolia**,
+and deploy.
+
 <ClientOnly>
   <RemixButton :code="piggyBankCode" />
 </ClientOnly>
-
-Here is the complete confidential piggy bank:
 
 ```solidity
 // SPDX-License-Identifier: MIT
@@ -149,17 +168,21 @@ pragma solidity ^0.8.24;
 import {Nox, euint256, externalEuint256, ebool} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol";
 
 contract ConfidentialPiggyBank {
-    euint256 private balance;
+    euint256 public balance;
     address public owner;
 
     constructor() {
         owner = msg.sender;
+        balance = Nox.toEuint256(0);
+        Nox.allowThis(balance);
+        Nox.allow(balance, owner);
     }
 
     function deposit(externalEuint256 inputHandle, bytes calldata inputProof) external {
         euint256 amount = Nox.fromExternal(inputHandle, inputProof);
         balance = Nox.add(balance, amount);
         Nox.allowThis(balance);
+        Nox.allow(balance, owner);
     }
 
     function withdraw(externalEuint256 inputHandle, bytes calldata inputProof) external {
@@ -169,47 +192,18 @@ contract ConfidentialPiggyBank {
         (ebool ok, euint256 newBalance) = Nox.safeSub(balance, amount);
         balance = Nox.select(ok, newBalance, balance);
         Nox.allowThis(balance);
-    }
-
-    function getBalanceHandle() external view returns (bytes32) {
-        return euint256.unwrap(balance);
+        Nox.allow(balance, owner);
     }
 }
 ```
 
-## Deploy with Remix
-
-:::steps
-
-1. ### Open in Remix
-
-   Click the **Open in Remix** button above. The contract will load
-   automatically in the Remix editor.
-
-2. ### Compile
-
-   In the left sidebar, go to the **Solidity Compiler** tab (second icon). Click
-   **Compile ConfidentialPiggyBank.sol**. Make sure the compiler version is
-   `0.8.24` or higher.
-
-3. ### Connect your wallet
-
-   Go to the **Deploy & Run Transactions** tab (third icon). In the
-   **Environment** dropdown, select **Injected Provider - MetaMask**. Make sure
-   your wallet is connected to **Arbitrum Sepolia**.
-
-4. ### Deploy
-
-   Click **Deploy**. MetaMask will ask you to confirm the transaction. Once
-   confirmed, your confidential piggy bank is live on testnet.
-
-:::
-
 ## Try it
 
-Use the widget below to create encrypted handles and decrypt them with the JS
-SDK. Connect your wallet, provide your deployed contract address, and try
-encrypting a value or decrypting a handle.
+Use the widget below to encrypt values and decrypt handles with the JS SDK.
+Connect your wallet, enter your deployed contract address, and encrypt an
+amount. Copy the resulting **handle** and **handle proof**, then paste them into
+the `deposit` or `withdraw` fields in Remix to call the contract. To read the
+balance, copy the handle returned by `balance()` in Remix and decrypt it here.
 
 <ClientOnly>
   <PiggyBankDemo />
