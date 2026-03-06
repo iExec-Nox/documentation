@@ -9,162 +9,166 @@ import piggyBankCode from '../contracts/ConfidentialPiggyBank.sol?raw';
 
 # Hello World
 
-Build your first confidential smart contract using Nox. This example
-demonstrates how to create a piggy bank that keeps your savings private using
-TEE-based encryption.
+In this tutorial, you will write a simple piggy bank contract, then make it
+confidential with Nox. By the end, balances and amounts will be fully encrypted:
+nobody can see how much is inside.
 
-## Try it in Remix
+## Step 1: A simple piggy bank
 
-You can experiment with the contract directly in your browser using Remix IDE:
+Start with a standard Solidity contract. Nothing encrypted yet:
+
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
+
+contract PiggyBank {
+    uint256 private balance;
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    function deposit(uint256 amount) external {
+        balance += amount;
+    }
+
+    function withdraw(uint256 amount) external {
+        require(msg.sender == owner);
+        require(amount <= balance);
+        balance -= amount;
+    }
+
+    function getBalance() external view returns (uint256) {
+        return balance;
+    }
+}
+```
+
+This works, but the balance is visible to anyone reading the blockchain. Let's
+fix that.
+
+## Step 2: Import Nox
+
+Replace the standard imports with the Nox library. A single import gives you
+everything you need:
+
+```solidity
+import {Nox, euint256, externalEuint256, ebool} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol"; // [!code ++]
+```
+
+## Step 3: Replace types with encrypted equivalents
+
+Swap `uint256` for `euint256`. On-chain, the value is now stored as a 32-byte
+**handle** that points to encrypted data. The actual value is never visible.
+
+```solidity
+uint256 private balance; // [!code --]
+euint256 private balance; // [!code ++]
+```
+
+## Step 4: Accept encrypted inputs
+
+Users encrypt values off-chain with the JS SDK and send a handle + proof to your
+contract. Replace plain `uint256` parameters with `externalEuint256` + a proof:
+
+```solidity
+function deposit(uint256 amount) external { // [!code --]
+function deposit(externalEuint256 inputHandle, bytes calldata inputProof) external { // [!code ++]
+```
+
+Then validate the proof with `Nox.fromExternal()` to get a typed handle:
+
+```solidity
+euint256 amount = Nox.fromExternal(inputHandle, inputProof);
+```
+
+## Step 5: Use Nox for computations
+
+Standard operators (`+=`, `-=`) don't work on encrypted types. Use `Nox.*`
+functions instead. These trigger off-chain computation inside a TEE, the
+plaintext is **never exposed on-chain**:
+
+```solidity
+balance += amount; // [!code --]
+balance = Nox.add(balance, amount); // [!code ++]
+```
+
+For the withdrawal, the `require(amount <= balance)` check would reveal
+information. Replace it with encrypted comparison and conditional selection:
+
+```solidity
+require(amount <= balance); // [!code --]
+balance -= amount; // [!code --]
+ebool canWithdraw = Nox.le(amount, balance); // [!code ++]
+euint256 newBalance = Nox.sub(balance, amount); // [!code ++]
+balance = Nox.select(canWithdraw, newBalance, balance); // [!code ++]
+```
+
+- `Nox.le()` compares two encrypted values and returns an encrypted boolean
+- `Nox.select()` picks between two values based on that encrypted boolean
+- If the withdrawal exceeds the balance, the balance stays unchanged, no
+  information is leaked
+
+## Step 6: Grant access
+
+By default, only the handle creator has access. After each operation that
+produces a new handle, grant the contract permission to reuse it:
+
+```solidity
+Nox.allowThis(balance);
+```
+
+## Final result
 
 <ClientOnly>
   <RemixButton :code="piggyBankCode" />
 </ClientOnly>
 
-## Understanding the Code
-
-### 1. Inherit from TEEChainConfig
+Here is the complete confidential piggy bank:
 
 ```solidity
-contract ConfidentialPiggyBank is TEEChainConfig {
-```
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.24;
 
-`TEEChainConfig` automatically configures the correct TEE service addresses
-based on the network you're deploying to (Arbitrum Sepolia, Arbitrum One, etc.).
+// Piggy bank with a private balance.
+// Nobody can see how much is inside, only the owner can withdraw.
 
-### 2. Encrypted State Variables
+import {Nox, euint256, externalEuint256, ebool} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol";
 
-```solidity
-euint256 private balance;
-```
+contract ConfidentialPiggyBank {
+    euint256 private balance;
+    address public owner;
 
-The `euint256` type represents an encrypted unsigned 256-bit integer. The actual
-value is stored as an encrypted handle - observers can see the handle exists but
-cannot read the value. Your piggy bank balance remains completely private.
+    constructor() {
+        owner = msg.sender;
+    }
 
-### 3. Working with Encrypted Inputs
+    function deposit(externalEuint256 inputHandle, bytes calldata inputProof) external {
+        euint256 amount = Nox.fromExternal(inputHandle, inputProof);
+        balance = Nox.add(balance, amount);
+        Nox.allowThis(balance);
+    }
 
-```solidity
-function deposit(
-    externalEuint256 inputHandle,
-    bytes calldata inputProof
-) external {
-    euint256 depositAmount = TEEPrimitive.fromExternal(inputHandle, inputProof);
-    // ...
+    function withdraw(externalEuint256 inputHandle, bytes calldata inputProof) external {
+        require(msg.sender == owner);
+        euint256 amount = Nox.fromExternal(inputHandle, inputProof);
+
+        ebool canWithdraw = Nox.le(amount, balance);
+        euint256 newBalance = Nox.sub(balance, amount);
+        balance = Nox.select(canWithdraw, newBalance, balance);
+        Nox.allowThis(balance);
+    }
+
+    function getBalanceHandle() external view returns (bytes32) {
+        return euint256.unwrap(balance);
+    }
 }
 ```
 
-When users want to pass encrypted values to your contract:
+## Next steps
 
-1. They use the SDK to encrypt the value off-chain, receiving a `handle` and
-   `inputProof`
-2. The contract verifies the proof using `TEEPrimitive.fromExternal()`
-3. The verified handle can now be used in computations
-
-### 4. Confidential Computations
-
-```solidity
-balance = TEEPrimitive.add(balance, depositAmount);
-```
-
-All arithmetic operations happen inside the TEE (Trusted Execution Environment).
-The TEE:
-
-- Decrypts the operands
-- Performs the computation
-- Re-encrypts the result
-- Returns a new handle
-
-The plaintext values are **never exposed on-chain**.
-
-### 5. Encrypted Comparisons
-
-```solidity
-ebool canWithdraw = TEEPrimitive.le(withdrawAmount, balance);
-balance = TEEPrimitive.select(canWithdraw, newBalance, balance);
-```
-
-You can perform comparisons on encrypted values:
-
-- `le()` checks if one encrypted value is less than or equal to another
-- `select()` conditionally chooses between two encrypted values based on an
-  encrypted boolean
-- This allows secure logic without revealing the actual values
-
-### 6. Managing Permissions
-
-```solidity
-acl.allowThis(euint256.unwrap(balance));
-acl.allow(euint256.unwrap(balance), viewer);
-```
-
-The ACL (Access Control List) manages who can access encrypted values:
-
-- `allowThis()` - Grants the contract access to the handle
-- `allow(handle, address)` - Grants a specific address access
-- By default, only the handle creator has access
-
-## Verifying Confidentiality
-
-Want proof that your balance is truly private? After deploying and depositing
-funds, call `getBalanceHandle()` in Remix:
-
-```solidity
-function getBalanceHandle() external view returns (bytes32) {
-    return euint256.unwrap(balance);
-}
-```
-
-You'll see something like:
-
-```
-0x7f8a9b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a
-```
-
-This 32-byte value is **not your balance** - it's an encrypted handle. In a
-traditional contract, you'd see `100` directly. Here, the actual value is
-encrypted inside the TEE and can only be decrypted by authorized addresses.
-
-| What you deposited | What `getBalanceHandle()` returns |
-| ------------------ | --------------------------------- |
-| 100                | `0x7f8a9b3c...` (opaque handle)   |
-
-The handle reveals nothing about the underlying value - that's confidentiality
-in action.
-
-## Interacting from the Frontend
-
-Use the Nox SDK to interact with your confidential piggy bank:
-
-```typescript
-import { createViemHandleClient } from '@iexec-nox/handles';
-import { createWalletClient, http } from 'viem';
-import { arbitrumSepolia } from 'viem/chains';
-
-// 1. Setup the client
-const walletClient = createWalletClient({
-  chain: arbitrumSepolia,
-  transport: http(),
-});
-
-const handleClient = createViemHandleClient(walletClient);
-
-// 2. Encrypt a deposit amount
-const { handle, inputProof } = await handleClient.encryptInput(100n, 'uint256');
-
-// 3. Deposit into the piggy bank
-const tx = await contract.deposit(handle, inputProof);
-
-// 4. Grant yourself view access and decrypt the balance
-await contract.grantViewAccess(walletClient.account.address);
-const { value } = await handleClient.decrypt(balanceHandle);
-console.log('Piggy bank balance:', value);
-```
-
-## Next Steps
-
-- [Deploy to Testnet](/guides/deploy-contract) - Deploy your first confidential
-  contract
-- [SDK Reference](/references/js-sdk) - Complete SDK documentation
-- [TEEPrimitive Library](/references/tee-primitive) - All available encrypted
-  operations
+- [Solidity Library](/references/solidity-library/getting-started) - Full
+  reference for all Nox operations
+- [JS SDK](/references/js-sdk) - Encrypt inputs and decrypt results from
+  JavaScript
