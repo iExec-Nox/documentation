@@ -5,6 +5,7 @@ description: Build your first confidential smart contract with Nox
 
 <script setup>
 import piggyBankCode from '../contracts/ConfidentialPiggyBank.sol?raw';
+import PiggyBankDemo from '../components/PiggyBankDemo.vue';
 </script>
 
 # Hello World
@@ -203,6 +204,16 @@ contract ConfidentialPiggyBank {
    confirmed, your confidential piggy bank is live on testnet.
 
 :::
+
+## Try it
+
+Use the widget below to create encrypted handles and decrypt them with the JS
+SDK. Connect your wallet, provide your deployed contract address, and try
+encrypting a value or decrypting a handle.
+
+<ClientOnly>
+  <PiggyBankDemo />
+</ClientOnly>
 
 ## Next steps
 
