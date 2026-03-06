@@ -1,0 +1,306 @@
+{
+  "title": "Glossary - Nox Protocol",
+  "description": "Definitions of technical terms used in the Nox protocol",
+  "terms": [
+    {
+      "term": "ACL (Access Control List)",
+      "definition": "On-chain access control mechanism allowing to define who can see (Viewer) or use (Admin) a handle. Permissions can be persistent or transient.",
+      "category": "Security"
+    },
+    {
+      "term": "Admin",
+      "definition": "ACL role with full control over a handle: can perform compute, grant permissions (allow), and add viewers.",
+      "category": "Security"
+    },
+    {
+      "term": "Remote Attestation",
+      "definition": "Cryptographic proof that a component runs in an authentic hardware TEE with the expected code.",
+      "category": "Security"
+    },
+    {
+      "term": "B2B2B",
+      "definition": "cToken business model: iExec (1st B) provides technology to Builders/Protocols (2nd B) who serve their end-users (3rd B).",
+      "category": "Market"
+    },
+    {
+      "term": "cDeFi",
+      "definition": "Confidential DeFi - Decentralized finance with transaction and balance privacy. Nox is iExec's cDeFi protocol.",
+      "category": "General"
+    },
+    {
+      "term": "Ciphertext",
+      "definition": "Encrypted form of confidential data (balance, amount). Stored off-chain in the Handle Gateway database, never publicly exposed on the blockchain.",
+      "category": "Technical"
+    },
+    {
+      "term": "Composability",
+      "definition": "One of Nox's pillars: ability to integrate with the existing DeFi ecosystem and third-party protocols.",
+      "category": "General"
+    },
+    {
+      "term": "Compute",
+      "definition": "Confidential computation operation on handles (add, sub, div, transfer, etc.) executed by a Runner in a TEE.",
+      "category": "Technical"
+    },
+    {
+      "term": "Confidential Token",
+      "definition": "Wrapped version of an ERC-20 with encrypted balances and amounts.",
+      "category": "General"
+    },
+    {
+      "term": "Core Primitives",
+      "definition": "Basic protocol operations: add(), sub(), div(), PlaintextToEncrypted(), select(). First category of computation primitives.",
+      "category": "Technical"
+    },
+    {
+      "term": "Custom Functions",
+      "definition": "Third category of primitives: custom functions developed by protocol users.",
+      "category": "Technical"
+    },
+    {
+      "term": "ECIES",
+      "definition": "Elliptic Curve Integrated Encryption Scheme - Encryption algorithm used by KMS based on elliptic curves.",
+      "category": "Technical"
+    },
+    {
+      "term": "EIP-712",
+      "definition": "Ethereum standard for typed signatures. Used to verify Gateway signatures with digest including handle, owner, app, and createdAt.",
+      "category": "Technical"
+    },
+    {
+      "term": "EIP-1153",
+      "definition": "Ethereum standard for transient storage (tstore). Used for transient permissions that are erased at the end of the transaction.",
+      "category": "Technical"
+    },
+    {
+      "term": "ERC-20",
+      "definition": "Fungible token standard on Ethereum. cToken allows wrapping any ERC-20 into a confidential version.",
+      "category": "Technical"
+    },
+    {
+      "term": "Handle",
+      "definition": "Unique 32-byte identifier stored on-chain that points to an off-chain ciphertext. Structure: truncated hash (26 bytes) + Chain ID (4) + Type (1) + Version (1).",
+      "category": "Technical"
+    },
+    {
+      "term": "Handle Gateway",
+      "definition": "Secure entry point of the system operating in a TEE. Encrypts user data, stores ciphertexts, and serves as interface to the Handle↔Ciphertext database.",
+      "category": "Architecture"
+    },
+    {
+      "term": "HNWI",
+      "definition": "High Net Worth Individual - Wealthy individuals, one of cToken's targets among Capital Allocators.",
+      "category": "Market"
+    },
+    {
+      "term": "Ingestor",
+      "definition": "Dedicated service that monitors the blockchain to detect primitive events (Add, Sub, Transfer...) and sends them to the message queue.",
+      "category": "Architecture"
+    },
+    {
+      "term": "Intel TDX",
+      "definition": "Trust Domain Extensions - Intel's TEE technology used by Nox to create hardware-isolated secure enclaves.",
+      "category": "Technical"
+    },
+    {
+      "term": "Interoperability",
+      "definition": "One of Nox's pillars: compatibility with existing blockchains, notably Arbitrum.",
+      "category": "General"
+    },
+    {
+      "term": "KMS (Key Management System)",
+      "definition": "Distributed vault that manages decryption delegation. No single node can decrypt: collaboration of t nodes (threshold) is required.",
+      "category": "Architecture"
+    },
+    {
+      "term": "MEV (Maximal Extractable Value)",
+      "definition": "Value extracted by validators/miners by reordering transactions. cToken privacy protects against MEV.",
+      "category": "Market"
+    },
+    {
+      "term": "MiCA",
+      "definition": "Markets in Crypto-Assets - European regulation on crypto-assets. Nox enables compliance via selective disclosure.",
+      "category": "Market"
+    },
+    {
+      "term": "MPC (Multi-Party Computation)",
+      "definition": "Cryptographic technology allowing multiple parties to jointly compute without revealing their inputs.",
+      "category": "Technical"
+    },
+    {
+      "term": "Persistent Permissions",
+      "definition": "ACL permissions stored via sstore (EVM storage) that survive the end of the transaction.",
+      "category": "Technical"
+    },
+    {
+      "term": "Transient Permissions",
+      "definition": "ACL permissions using tstore (EIP-1153), less expensive in gas, automatically erased at the end of the transaction.",
+      "category": "Technical"
+    },
+    {
+      "term": "PlaintextToEncrypted",
+      "definition": "Primitive that creates a handle for a public plaintext value, useful for initializing counters to zero.",
+      "category": "Technical"
+    },
+    {
+      "term": "preHandle",
+      "definition": "Hash calculated via keccak256(operator, operands, NoxCompte, msg.sender, block.timestamp, outputIndex) before being truncated to form the final handle.",
+      "category": "Technical"
+    },
+    {
+      "term": "Private Token",
+      "definition": "Wrapped version of an ERC-20 with encrypted balances and amounts",
+      "category": "General"
+    },
+    {
+      "term": "RA-TLS",
+      "definition": "Remote Attestation TLS - Protocol combining remote attestation and TLS used for all communications between Nox internal components.",
+      "category": "Technical"
+    },
+    {
+      "term": "Runner",
+      "definition": "Executor that performs confidential computations on encrypted data in a secure TEE environment.",
+      "category": "Architecture"
+    },
+    {
+      "term": "RWA (Real World Assets)",
+      "definition": "Real-world assets tokenized on blockchain (real estate, bonds, etc.). Key segment targeted by cToken requiring privacy.",
+      "category": "Market"
+    },
+    {
+      "term": "Selective Disclosure",
+      "definition": "Ability to reveal information only to authorized parties (auditors, regulators) via the ACL system, without public exposure.",
+      "category": "Security"
+    },
+    {
+      "term": "TEE (Trusted Execution Environment)",
+      "definition": "Secure execution environment with hardware isolation (Intel TDX). Guarantees privacy and integrity of sensitive operations.",
+      "category": "Technical"
+    },
+    {
+      "term": "NoxCompute",
+      "definition": "Main on-chain smart contract for receiving and coordinating confidential computation requests.",
+      "category": "Architecture"
+    },
+    {
+      "term": "Threshold Cryptography",
+      "definition": "Threshold cryptography where the private key is fragmented among n nodes. At least t nodes must collaborate for any operation.",
+      "category": "Security"
+    },
+    {
+      "term": "TradFi",
+      "definition": "Traditional Finance - Traditional finance (banks, funds). Major target of cToken which requires privacy to enter DeFi.",
+      "category": "Market"
+    },
+    {
+      "term": "TVL (Total Value Locked)",
+      "definition": "Total value locked in a DeFi protocol. Key metric to measure adoption. ETH = $69B, ARB = $2.9B.",
+      "category": "Market"
+    },
+    {
+      "term": "Viewer",
+      "definition": "Read-only ACL role: can request handle decryption but cannot perform compute or modify permissions.",
+      "category": "Security"
+    },
+    {
+      "term": "Wrap/Unwrap",
+      "definition": "Conversion operations between public ERC-20 tokens and their confidential versions. Reversible at any time.",
+      "category": "Technical"
+    },
+    {
+      "term": "ZK (Zero-Knowledge)",
+      "definition": "Zero-Knowledge Proofs - Technology allowing to prove a statement without revealing the underlying information",
+      "category": "Technical"
+    },
+    {
+      "term": "Advanced Functions",
+      "definition": "Second category of computation primitives: more complex operations like transfer, mint, burn for confidential tokens.",
+      "category": "Technical"
+    },
+    {
+      "term": "Chain ID",
+      "definition": "Unique identifier of the blockchain chain (4 bytes) included in a handle's structure (bytes 26-29) to guarantee cross-chain uniqueness.",
+      "category": "Technical"
+    },
+    {
+      "term": "Copy-trading",
+      "definition": "Practice of copying investment strategies of other traders. DeFi transparency facilitates this practice, which privacy limits.",
+      "category": "Market"
+    },
+    {
+      "term": "Domain Separator",
+      "definition": "Component of the EIP-712 digest including name, version, chainId and contract address. Used to sign Gateway messages.",
+      "category": "Technical"
+    },
+    {
+      "term": "Enclave",
+      "definition": "Hardware-isolated environment in a TEE where secure components run (Handle Gateway, Runners, KMS Manager).",
+      "category": "Technical"
+    },
+    {
+      "term": "Front-running",
+      "definition": "Practice where validators/miners anticipate and execute transactions before users to profit from them. Privacy protects against this.",
+      "category": "Market"
+    },
+    {
+      "term": "keccak256",
+      "definition": "Cryptographic hash function used to calculate preHandle and EIP-712 digests in the Nox protocol.",
+      "category": "Technical"
+    },
+    {
+      "term": "Off-chain",
+      "definition": "Storage or computations performed off the blockchain. Ciphertexts are stored off-chain in the Handle Gateway database.",
+      "category": "Technical"
+    },
+    {
+      "term": "Ownership",
+      "definition": "Handle ownership determined by the associated public key. Can be transferred via the sponsoring mechanism.",
+      "category": "Technical"
+    },
+    {
+      "term": "Payload",
+      "definition": "Data submitted in a transaction containing necessary information (public key, handles, etc.).",
+      "category": "Technical"
+    },
+    {
+      "term": "Plaintext",
+      "definition": "Unencrypted data in clear. In Nox, data exists in plaintext only in the Runner's TEE enclave during execution.",
+      "category": "Technical"
+    },
+    {
+      "term": "Primitives (add/sub/div/select)",
+      "definition": "Basic computation operations available in Core Primitives: addition, subtraction, division, conditional selection.",
+      "category": "Technical"
+    },
+    {
+      "term": "GDPR",
+      "definition": "General Data Protection Regulation - European regulation on personal data protection. Nox enables compliance via programmable auditability.",
+      "category": "Market"
+    },
+    {
+      "term": "SDK",
+      "definition": "Software Development Kit - Client-side software development kit allowing developers to integrate cToken into their applications.",
+      "category": "Technical"
+    },
+    {
+      "term": "Secret shares",
+      "definition": "Fragments of the private key distributed among KMS nodes in the threshold protocol. No single node possesses the complete key.",
+      "category": "Security"
+    },
+    {
+      "term": "Slippage",
+      "definition": "Difference between expected price and actual execution price of a transaction. Privacy protects against slippage caused by front-running.",
+      "category": "Market"
+    },
+    {
+      "term": "sstore",
+      "definition": "EVM opcode for persistent storage. Used to store persistent ACL permissions that survive the transaction.",
+      "category": "Technical"
+    },
+    {
+      "term": "tstore",
+      "definition": "EVM opcode for transient storage (EIP-1153). Used for transient ACL permissions less expensive in gas.",
+      "category": "Technical"
+    }
+  ]
+}
