@@ -18,7 +18,7 @@ TEE-based encryption.
 You can experiment with the contract directly in your browser using Remix IDE:
 
 <ClientOnly>
-  <RemixEmbed :code="piggyBankCode" />
+  <RemixButton :code="piggyBankCode" />
 </ClientOnly>
 
 ## Understanding the Code
