@@ -61,7 +61,6 @@ const totalCount = glossaryData.terms.length;
         aria-label="Search glossary"
         class="glossary-search"
       />
-
     </div>
 
     <!-- List -->
@@ -79,10 +78,7 @@ const totalCount = glossaryData.terms.length;
         <div class="glossary-card-header">
           <h3 class="glossary-term">{{ item.term }}</h3>
           <span
-            :class="[
-              'glossary-badge',
-              `cat-${item.category.toLowerCase()}`,
-            ]"
+            :class="['glossary-badge', `cat-${item.category.toLowerCase()}`]"
           >
             {{ item.category }}
           </span>
