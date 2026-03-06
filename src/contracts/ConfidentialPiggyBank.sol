@@ -25,9 +25,8 @@ contract ConfidentialPiggyBank {
         require(msg.sender == owner);
         euint256 amount = Nox.fromExternal(inputHandle, inputProof);
 
-        ebool canWithdraw = Nox.le(amount, balance);
-        euint256 newBalance = Nox.sub(balance, amount);
-        balance = Nox.select(canWithdraw, newBalance, balance);
+        (ebool ok, euint256 newBalance) = Nox.safeSub(balance, amount);
+        balance = Nox.select(ok, newBalance, balance);
         Nox.allowThis(balance);
     }
 

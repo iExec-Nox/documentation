@@ -94,21 +94,21 @@ balance += amount; // [!code --]
 balance = Nox.add(balance, amount); // [!code ++]
 ```
 
-For the withdrawal, the `require(amount <= balance)` check would reveal
-information. Replace it with encrypted comparison and conditional selection:
+For the withdrawal, `require(amount <= balance)` would leak information (a
+revert reveals the condition failed). Use `Nox.safeSub()` instead: it handles
+underflow detection on encrypted values without reverting.
 
 ```solidity
 require(amount <= balance); // [!code --]
 balance -= amount; // [!code --]
-ebool canWithdraw = Nox.le(amount, balance); // [!code ++]
-euint256 newBalance = Nox.sub(balance, amount); // [!code ++]
-balance = Nox.select(canWithdraw, newBalance, balance); // [!code ++]
+(ebool ok, euint256 newBalance) = Nox.safeSub(balance, amount); // [!code ++]
+balance = Nox.select(ok, newBalance, balance); // [!code ++]
 ```
 
-- `Nox.le()` compares two encrypted values and returns an encrypted boolean
-- `Nox.select()` picks between two values based on that encrypted boolean
-- If the withdrawal exceeds the balance, the balance stays unchanged, no
-  information is leaked
+- `Nox.safeSub()` subtracts and returns `(ebool ok, euint256 result)`. If
+  `amount > balance`, `ok` is false and `result` is zero
+- `Nox.select()` picks between two values based on an encrypted boolean: on
+  underflow the balance stays unchanged, no information is leaked
 
 ## Step 6: Grant access
 
@@ -154,9 +154,8 @@ contract ConfidentialPiggyBank {
         require(msg.sender == owner);
         euint256 amount = Nox.fromExternal(inputHandle, inputProof);
 
-        ebool canWithdraw = Nox.le(amount, balance);
-        euint256 newBalance = Nox.sub(balance, amount);
-        balance = Nox.select(canWithdraw, newBalance, balance);
+        (ebool ok, euint256 newBalance) = Nox.safeSub(balance, amount);
+        balance = Nox.select(ok, newBalance, balance);
         Nox.allowThis(balance);
     }
 
