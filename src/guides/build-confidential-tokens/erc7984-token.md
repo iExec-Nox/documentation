@@ -42,7 +42,7 @@ bun add @iexec-nox/nox-confidential-contracts
 This also installs `@iexec-nox/nox-protocol-contracts` and
 `@openzeppelin/contracts` as dependencies.
 
-## Write the contract
+## Deploying the contract
 
 Start by inheriting from `ERC7984` and adding mint/burn functions restricted to
 the owner:
@@ -85,61 +85,6 @@ contract ConfidentialToken is ERC7984, Ownable {
 
 That's it. The `ERC7984` base contract handles everything else: encrypted
 balances, transfers, operators, callbacks, and access control on handles.
-
-## What happens under the hood
-
-### Constructor
-
-`ERC7984("Confidential Token", "CTOK", "")` sets the token name, symbol, and an
-optional `contractURI` (see
-[ERC-7572](https://eips.ethereum.org/EIPS/eip-7572)).
-
-The total supply and all balances start uninitialized. The first `_mint` call
-sets the total supply to the minted amount.
-
-### `_mint`
-
-When you call `_mint(to, amount)`, the base contract:
-
-1. Safely adds `amount` to the total supply using `Nox.safeAdd()`. If it would
-   overflow, zero tokens are minted (all-or-nothing)
-2. Adds `amount` to the recipient's balance
-3. Grants handle permissions so the contract can reuse the balance
-   (`Nox.allowThis`) and the recipient can decrypt it (`Nox.allow`)
-4. Emits a `ConfidentialTransfer(address(0), to, amount)` event
-
-### `_burn`
-
-When you call `_burn(from, amount)`, the base contract:
-
-1. Safely subtracts `amount` from the sender's balance using `Nox.safeSub()`. If
-   `amount > balance`, zero tokens are burned
-2. Subtracts the actually burned amount from the total supply
-3. Updates handle permissions
-4. Emits a `ConfidentialTransfer(from, address(0), amount)` event
-
-### Transfers
-
-Users call `confidentialTransfer` to send tokens. The amount is encrypted, so
-nobody watching the blockchain can see how much was sent:
-
-```solidity
-// User encrypts the amount off-chain using the JS SDK,
-// then calls the contract with the handle and proof
-token.confidentialTransfer(
-    recipientAddress,
-    encryptedAmount,
-    inputProof
-);
-```
-
-Internally, the base contract:
-
-1. Subtracts from the sender's balance with `Nox.safeSub()`, if the sender does
-   not have enough tokens, zero tokens are transferred (no revert, no leak)
-2. Adds the actually transferred amount to the recipient's balance
-3. Grants permissions to both parties
-4. Returns the actually transferred amount (encrypted)
 
 ## Operators
 
@@ -189,7 +134,9 @@ contract Vault is IERC7984Receiver {
     ) external returns (ebool) {
         // Process the incoming transfer...
         // Return encrypted true to accept, false to refund
-        return Nox.toEbool(true);
+        ebool accepted = Nox.toEbool(true);
+        Nox.allowTransient(accepted, msg.sender);
+        return accepted;
     }
 }
 ```
@@ -198,35 +145,54 @@ When a user calls `confidentialTransferAndCall`, the token contract transfers
 first, then calls the hook on the recipient. If the hook returns encrypted
 `false`, the transfer is automatically reversed.
 
-## View functions
+## Swap ERC-7984 to ERC-7984
 
-| Function                         | Returns    | Description                                           |
-| -------------------------------- | ---------- | ----------------------------------------------------- |
-| `name()`                         | `string`   | Token name                                            |
-| `symbol()`                       | `string`   | Token symbol                                          |
-| `decimals()`                     | `uint8`    | Decimals (default: 18)                                |
-| `confidentialTotalSupply()`      | `euint256` | Encrypted total supply                                |
-| `confidentialBalanceOf(account)` | `euint256` | Encrypted balance (decrypt with JS SDK if authorized) |
-| `isOperator(holder, spender)`    | `bool`     | Whether spender is an active operator                 |
+A common use case is swapping between two confidential tokens. Below is a
+contract that swaps `fromToken` for `toToken` at a 1:1 rate. The caller must
+have set this contract as an operator on `fromToken` beforehand.
 
-## Transfer functions
+```solidity
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.28;
 
-ERC-7984 provides 8 transfer variants combining these options:
+import {Nox, euint256, externalEuint256} from "@iexec-nox/nox-protocol-contracts/contracts/sdk/Nox.sol";
+import {IERC7984} from "@iexec-nox/nox-confidential-contracts/contracts/interfaces/IERC7984.sol";
 
-| Variant                           | Who sends | Proof needed         | Callback |
-| --------------------------------- | --------- | -------------------- | -------- |
-| `confidentialTransfer`            | Caller    | Yes (external input) | No       |
-| `confidentialTransfer`            | Caller    | No (pre-allowed)     | No       |
-| `confidentialTransferFrom`        | Operator  | Yes (external input) | No       |
-| `confidentialTransferFrom`        | Operator  | No (pre-allowed)     | No       |
-| `confidentialTransferAndCall`     | Caller    | Yes (external input) | Yes      |
-| `confidentialTransferAndCall`     | Caller    | No (pre-allowed)     | Yes      |
-| `confidentialTransferFromAndCall` | Operator  | Yes (external input) | Yes      |
-| `confidentialTransferFromAndCall` | Operator  | No (pre-allowed)     | Yes      |
+contract ConfidentialSwap {
+    function swap(
+        IERC7984 fromToken,
+        IERC7984 toToken,
+        externalEuint256 encryptedAmount,
+        bytes calldata inputProof
+    ) external {
+        require(fromToken.isOperator(msg.sender, address(this)));
 
-The "no proof" variants are used when the caller already has ACL access to the
-encrypted amount handle (e.g. the handle was returned by a previous operation
-and the caller was granted access).
+        euint256 amount = Nox.fromExternal(encryptedAmount, inputProof);
+
+        // Transfer fromToken: caller → this contract
+        Nox.allowTransient(amount, address(fromToken));
+        euint256 received = fromToken.confidentialTransferFrom(
+            msg.sender, address(this), amount
+        );
+
+        // Transfer toToken: this contract → caller
+        Nox.allowTransient(received, address(toToken));
+        toToken.confidentialTransfer(msg.sender, received);
+    }
+}
+```
+
+The steps are:
+
+1. Check operator approval (the caller must have called
+   `fromToken.setOperator(swapContract, until)`)
+2. Allow `fromToken` to access the encrypted amount
+3. Transfer `fromToken` from caller to the swap contract
+4. Allow `toToken` to access the actually transferred amount
+5. Transfer `toToken` from the swap contract back to the caller
+
+The swap amount remains encrypted throughout, nobody watching the blockchain can
+see how much was swapped.
 
 ## Customizing behavior
 
