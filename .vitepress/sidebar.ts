@@ -1,5 +1,130 @@
 import type { DefaultTheme } from 'vitepress';
 
+const referenceItems: DefaultTheme.SidebarItem[] = [
+  {
+    text: 'JS SDK',
+    link: '/references/js-sdk',
+    items: [
+      {
+        text: 'Getting Started',
+        link: '/references/js-sdk/getting-started',
+      },
+      {
+        text: 'Methods',
+        collapsed: true,
+        items: [
+          {
+            text: 'encryptInput',
+            link: '/references/js-sdk/methods/encryptInput',
+          },
+          {
+            text: 'decrypt',
+            link: '/references/js-sdk/methods/decrypt',
+          },
+        ],
+      },
+      {
+        text: 'Advanced Configuration',
+        link: '/references/js-sdk/advanced-configuration',
+      },
+    ],
+  },
+  {
+    text: 'SOLIDITY LIBRARY',
+    link: '/references/solidity-library',
+    items: [
+      {
+        text: 'Getting Started',
+        link: '/references/solidity-library/getting-started',
+      },
+      {
+        text: 'Core Primitives',
+        collapsed: true,
+        items: [
+          {
+            text: 'Plaintext to Encrypted',
+            link: '/references/solidity-library/methods/core-primitives/plaintext-to-encrypted',
+          },
+          {
+            text: 'fromExternal',
+            link: '/references/solidity-library/methods/core-primitives/fromExternal',
+          },
+          {
+            text: 'Arithmetic',
+            link: '/references/solidity-library/methods/core-primitives/arithmetic',
+          },
+          {
+            text: 'Safe Arithmetic',
+            link: '/references/solidity-library/methods/core-primitives/safe-arithmetic',
+          },
+          {
+            text: 'Comparisons',
+            link: '/references/solidity-library/methods/core-primitives/comparisons',
+          },
+          {
+            text: 'select',
+            link: '/references/solidity-library/methods/core-primitives/select',
+          },
+          {
+            text: 'Access Control',
+            link: '/references/solidity-library/methods/core-primitives/access-control',
+          },
+        ],
+      },
+      {
+        text: 'Advanced Functions',
+        collapsed: true,
+        items: [
+          {
+            text: 'Token Operations',
+            link: '/references/solidity-library/methods/advanced/token-operations',
+          },
+        ],
+      },
+    ],
+  },
+];
+
+const protocolItems: DefaultTheme.SidebarItem[] = [
+  {
+    text: 'PROTOCOL',
+    items: [
+      {
+        text: 'Global Architecture Overview',
+        link: '/protocol/global-architecture-overview',
+      },
+      {
+        text: 'Protocol Vision',
+        link: '/protocol/protocol-vision',
+      },
+      {
+        text: 'Nox Smart Contracts',
+        link: '/protocol/nox-smart-contracts',
+      },
+      {
+        text: 'Ingestor',
+        link: '/protocol/ingestor',
+      },
+      {
+        text: 'Runner',
+        link: '/protocol/runner',
+      },
+      {
+        text: 'Handle Gateway',
+        link: '/protocol/handle-gateway',
+      },
+      {
+        text: 'KMS',
+        link: '/protocol/kms',
+      },
+      {
+        text: 'Computation Primitives',
+        link: '/protocol/computation-primitives',
+      },
+    ],
+  },
+];
+
 export function getSidebar() {
   return {
     '/getting-started/': [
@@ -60,131 +185,14 @@ export function getSidebar() {
       },
     ],
     '/references/': [
-      {
-        text: 'JS SDK',
-        link: '/references/js-sdk',
-        items: [
-          {
-            text: 'Getting Started',
-            link: '/references/js-sdk/getting-started',
-          },
-          {
-            text: 'Methods',
-            collapsed: true,
-            items: [
-              {
-                text: 'encryptInput',
-                link: '/references/js-sdk/methods/encryptInput',
-              },
-              {
-                text: 'decrypt',
-                link: '/references/js-sdk/methods/decrypt',
-              },
-            ],
-          },
-          {
-            text: 'Advanced Configuration',
-            link: '/references/js-sdk/advanced-configuration',
-          },
-        ],
-      },
-      {
-        text: 'SOLIDITY LIBRARY',
-        link: '/references/solidity-library',
-        items: [
-          {
-            text: 'Getting Started',
-            link: '/references/solidity-library/getting-started',
-          },
-          {
-            text: 'Core Primitives',
-            collapsed: true,
-            items: [
-              {
-                text: 'Plaintext to Encrypted',
-                link: '/references/solidity-library/methods/core-primitives/plaintext-to-encrypted',
-              },
-              {
-                text: 'fromExternal',
-                link: '/references/solidity-library/methods/core-primitives/fromExternal',
-              },
-              {
-                text: 'Arithmetic',
-                link: '/references/solidity-library/methods/core-primitives/arithmetic',
-              },
-              {
-                text: 'Safe Arithmetic',
-                link: '/references/solidity-library/methods/core-primitives/safe-arithmetic',
-              },
-              {
-                text: 'Comparisons',
-                link: '/references/solidity-library/methods/core-primitives/comparisons',
-              },
-              {
-                text: 'select',
-                link: '/references/solidity-library/methods/core-primitives/select',
-              },
-              {
-                text: 'Access Control',
-                link: '/references/solidity-library/methods/core-primitives/access-control',
-              },
-            ],
-          },
-          {
-            text: 'Advanced Functions',
-            collapsed: true,
-            items: [
-              {
-                text: 'Token Operations',
-                link: '/references/solidity-library/methods/advanced/token-operations',
-              },
-            ],
-          },
-        ],
-      },
-      {
-        text: '📖 Glossary',
-        link: '/references/glossary',
-      },
+      ...referenceItems,
+      ...protocolItems,
+      { text: '📖 Glossary', link: '/references/glossary' },
     ],
     '/protocol/': [
-      {
-        text: 'PROTOCOL',
-        items: [
-          {
-            text: 'Global Architecture Overview',
-            link: '/protocol/global-architecture-overview',
-          },
-          {
-            text: 'Protocol Vision',
-            link: '/protocol/protocol-vision',
-          },
-          {
-            text: 'Nox Smart Contracts',
-            link: '/protocol/nox-smart-contracts',
-          },
-          {
-            text: 'Ingestor',
-            link: '/protocol/ingestor',
-          },
-          {
-            text: 'Runner',
-            link: '/protocol/runner',
-          },
-          {
-            text: 'Handle Gateway',
-            link: '/protocol/handle-gateway',
-          },
-          {
-            text: 'KMS',
-            link: '/protocol/kms',
-          },
-          {
-            text: 'Computation Primitives',
-            link: '/protocol/computation-primitives',
-          },
-        ],
-      },
+      ...referenceItems,
+      ...protocolItems,
+      { text: '📖 Glossary', link: '/references/glossary' },
     ],
   } as DefaultTheme.Sidebar;
 }

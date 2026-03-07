@@ -104,14 +104,9 @@ export default withMermaid(
           activeMatch: '^/guides/',
         },
         {
-          text: 'References',
-          link: '/references/js-sdk',
-          activeMatch: '^/references/',
-        },
-        {
           text: 'Protocol',
           link: '/protocol/global-architecture-overview',
-          activeMatch: '^/protocol/',
+          activeMatch: '^/(protocol|references)/',
         },
       ],
       outline: {
