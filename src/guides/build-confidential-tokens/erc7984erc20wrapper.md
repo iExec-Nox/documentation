@@ -29,7 +29,7 @@ sequenceDiagram
     User->>Wrapper: unwrap(from, to, encryptedAmount, proof)
     Wrapper->>Wrapper: _burn(from, encryptedAmount)
     Note over Wrapper: Decrypt burnt amount off-chain
-    User->>Wrapper: finalizeUnwrap(burntAmount, cleartext, decryptionProof)
+    User->>Wrapper: finalizeUnwrap(encryptedAmount, cleartext, decryptionProof)
     Wrapper->>ERC20: transfer(to, cleartext)
     Wrapper-->>User: ERC-20 tokens received
 ```
@@ -139,7 +139,7 @@ After the Nox protocol decrypts the burnt amount off-chain, the user calls
 
 ```solidity
 wrappedUSDC.finalizeUnwrap(
-    burntAmountHandle,
+    encryptedAmount,
     cleartextAmount,
     decryptionProof
 );
