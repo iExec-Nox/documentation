@@ -6,8 +6,8 @@ description:
 
 # Token Operations
 
-High-level operations for confidential token contracts. They **never revert** and
-follow **all-or-nothing** semantics: if the operation cannot complete
+High-level operations for confidential token contracts. They **never revert**
+and follow **all-or-nothing** semantics: if the operation cannot complete
 (insufficient balance, overflow), nothing changes and `success` is set to
 `false`. The previous ciphertexts are reassigned to the new output handles. This
 prevents leaking balance information through transaction success/failure (which

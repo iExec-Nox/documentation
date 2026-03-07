@@ -34,9 +34,9 @@ function eq(euint256 a, euint256 b) internal returns (ebool)
 Returns encrypted `true` when `a == b`.
 
 | Example (Uint8) | Result  | Reason           |
-| ---------------- | ------- | ---------------- |
-| `Eq(42, 42)`     | `true`  | Equal values     |
-| `Eq(0, 255)`     | `false` | Different values |
+| --------------- | ------- | ---------------- |
+| `Eq(42, 42)`    | `true`  | Equal values     |
+| `Eq(0, 255)`    | `false` | Different values |
 
 ## ne
 
@@ -47,9 +47,9 @@ function ne(euint256 a, euint256 b) internal returns (ebool)
 Returns encrypted `true` when `a != b`.
 
 | Example (Uint8) | Result  | Reason           |
-| ---------------- | ------- | ---------------- |
-| `Ne(42, 42)`     | `false` | Equal values     |
-| `Ne(0, 255)`     | `true`  | Different values |
+| --------------- | ------- | ---------------- |
+| `Ne(42, 42)`    | `false` | Equal values     |
+| `Ne(0, 255)`    | `true`  | Different values |
 
 ## lt
 
@@ -60,9 +60,9 @@ function lt(euint256 a, euint256 b) internal returns (ebool)
 Returns encrypted `true` when `a < b`.
 
 | Example (Uint8) | Result  | Reason              |
-| ---------------- | ------- | ------------------- |
-| `Lt(10, 200)`    | `true`  | 10 < 200 (unsigned) |
-| `Lt(200, 10)`    | `false` | 200 < 10 is false   |
+| --------------- | ------- | ------------------- |
+| `Lt(10, 200)`   | `true`  | 10 < 200 (unsigned) |
+| `Lt(200, 10)`   | `false` | 200 < 10 is false   |
 
 | Example (Int8)  | Result  | Reason              |
 | --------------- | ------- | ------------------- |
@@ -78,9 +78,9 @@ function le(euint256 a, euint256 b) internal returns (ebool)
 Returns encrypted `true` when `a <= b`.
 
 | Example (Uint8) | Result  | Reason             |
-| ---------------- | ------- | ------------------ |
-| `Le(10, 10)`     | `true`  | Equal values       |
-| `Le(200, 10)`    | `false` | 200 <= 10 is false |
+| --------------- | ------- | ------------------ |
+| `Le(10, 10)`    | `true`  | Equal values       |
+| `Le(200, 10)`   | `false` | 200 <= 10 is false |
 
 ## gt
 
@@ -91,9 +91,9 @@ function gt(euint256 a, euint256 b) internal returns (ebool)
 Returns encrypted `true` when `a > b`.
 
 | Example (Uint8) | Result  | Reason              |
-| ---------------- | ------- | ------------------- |
-| `Gt(200, 10)`    | `true`  | 200 > 10 (unsigned) |
-| `Gt(10, 200)`    | `false` | 10 > 200 is false   |
+| --------------- | ------- | ------------------- |
+| `Gt(200, 10)`   | `true`  | 200 > 10 (unsigned) |
+| `Gt(10, 200)`   | `false` | 10 > 200 is false   |
 
 | Example (Int8)  | Result  | Reason              |
 | --------------- | ------- | ------------------- |
@@ -109,6 +109,6 @@ function ge(euint256 a, euint256 b) internal returns (ebool)
 Returns encrypted `true` when `a >= b`.
 
 | Example (Uint8) | Result  | Reason             |
-| ---------------- | ------- | ------------------ |
-| `Ge(10, 10)`     | `true`  | Equal values       |
-| `Ge(10, 200)`    | `false` | 10 >= 200 is false |
+| --------------- | ------- | ------------------ |
+| `Ge(10, 10)`    | `true`  | Equal values       |
+| `Ge(10, 200)`   | `false` | 10 >= 200 is false |

@@ -7,7 +7,8 @@ description: Encrypted arithmetic operations with wrapping semantics
 
 Arithmetic operations on two encrypted values of the same type. All arithmetic
 uses **wrapping semantics**, matching Solidity's `unchecked` behavior: on
-overflow or underflow, values wrap around the type boundary instead of reverting.
+overflow or underflow, values wrap around the type boundary instead of
+reverting.
 
 For overflow-safe variants, see
 [Safe Arithmetic](/references/solidity-library/methods/core-primitives/safe-arithmetic).
@@ -37,10 +38,10 @@ Wrapping addition. On overflow, the result wraps around the type boundary.
   Int8, adding past `127` continues from `-128`
 
 | Example (Uint8) | Result | Reason                  |
-| ---------------- | ------ | ----------------------- |
-| `200 + 100`      | `44`   | Overflows, wraps around |
-| `255 + 1`        | `0`    | Overflows to zero       |
-| `100 + 50`       | `150`  | No overflow             |
+| --------------- | ------ | ----------------------- |
+| `200 + 100`     | `44`   | Overflows, wraps around |
+| `255 + 1`       | `0`    | Overflows to zero       |
+| `100 + 50`      | `150`  | No overflow             |
 
 | Example (Int8) | Result | Reason                       |
 | -------------- | ------ | ---------------------------- |
@@ -62,10 +63,10 @@ Wrapping subtraction. On underflow, the result wraps around the type boundary.
   example on Int8, `-128 - 1` gives `127`
 
 | Example (Uint8) | Result | Reason                   |
-| ---------------- | ------ | ------------------------ |
-| `0 - 1`          | `255`  | Underflows, wraps to MAX |
-| `10 - 200`       | `66`   | Underflows, wraps around |
-| `100 - 30`       | `70`   | No underflow             |
+| --------------- | ------ | ------------------------ |
+| `0 - 1`         | `255`  | Underflows, wraps to MAX |
+| `10 - 200`      | `66`   | Underflows, wraps around |
+| `100 - 30`      | `70`   | No underflow             |
 
 | Example (Int8) | Result | Reason                        |
 | -------------- | ------ | ----------------------------- |
@@ -85,10 +86,10 @@ Wrapping multiplication. On overflow, the result wraps around the type boundary.
 - **Signed:** `(a * b) mod 2^N`, interpreted in two's complement
 
 | Example (Uint8) | Result | Reason                  |
-| ---------------- | ------ | ----------------------- |
-| `3 * 100`        | `44`   | Overflows, wraps around |
-| `16 * 16`        | `0`    | Overflows to zero       |
-| `10 * 5`         | `50`   | No overflow             |
+| --------------- | ------ | ----------------------- |
+| `3 * 100`       | `44`   | Overflows, wraps around |
+| `16 * 16`       | `0`    | Overflows to zero       |
+| `10 * 5`        | `50`   | No overflow             |
 
 | Example (Int8) | Result | Reason                       |
 | -------------- | ------ | ---------------------------- |
@@ -103,7 +104,8 @@ function div(euint256 a, euint256 b) internal returns (euint256)
 ```
 
 Integer division, truncated toward zero. Division by zero does not revert, it
-returns the maximum representable value of the type (saturates toward +infinity).
+returns the maximum representable value of the type (saturates toward
++infinity).
 
 - **Unsigned:** returns `2^N - 1` (MAX_U). For example on Uint8, `10 / 0` gives
   `255`
@@ -112,11 +114,11 @@ returns the maximum representable value of the type (saturates toward +infinity)
   (`128`) exceeds MAX_I (`127`)
 
 | Example (Uint8) | Result | Reason                          |
-| ---------------- | ------ | ------------------------------- |
-| `10 / 0`         | `255`  | Division by zero, returns MAX_U |
-| `7 / 2`          | `3`    | Truncated toward zero           |
-| `1 / 2`          | `0`    | Truncated toward zero           |
-| `0 / 5`          | `0`    | Zero numerator                  |
+| --------------- | ------ | ------------------------------- |
+| `10 / 0`        | `255`  | Division by zero, returns MAX_U |
+| `7 / 2`         | `3`    | Truncated toward zero           |
+| `1 / 2`         | `0`    | Truncated toward zero           |
+| `0 / 5`         | `0`    | Zero numerator                  |
 
 | Example (Int8) | Result | Reason                          |
 | -------------- | ------ | ------------------------------- |
