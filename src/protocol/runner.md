@@ -113,12 +113,12 @@ silently cap at available balances to prevent leaking information.
 
 For the complete reference of all operations, including Solidity signatures,
 edge cases and examples, see the
-[Computation Primitives](/protocol/computation-primitives) page.
+[Solidity Library](/references/solidity-library).
 
 ## Learn More
 
-- [Computation Primitives](/protocol/computation-primitives) - Full reference of
-  all operations with signatures and edge cases
+- [Solidity Library](/references/solidity-library) - Full reference of all
+  operations with signatures and edge cases
 - [Handle Gateway](/protocol/handle-gateway) - Handle storage and encryption
 - [KMS](/protocol/kms) - Key management and decryption delegation
 - [Nox Smart Contracts](/protocol/nox-smart-contracts) - On-chain computation

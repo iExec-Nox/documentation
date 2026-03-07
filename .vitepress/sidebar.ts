@@ -117,10 +117,6 @@ const protocolItems: DefaultTheme.SidebarItem[] = [
         text: 'KMS',
         link: '/protocol/kms',
       },
-      {
-        text: 'Computation Primitives',
-        link: '/protocol/computation-primitives',
-      },
     ],
   },
 ];

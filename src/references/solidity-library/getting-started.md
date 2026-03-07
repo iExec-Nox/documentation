@@ -107,7 +107,5 @@ for handles received from users that need proof validation before use.
   `transfer`, `mint`, `burn`
 - [Access Control](/references/solidity-library/methods/core-primitives/access-control):
   permissions and viewer management
-- [Computation Primitives](/protocol/computation-primitives): detailed semantics
-  for each operation (overflow behavior, edge cases)
 - [JS SDK](/references/js-sdk): encrypt inputs and decrypt results from
   JavaScript

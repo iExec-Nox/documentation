@@ -7,7 +7,8 @@ description: Encrypted conditional branching
 
 Returns `ifTrue` when `condition` is encrypted `true`, `ifFalse` otherwise.
 Since encrypted values cannot be branched on with `if`, `select` is the only way
-to implement conditional logic on encrypted data.
+to implement conditional logic on encrypted data. No computation is performed on
+the values themselves, it is purely a selection.
 
 **Supported types:** `euint16`, `euint256`, `eint16`, `eint256`
 
@@ -42,3 +43,8 @@ Nox.allowThis(finalBalance);
 ```solidity
 function select(ebool condition, euint256 ifTrue, euint256 ifFalse) internal returns (euint256)
 ```
+
+| Example                  | Result | Reason             |
+| ------------------------ | ------ | ------------------ |
+| `Select(true, 42, 100)`  | `42`   | Condition is true  |
+| `Select(false, 42, 100)` | `100`  | Condition is false |

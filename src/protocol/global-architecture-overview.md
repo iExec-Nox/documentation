@@ -216,7 +216,7 @@ For the full cryptographic protocol, see [KMS](/protocol/kms).
 - [Ingestor](/protocol/ingestor): blockchain monitoring and event pipeline
 - [Nox Smart Contracts](/protocol/nox-smart-contracts): on-chain contracts,
   handle structure, and ACL
-- [Computation Primitives](/protocol/computation-primitives): full reference of
-  all operations
+- [Solidity Library](/references/solidity-library): full reference of all
+  operations
 - [Protocol Vision](/protocol/protocol-vision): long-term architecture and
   design principles
