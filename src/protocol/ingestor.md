@@ -55,8 +55,8 @@ sequenceDiagram
 
 The Ingestor listens for **all events** emitted by the `NoxCompute` contract.
 Each event corresponds to a computation primitive (arithmetic, comparisons,
-token operations, etc.). See
-[Computation Primitives](/protocol/computation-primitives) for the full list.
+token operations, etc.). See [Solidity Library](/references/solidity-library)
+for the full list.
 
 ## Message Format
 
