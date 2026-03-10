@@ -13,7 +13,7 @@ protocol coordinates six components: on-chain smart contracts, an event listener
 (Ingestor), a message queue (NATS), a computation engine (Runner), an encrypted
 data store (Handle Gateway), and a key management service (KMS).
 
-![Nox Protocol Architecture](/nox-protocol.png)
+![Nox Protocol Architecture](../assets/nox-protocol.png)
 
 ## End-to-End Flow
 

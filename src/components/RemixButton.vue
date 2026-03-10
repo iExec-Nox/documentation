@@ -5,13 +5,14 @@
     rel="noopener noreferrer"
     class="remix-btn"
   >
-    <img src="/remix-logo.png" alt="Remix" class="remix-icon" />
+    <img :src="remixLogo" alt="Remix" class="remix-icon" />
     <span>Open in Remix</span>
   </a>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue';
+import remixLogo from '@/assets/remix-logo.png';
 
 const props = defineProps<{ code: string }>();
 
