@@ -179,6 +179,27 @@ export function getSidebar() {
           },
         ],
       },
+      {
+        text: 'MANAGE HANDLE ACCESS',
+        items: [
+          {
+            text: 'Intro',
+            link: '/guides/manage-handle-access/intro',
+          },
+          {
+            text: 'Manage Viewers',
+            link: '/guides/manage-handle-access/viewers',
+          },
+          {
+            text: 'Manage Admins',
+            link: '/guides/manage-handle-access/admins',
+          },
+          {
+            text: 'Manage Public Decryption',
+            link: '/guides/manage-handle-access/public-decryption',
+          },
+        ],
+      },
     ],
     '/references/': [
       ...referenceItems,
