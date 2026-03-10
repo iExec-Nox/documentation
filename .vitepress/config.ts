@@ -134,6 +134,8 @@ export default withMermaid(
         text: 'Suggest changes to this page',
       },
 
+      siteTitle: false,
+
       logo: {
         light: '/Logo-RLC-Yellow.png',
         dark: '/Logo-RLC-Yellow.png',

@@ -161,19 +161,6 @@ const dappFeatures = [
 .home-custom {
   max-width: 1152px;
   margin: 0 auto;
-  padding: 0 24px 64px;
-}
-
-@media (min-width: 640px) {
-  .home-custom {
-    padding: 0 48px 96px;
-  }
-}
-
-@media (min-width: 960px) {
-  .home-custom {
-    padding: 0 64px 96px;
-  }
 }
 
 /* Protocol Cards */
