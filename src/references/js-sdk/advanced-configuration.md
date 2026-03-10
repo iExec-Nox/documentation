@@ -24,8 +24,8 @@ import { BrowserProvider } from 'ethers';
 const signer = new BrowserProvider(window.ethereum);
 
 const handleClient = await createEthersHandleClient(signer, {
-  gatewayUrl: 'https://gateway.custom.example.com',
-  smartContractAddress: '0xYourContractAddress',
+  gatewayUrl: 'https://nox-gateway.custom.example.com',
+  smartContractAddress: '0xCustomNoxContractAddress',
 });
 ```
 
@@ -39,8 +39,8 @@ import type { HandleClientConfig } from '@iexec-nox/handle';
 
 **Type:** `string` (base URL without path or query parameters)
 
-The Gateway endpoint URL. The SDK communicates with the Gateway for encryption
-and decryption operations.
+The Nox Gateway endpoint URL. The SDK communicates with the Gateway for
+encryption and decryption operations.
 
 ```ts twoslash
 declare global {
@@ -55,11 +55,12 @@ import { BrowserProvider } from 'ethers';
 const signer = new BrowserProvider(window.ethereum);
 
 const handleClient = await createEthersHandleClient(signer, {
-  gatewayUrl: 'https://gateway.custom.example.com', // [!code focus]
+  gatewayUrl: 'https://nox-gateway.custom.example.com', // [!code focus]
 });
 ```
 
-If not provided, the default Gateway URL for the detected network will be used.
+If not provided, the default Nox Gateway URL for the detected network will be
+used.
 
 ### smartContractAddress <Optional />
 
@@ -106,8 +107,8 @@ To use an unsupported chain, you must provide both `gatewayUrl` and
 ```ts twoslash [Ethers.js]
 declare const RPC_URL: string;
 declare const PRIVATE_KEY: string;
-declare const GATEWAY_URL: `https://${string}`;
-declare const CONTRACT_ADDRESS: `0x${string}`;
+declare const NOX_GATEWAY_URL: `https://${string}`;
+declare const NOX_CONTRACT_ADDRESS: `0x${string}`;
 // ---cut---
 import { createEthersHandleClient } from '@iexec-nox/handle';
 import { JsonRpcProvider, Wallet } from 'ethers';
@@ -116,16 +117,16 @@ const provider = new JsonRpcProvider(RPC_URL);
 const signer = new Wallet(PRIVATE_KEY, provider);
 
 const handleClient = await createEthersHandleClient(signer, {
-  gatewayUrl: GATEWAY_URL,
-  smartContractAddress: CONTRACT_ADDRESS,
+  gatewayUrl: NOX_GATEWAY_URL,
+  smartContractAddress: NOX_CONTRACT_ADDRESS,
 });
 ```
 
 ```ts twoslash [Viem]
 declare const RPC_URL: string;
 declare const PRIVATE_KEY: `0x${string}`;
-declare const GATEWAY_URL: `https://${string}`;
-declare const CONTRACT_ADDRESS: `0x${string}`;
+declare const NOX_GATEWAY_URL: `https://${string}`;
+declare const NOX_CONTRACT_ADDRESS: `0x${string}`;
 // ---cut---
 import { createViemHandleClient } from '@iexec-nox/handle';
 import { createWalletClient, http } from 'viem';
@@ -137,8 +138,8 @@ const walletClient = createWalletClient({
 });
 
 const handleClient = await createViemHandleClient(walletClient, {
-  gatewayUrl: GATEWAY_URL,
-  smartContractAddress: CONTRACT_ADDRESS,
+  gatewayUrl: NOX_GATEWAY_URL,
+  smartContractAddress: NOX_CONTRACT_ADDRESS,
 });
 ```
 
