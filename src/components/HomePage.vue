@@ -183,6 +183,7 @@ const dappFeatures = [
         </div>
       </div>
     </section>
+    n
   </div>
 </template>
 
@@ -409,7 +410,9 @@ const dappFeatures = [
   overflow: hidden;
   text-decoration: none;
   color: inherit;
-  transition: box-shadow 0.3s, border-color 0.3s;
+  transition:
+    box-shadow 0.3s,
+    border-color 0.3s;
 }
 
 .dark .protocol-card {
@@ -525,7 +528,9 @@ const dappFeatures = [
   overflow: hidden;
   text-decoration: none;
   color: inherit;
-  transition: box-shadow 0.3s, border-color 0.3s;
+  transition:
+    box-shadow 0.3s,
+    border-color 0.3s;
 }
 
 .dark .feature-card {
