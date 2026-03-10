@@ -63,79 +63,79 @@ const dappCards = [
         </p>
       </div>
       <div class="hero-image">
-        <img
-          :src="withBase('/illustration-large.webp')"
-          alt="Nox Protocol"
-        />
+        <img :src="withBase('/illustration-large.webp')" alt="Nox Protocol" />
       </div>
     </section>
 
     <!-- Protocol Cards -->
     <section class="section-container">
       <div class="protocol-grid">
-          <!-- Nox Protocol -->
-          <a :href="withBase('/getting-started/welcome')" class="protocol-card">
-            <div class="protocol-card-header">
-              <div class="protocol-icon">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <path
-                    d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h3 class="protocol-card-title">Nox Protocol</h3>
-                <p class="protocol-card-subtitle">Confidential DeFi</p>
-              </div>
+        <!-- Nox Protocol -->
+        <a :href="withBase('/getting-started/welcome')" class="protocol-card">
+          <div class="protocol-card-header">
+            <div class="protocol-icon">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              </svg>
             </div>
-            <p class="protocol-card-desc">
-              Nox is a privacy layer that empowers smart contracts with
-              confidential computation. Encrypted inputs are executed inside
-              Trusted Execution Environments (TEE), composable with DeFi,
-              without ever exposing plaintext on-chain.
-            </p>
-          </a>
-          <!-- iExec PoCo -->
-          <a href="https://docs.iex.ec/get-started/welcome" target="_blank" rel="noopener" class="protocol-card">
-            <div class="protocol-card-header">
-              <div class="protocol-icon">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                >
-                  <rect x="2" y="2" width="20" height="8" rx="2" />
-                  <rect x="2" y="14" width="20" height="8" rx="2" />
-                  <circle cx="6" cy="6" r="0.5" fill="currentColor" />
-                  <circle cx="6" cy="18" r="0.5" fill="currentColor" />
-                </svg>
-              </div>
-              <div>
-                <h3 class="protocol-card-title">iExec PoCo</h3>
-                <p class="protocol-card-subtitle">Off-chain Privacy</p>
-              </div>
+            <div>
+              <h3 class="protocol-card-title">Nox Protocol</h3>
+              <p class="protocol-card-subtitle">Confidential DeFi</p>
             </div>
-            <p class="protocol-card-desc">
-              PoCo is a trust and coordination layer that secures off-chain
-              execution in Trusted Execution Environments (TEE), enforcing
-              correctness, privacy, and clear economic governance.
-            </p>
-          </a>
-        </div>
+          </div>
+          <p class="protocol-card-desc">
+            Nox is a privacy layer that empowers smart contracts with
+            confidential computation. Encrypted inputs are executed inside
+            Trusted Execution Environments (TEE), composable with DeFi, without
+            ever exposing plaintext on-chain.
+          </p>
+        </a>
+        <!-- iExec PoCo -->
+        <a
+          href="https://docs.iex.ec/get-started/welcome"
+          target="_blank"
+          rel="noopener"
+          class="protocol-card"
+        >
+          <div class="protocol-card-header">
+            <div class="protocol-icon">
+              <svg
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              >
+                <rect x="2" y="2" width="20" height="8" rx="2" />
+                <rect x="2" y="14" width="20" height="8" rx="2" />
+                <circle cx="6" cy="6" r="0.5" fill="currentColor" />
+                <circle cx="6" cy="18" r="0.5" fill="currentColor" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="protocol-card-title">iExec PoCo</h3>
+              <p class="protocol-card-subtitle">Off-chain Privacy</p>
+            </div>
+          </div>
+          <p class="protocol-card-desc">
+            PoCo is a trust and coordination layer that secures off-chain
+            execution in Trusted Execution Environments (TEE), enforcing
+            correctness, privacy, and clear economic governance.
+          </p>
+        </a>
+      </div>
     </section>
 
     <!-- Build confidential and programmable financial logic -->
@@ -215,10 +215,7 @@ const dappCards = [
           :href="withBase(card.link)"
           class="feature-card"
         >
-          <div
-            class="feature-icon outlined"
-            :class="{ accent: card.accent }"
-          >
+          <div class="feature-icon outlined" :class="{ accent: card.accent }">
             <!-- Layers icon -->
             <svg
               v-if="card.icon === 'layers'"
@@ -247,9 +244,7 @@ const dappCards = [
               stroke-linecap="round"
               stroke-linejoin="round"
             >
-              <path
-                d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"
-              />
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
               <path d="M9 12l2 2 4-4" />
             </svg>
             <!-- Rocket icon -->
