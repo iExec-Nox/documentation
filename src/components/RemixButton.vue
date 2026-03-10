@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import remixLogo from '@/assets/remix-logo.png';
+import remixLogo from '@/assets/images/remix-logo.png';
 
 const props = defineProps<{ code: string }>();
 
