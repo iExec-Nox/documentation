@@ -50,9 +50,9 @@ function isPubliclyDecryptable(bytes32 handle) external view returns (bool);
 ]
 ```
 
-### with ethers
+::: code-group
 
-```ts twoslash
+```ts twoslash [ethers]
 import { BrowserProvider, Contract, type AbstractProvider } from 'ethers';
 
 const provider: AbstractProvider = new BrowserProvider(
@@ -103,9 +103,7 @@ const isPubliclyDecryptable: boolean =
   await noxContract.isPubliclyDecryptable(handle);
 ```
 
-### with viem
-
-```ts twoslash
+```ts twoslash [viem]
 import { createPublicClient, http } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
 
@@ -157,6 +155,8 @@ const isPubliclyDecryptable = await publicClient.readContract({
 });
 ```
 
+:::
+
 ## Allowing Public Decryption
 
 The Nox protocol smart contract provides a function for admins to make a handle
@@ -200,9 +200,9 @@ function allowPublicDecryption(bytes32 handle) external;
 ]
 ```
 
-### with ethers
+::: code-group
 
-```ts twoslash
+```ts twoslash [ethers]
 import {
   BrowserProvider,
   Contract,
@@ -252,9 +252,7 @@ const tx = await noxContract.allowPublicDecryption(handle);
 await tx.wait();
 ```
 
-### with viem
-
-```ts twoslash
+```ts twoslash [viem]
 import {
   createWalletClient,
   http,
@@ -314,3 +312,5 @@ await walletClient.writeContract({
   args: [handle],
 });
 ```
+
+:::

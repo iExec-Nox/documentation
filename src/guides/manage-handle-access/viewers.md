@@ -57,9 +57,9 @@ function isViewer(bytes32 handle, address account) external view returns (bool);
 ]
 ```
 
-### with ethers
+::: code-group
 
-```ts twoslash
+```ts twoslash [ethers]
 import { BrowserProvider, Contract, type AbstractProvider } from 'ethers';
 
 const provider: AbstractProvider = new BrowserProvider(
@@ -115,9 +115,7 @@ const noxContract = new Contract(
 const isViewer: boolean = await noxContract.isViewer(handle, account);
 ```
 
-### with viem
-
-```ts twoslash
+```ts twoslash [viem]
 import { createPublicClient, http } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
 
@@ -175,6 +173,8 @@ const isViewer = await publicClient.readContract({
 });
 ```
 
+:::
+
 ## Adding Viewers
 
 The Nox protocol smart contract provides a function for admins to add a specific
@@ -223,9 +223,9 @@ function addViewer(bytes32 handle, address account) external;
 ]
 ```
 
-### with ethers
+::: code-group
 
-```ts twoslash
+```ts twoslash [ethers]
 import {
   BrowserProvider,
   Contract,
@@ -281,9 +281,7 @@ const tx = await noxContract.addViewer(handle, viewerAddress);
 await tx.wait();
 ```
 
-### with viem
-
-```ts twoslash
+```ts twoslash [viem]
 import {
   createWalletClient,
   http,
@@ -349,3 +347,5 @@ await walletClient.writeContract({
   args: [handle, viewerAddress],
 });
 ```
+
+:::

@@ -60,9 +60,9 @@ function isAllowed(bytes32 handle, address account) external view returns (bool)
 ]
 ```
 
-### with ethers
+::: code-group
 
-```ts twoslash
+```ts twoslash [ethers]
 import { BrowserProvider, Contract, type AbstractProvider } from 'ethers';
 
 const provider: AbstractProvider = new BrowserProvider(
@@ -118,9 +118,7 @@ const noxContract = new Contract(
 const isAllowed: boolean = await noxContract.isAllowed(handle, account);
 ```
 
-### with viem
-
-```ts twoslash
+```ts twoslash [viem]
 import { createPublicClient, http } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
 
@@ -178,6 +176,8 @@ const isAllowed = await publicClient.readContract({
 });
 ```
 
+:::
+
 ## Allowing Admins
 
 The Nox protocol smart contract provides a function for admins to allow a
@@ -224,9 +224,9 @@ function allow(bytes32 handle, address account) external;
 ]
 ```
 
-### with ethers
+::: code-group
 
-```ts twoslash
+```ts twoslash [ethers]
 import {
   BrowserProvider,
   Contract,
@@ -282,9 +282,7 @@ const tx = await noxContract.allow(handle, accountToAllow);
 await tx.wait();
 ```
 
-### with viem
-
-```ts twoslash
+```ts twoslash [viem]
 import {
   createWalletClient,
   http,
@@ -350,3 +348,5 @@ await walletClient.writeContract({
   args: [handle, accountToAllow],
 });
 ```
+
+:::
