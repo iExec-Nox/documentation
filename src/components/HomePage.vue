@@ -88,7 +88,7 @@ const dappFeatures = [
         :href="card.external ? card.link : withBase(card.link)"
         :target="card.external ? '_blank' : undefined"
         :rel="card.external ? 'noopener' : undefined"
-        class="protocol-card"
+        class="protocol-card relative rounded-[32px] border border-[var(--vp-c-bg-soft)] bg-gradient-to-b from-[var(--vp-c-white)] to-[var(--vp-c-white)] transition-all duration-300 *:relative *:z-20 after:absolute after:inset-px after:z-10 after:rounded-[31px] after:bg-[var(--vp-c-bg-soft)] hover:shadow-lg hover:border-[var(--vp-c-brand-1)] dark:from-[var(--c-border)] dark:to-transparent"
       >
         <div class="protocol-card-header">
           <img
@@ -115,7 +115,7 @@ const dappFeatures = [
           v-for="feature in financialFeatures"
           :key="feature.title"
           :href="withBase(feature.link)"
-          class="feature-card"
+          class="feature-card relative rounded-[32px] border border-[var(--vp-c-bg-soft)] bg-gradient-to-b from-[var(--vp-c-white)] to-[var(--vp-c-white)] transition-all duration-300 *:relative *:z-20 after:absolute after:inset-px after:z-10 after:rounded-[31px] after:bg-[var(--vp-c-bg-soft)] hover:shadow-lg hover:border-[var(--vp-c-brand-1)] dark:from-[var(--c-border)] dark:to-transparent"
         >
           <div class="feature-icon-wrapper">
             <img
@@ -140,7 +140,7 @@ const dappFeatures = [
           :href="feature.external ? feature.link : withBase(feature.link)"
           :target="feature.external ? '_blank' : undefined"
           :rel="feature.external ? 'noopener' : undefined"
-          class="feature-card"
+          class="feature-card relative rounded-[32px] border border-[var(--vp-c-bg-soft)] bg-gradient-to-b from-[var(--vp-c-white)] to-[var(--vp-c-white)] transition-all duration-300 *:relative *:z-20 after:absolute after:inset-px after:z-10 after:rounded-[31px] after:bg-[var(--vp-c-bg-soft)] hover:shadow-lg hover:border-[var(--vp-c-brand-1)] dark:from-[var(--c-border)] dark:to-transparent"
         >
           <div class="feature-icon-wrapper">
             <img
@@ -195,15 +195,6 @@ const dappFeatures = [
   text-decoration: none;
   color: inherit;
   padding: 24px;
-  border-radius: 16px;
-  border: 1px solid var(--vp-c-gutter);
-  background: var(--vp-c-bg-soft);
-  transition: all 0.25s;
-}
-
-.protocol-card:hover {
-  border-color: var(--vp-c-brand-1);
-  box-shadow: 0 4px 16px rgba(24, 62, 233, 0.08);
 }
 
 .protocol-card-header {
@@ -270,15 +261,6 @@ const dappFeatures = [
   text-decoration: none;
   color: inherit;
   padding: 24px;
-  border-radius: 16px;
-  border: 1px solid var(--vp-c-gutter);
-  background: var(--vp-c-bg);
-  transition: all 0.25s;
-}
-
-.feature-card:hover {
-  border-color: var(--vp-c-brand-1);
-  box-shadow: 0 4px 16px rgba(24, 62, 233, 0.08);
 }
 
 .feature-icon-wrapper {
@@ -302,23 +284,5 @@ const dappFeatures = [
   line-height: 1.6;
   color: var(--vp-c-text-2);
   margin: 0;
-}
-
-/* Dark mode adjustments */
-:global(.dark) .protocol-card {
-  border-color: rgba(255, 255, 255, 0.08);
-}
-
-:global(.dark) .protocol-card:hover {
-  box-shadow: 0 4px 16px rgba(162, 179, 255, 0.08);
-}
-
-:global(.dark) .feature-card {
-  border-color: rgba(255, 255, 255, 0.08);
-  background: var(--vp-c-bg-soft);
-}
-
-:global(.dark) .feature-card:hover {
-  box-shadow: 0 4px 16px rgba(162, 179, 255, 0.08);
 }
 </style>
