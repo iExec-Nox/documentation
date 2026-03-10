@@ -486,63 +486,36 @@ input {
 }
 
 /**
-   * HomePage: rewrite
+   * HomePage: custom layout
    * -------------------------------------------------------------------------- */
 
-:root {
-  --vp-home-hero-name-color: var(--vp-c-text-1);
-}
 .VPContent.is-home {
   @apply overflow-x-hidden;
 }
 
-.VPHero.has-image.VPHomeHero {
-  @apply lg:pb-0;
+.VPHome .VPHomeContent {
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
-.VPHero.has-image.VPHomeHero p {
-  @apply font-normal text-[var(--vp-home-hero-name-color)];
+.VPHome .VPHomeContent > .container {
+  max-width: 100% !important;
+  margin: 0 !important;
 }
 
-.VPLink.link.VPFeature {
-  @apply relative rounded-[32px] border bg-gradient-to-b from-[var(--vp-c-white)] to-[var(--vp-c-white)] transition-all duration-300 *:relative *:z-20 after:absolute after:inset-px after:z-10 after:rounded-[31px] after:bg-[var(--vp-c-bg-soft)] hover:shadow-lg;
+.VPHome .VPHomeContent .vp-doc {
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
-.dark .VPLink.link.VPFeature {
-  @apply from-[var(--c-border)] to-transparent;
+.VPHome h2 {
+  border-top: none !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
 }
 
-article.box .icon {
-  @apply size-14 rounded-[14px] bg-[var(--vp-c-bg-soft)] p-2;
-  box-shadow:
-    -12.835px -12.835px 21.392px 0 var(--vp-c-bg),
-    12.835px 12.835px 21.392px 0 var(--vp-c-bg);
-}
-
-article.box .icon ._stroke {
-  @apply stroke-[var(--vp-c-brand-1)];
-}
-
-article.box .icon ._fill {
-  @apply fill-[var(--vp-c-brand-1)];
-}
-
-/* Image */
-
-.VPImage.image-src {
-  @apply lg:size-[448px]! lg:max-h-none lg:max-w-none;
-}
-
-.image .image-container {
-  @apply relative flex items-center justify-center;
-}
-
-.image .image-container::before {
-  @apply pointer-events-none absolute top-[60%] left-1/2 -z-10 size-[724px] -translate-x-1/2 -translate-y-1/2 bg-contain bg-center bg-no-repeat lg:h-[929px] lg:w-[995px];
-  content: '';
-  background-image: url('/bg-gradient.svg');
-}
-
-.image .image-container .VPImage.image-src {
-  @apply z-10 lg:relative;
+.VPHome .vp-doc h2 {
+  border-top: none !important;
+  margin-top: 0 !important;
+  padding-top: 0 !important;
 }
