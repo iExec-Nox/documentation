@@ -1,5 +1,11 @@
 {
   "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/nox-protocol/:path*",
+      "destination": "/:path*"
+    }
+  ],
   "redirects": [
     {
       "source": "/robots.txt",

@@ -183,7 +183,6 @@ const dappFeatures = [
         </div>
       </div>
     </section>
-    n
   </div>
 </template>
 
