@@ -97,45 +97,6 @@ architecture for production.
 
 :::
 
-## API
-
-### `POST /v0/delegate`
-
-Performs decryption delegation. Given an ephemeral Elliptic Curve public key `K`
-(from encryption) and a target RSA public key, the KMS:
-
-1. Computes the shared secret `S = K * privkey_KMS`
-2. Encrypts `S` with RSA-OAEP (SHA-256)
-3. Returns the RSA-encrypted shared secret
-
-**Request:**
-
-```json
-{
-  "ephemeralPubKey": "0x...",
-  "targetPubKey": "0x..."
-}
-```
-
-- `ephemeralPubKey`: compressed SEC1 format (33 bytes), the `K` stored with the
-  ciphertext
-- `targetPubKey`: RSA public key in SPKI format (minimum 2048-bit)
-
-**Authorization:** EIP-712 signed `DelegateAuthorization` in the `Authorization`
-header (`Bearer <hex signature>`).
-
-**Response:**
-
-```json
-{
-  "encryptedSharedSecret": "0x...",
-  "proof": "0x..."
-}
-```
-
-The requester then decrypts the shared secret with their RSA private key,
-derives the AES-256 key via HKDF, and decrypts the ciphertext locally.
-
 ## Learn More
 
 - [Global Architecture Overview](/protocol/global-architecture-overview)
