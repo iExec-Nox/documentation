@@ -18,12 +18,12 @@ and manage confidential tokens, all from your browser.
 
 The application walks through four core capabilities of confidential tokens:
 
-| Feature | What it does |
-| --- | --- |
-| **Wrap** | Convert a public ERC-20 token (USDC, RLC) into its confidential equivalent (cUSDC, cRLC) |
-| **Transfer** | Send confidential tokens to another address. The amount stays encrypted on-chain |
-| **Unwrap** | Convert a confidential token back into a standard ERC-20 |
-| **Selective Disclosure** | Grant a third party (auditor, regulator) read access to your confidential balance |
+| Feature                  | What it does                                                                             |
+| ------------------------ | ---------------------------------------------------------------------------------------- |
+| **Wrap**                 | Convert a public ERC-20 token (USDC, RLC) into its confidential equivalent (cUSDC, cRLC) |
+| **Transfer**             | Send confidential tokens to another address. The amount stays encrypted on-chain         |
+| **Unwrap**               | Convert a confidential token back into a standard ERC-20                                 |
+| **Selective Disclosure** | Grant a third party (auditor, regulator) read access to your confidential balance        |
 
 ## Prerequisites
 
@@ -33,10 +33,8 @@ To use the demo you need:
 - A small amount of **Arbitrum Sepolia ETH** for gas fees
 - Some testnet tokens to wrap. The app includes a faucet to get USDC and RLC
 
-::: tip No real funds involved
-The demo runs entirely on **Arbitrum Sepolia** (testnet). All tokens are free
-and have no monetary value.
-:::
+::: tip No real funds involved The demo runs entirely on **Arbitrum Sepolia**
+(testnet). All tokens are free and have no monetary value. :::
 
 ## Walkthrough
 
@@ -84,11 +82,9 @@ grant a specific address **read access** to your confidential balance.
 Enter the viewer's address, choose which tokens to share (or all of them), and
 confirm. The viewer can then read your balance, but nobody else can.
 
-::: info Per-balance access
-Access is tied to the current balance handle. After a transaction that changes
-your balance (wrap, transfer, unwrap), you need to grant access again for the
-new balance.
-:::
+::: info Per-balance access Access is tied to the current balance handle. After
+a transaction that changes your balance (wrap, transfer, unwrap), you need to
+grant access again for the new balance. :::
 
 ## How it works
 
@@ -96,8 +92,8 @@ Under the hood, the demo relies on three building blocks:
 
 - **ERC-7984 smart contracts** the on-chain standard for confidential tokens,
   handling wrap, unwrap, and encrypted transfers
-- **Nox JS SDK** encrypts amounts client-side before sending them on-chain,
-  and decrypts balance handles for the wallet owner
+- **Nox JS SDK** encrypts amounts client-side before sending them on-chain, and
+  decrypts balance handles for the wallet owner
 - **Handle Gateway** the off-chain service that manages encryption keys and
   processes decryption requests inside a Trusted Execution Environment (TEE)
 
@@ -114,8 +110,8 @@ granted access to you.
 
 ## Next steps
 
-- [ERC-7984 Token](/guides/build-confidential-tokens/erc7984-token) Learn how
-  to create your own confidential token
+- [ERC-7984 Token](/guides/build-confidential-tokens/erc7984-token) Learn how to
+  create your own confidential token
 - [ERC-20 to ERC-7984](/guides/build-confidential-tokens/erc7984erc20wrapper)
   Wrap an existing ERC-20 into a confidential token
 - [Manage Viewers](/guides/manage-handle-access/viewers) Deep dive into access
