@@ -7,43 +7,61 @@ description: Welcome to Nox Protocol - Composable Privacy for DeFi
 
 ## Welcome to Nox
 
-Nox is the first truly on-chain composable privacy layer for DeFi. Just as HTTPS
-made secure connections invisible and seamless, Nox makes privacy the default
-for blockchain applications.
+Nox is a **composable privacy layer** for DeFi. Just as HTTPS made **secure
+connections invisible and seamless**, Nox makes **privacy the default** for
+blockchain applications.
 
-With Nox, you can build confidential smart contracts and tokens that protect
-sensitive data while remaining fully composable with existing DeFi protocols.
-Your contracts can process encrypted inputs, execute computations privately, and
-maintain confidentiality—all without breaking composability.
+With Nox, you build **confidential smart contracts and tokens** fully composable
+with existing DeFi protocols. Your contracts can **process encrypted inputs**,
+**execute computations privately**, and **maintain confidentiality**.
 
 ## Why Nox?
 
-- **Native Composability**: Privacy that doesn't break DeFi composability
-- **Developer-Friendly**: Familiar Solidity syntax with privacy primitives
-- **No Special Wallets**: Works with standard Ethereum wallets and tools
-- **Omnichain**: Deploy on multiple blockchain networks
-- **Production-Ready**: Built for real-world DeFi applications
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+  <div class="rounded-lg border border-border bg-soft-bg p-5">
+    <p class="font-semibold text-text1 mb-1">Native composability</p>
+    <p class="text-sm text-text2 m-0!">Privacy that doesn't break DeFi composability</p>
+  </div>
+  <div class="rounded-lg border border-border bg-soft-bg p-5">
+    <p class="font-semibold text-text1 mb-1">Developer-friendly</p>
+    <p class="text-sm text-text2 m-0!">Familiar Solidity syntax with privacy primitives</p>
+  </div>
+  <div class="rounded-lg border border-border bg-soft-bg p-5">
+    <p class="font-semibold text-text1 mb-1">No special wallets</p>
+    <p class="text-sm text-text2 m-0!">Works with standard Ethereum wallets and tools</p>
+  </div>
+  <div class="rounded-lg border border-border bg-soft-bg p-5">
+    <p class="font-semibold text-text1 mb-1">Omnichain</p>
+    <p class="text-sm text-text2 m-0!">Deploy on multiple blockchain networks</p>
+  </div>
+  <div class="rounded-lg border border-border bg-soft-bg p-5">
+    <p class="font-semibold text-text1 mb-1">Production-ready</p>
+    <p class="text-sm text-text2 m-0!">Built for real-world DeFi applications</p>
+  </div>
+</div>
 
 ## How Nox Works
 
 Nox enables confidential DeFi through a distributed architecture built on three
 core concepts:
 
-1. **Handles**: When you encrypt data using the JS SDK, Nox creates a unique
-   32-byte identifier called a handle. Think of handles as secure pointers—your
-   smart contracts reference confidential values through these handles without
-   exposing the underlying encrypted data, which is stored securely off-chain.
+1. **Handles**: When you encrypt data using the JS SDK, Nox creates a **unique
+   32-byte identifier** called a handle. Think of handles as **secure
+   pointers**. Your smart contracts reference confidential values through these
+   handles without exposing the underlying encrypted data, which is stored
+   **securely off-chain**.
 
 2. **Access Control Lists (ACL)**: Each handle is protected by an ACL that
-   manages permissions on-chain. By default, only you can access your data, but
-   you can grant view permissions to specific addresses, smart contracts, or
-   auditors. This enables **selective disclosure**—maintaining privacy while
+   manages **permissions on-chain**. By default, only you can access your data.
+   You can grant view permissions to specific addresses, smart contracts, or
+   auditors. This enables **selective disclosure**: maintaining privacy while
    allowing authorized parties to verify transactions when needed.
 
 3. **Trusted Execution Environments (TEE)**: When your smart contract needs to
-   process confidential data, the computation happens inside Intel TDX-based TEE
-   enclaves. These hardware-protected environments ensure that even
-   infrastructure providers cannot access the plaintext data during execution.
+   process confidential data, the computation happens inside **Intel TDX-based
+   TEE enclaves**. These hardware-protected environments ensure that even
+   infrastructure providers **cannot access the plaintext data** during
+   execution.
 
 ## The Nox Toolkit
 
@@ -65,23 +83,23 @@ native confidential assets that maintain full DeFi compatibility.
 With Nox, you can build a wide range of privacy-preserving applications that
 seamlessly integrate with the broader DeFi ecosystem:
 
-- **Yield with Confidential Vault** — Build yield-generating vaults that protect
+- **Yield with confidential vault** Build yield-generating vaults that protect
   strategy positions and capital allocations from copy-trading and MEV
-- **cRWA with Confidential Tokenized Equity** — Enable confidential tokenized
+- **cRWA with confidential tokenized equity** Enable confidential tokenized
   equity on-chain, protecting investor positions and allocations while
   maintaining regulatory compliance
-- **Confidential Value Transfers** — Create private payment systems and
+- **Confidential value transfers** Create private payment systems, payroll, and
   confidential transfers that hide transaction amounts while remaining
   verifiable
-- **Privacy-Preserving DeFi Primitives** — Build lending, borrowing, and other
+- **Privacy-preserving DeFi primitives** Build lending, borrowing, and other
   DeFi primitives that process sensitive data without exposing it publicly
-- **Tokens with Hidden Balances & Amounts** — Create ERC-7984 compliant tokens
+- **Tokens with hidden balances & amounts** Create ERC-7984 compliant tokens
   where balances and transaction amounts are hidden from public view
-- **Selective Disclosure Workflows** — Implement audit and compliance workflows
+- **Selective disclosure workflows** Implement audit and compliance workflows
   where users control exactly who can access their data, enabling regulatory
   requirements without sacrificing privacy
-- **Institutional-Grade DeFi & RWAs** — Enable institutional adoption by
-  removing transparency blockers, making DeFi and RWA products ready for
+- **Institutional-grade DeFi & RWAs** Enable institutional adoption by removing
+  transparency blockers, making DeFi and RWA products ready for
   discretion-sensitive capital
 
 The next chapters guide you through our **Hello World journey**: how to protect
