@@ -84,7 +84,7 @@ stored in the Handle Gateway).
 1. The user sends a plaintext value to the **Handle Gateway** via the SDK
 2. The Handle Gateway encrypts it with
    [ECIES](/protocol/kms#ecies-encryption-scheme) using the KMS public key and
-   stores the ciphertext in PostgreSQL.
+   stores the ciphertext in an **AWS S3 bucket**.
 3. The Handle Gateway returns a **handle** and an **EIP-712 signed proof**
    attesting the handle's validity.
 4. The user calls a function on a smart contract that uses the **NoxCompute**

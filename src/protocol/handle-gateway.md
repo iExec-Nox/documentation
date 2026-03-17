@@ -7,8 +7,8 @@ description: Handle Gateway for encryption, storage and access to encrypted data
 
 The Handle Gateway is a Rust service running in Intel TDX. It is the single
 entry point for creating, storing and accessing encrypted handle data. It
-encrypts plaintext values using the KMS public key, manages a PostgreSQL
-database of handles, and coordinates decryption delegation with the
+encrypts plaintext values using the KMS public key, interacts with an **AWS S3
+bucket** of handles, and coordinates decryption delegation with the
 [KMS](/protocol/kms).
 
 ## Role in the Protocol
@@ -71,26 +71,16 @@ sequenceDiagram
     U->>U: RSA decrypt, HKDF, AES-GCM decrypt → plaintext
 ```
 
-## Database
+## Storage
 
 ::: info Current Implementation
 
-The current implementation uses **PostgreSQL**. The target architecture will
-migrate to an **S3-compatible object store** with finance-grade certifications,
+The current implementation uses an **AWS S3 bucket**. The production environment
+will target an **S3-compatible object store** with finance-grade certifications,
 providing regulatory compliance and auditability guarantees for encrypted data
 at rest.
 
 :::
-
-### Schema
-
-| Column       | Constraint | Description                                    |
-| ------------ | ---------- | ---------------------------------------------- |
-| `handle`     | PK, Unique | 32-byte handle identifier                      |
-| `ciphertext` |            | Encrypted value                                |
-| `public_key` | Unique     | Ephemeral public key for decryption delegation |
-| `nonce`      |            | 12-byte AES-GCM nonce                          |
-| `createdAt`  |            | Creation timestamp                             |
 
 ## Exchange Format Conventions
 
