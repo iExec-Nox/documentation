@@ -14,7 +14,11 @@ components.d.ts
 .DS_Store
 protocol-docs
 
-#Claude
+#Claude / AI
 .cursorrules
 CLAUDE.md
 .cursor
+.agents/
+audit-report.html
+skills-lock.json
+Generation.md
