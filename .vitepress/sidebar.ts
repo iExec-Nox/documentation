@@ -174,8 +174,8 @@ export function getSidebar() {
             link: '/guides/build-confidential-tokens/erc7984erc20wrapper',
           },
           {
-            text: 'Demo',
-            link: '/guides/build-confidential-tokens/swap',
+            text: 'Live Demo',
+            link: '/guides/build-confidential-tokens/demo',
           },
         ],
       },
