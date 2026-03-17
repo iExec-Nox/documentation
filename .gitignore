@@ -15,10 +15,9 @@ components.d.ts
 protocol-docs
 
 #Claude / AI
-.cursorrules
 CLAUDE.md
+.claude/
 .cursor
 .agents/
 audit-report.html
-skills-lock.json
 Generation.md
