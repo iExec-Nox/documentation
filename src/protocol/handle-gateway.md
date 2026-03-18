@@ -7,8 +7,8 @@ description: Handle Gateway for encryption, storage and access to encrypted data
 
 The Handle Gateway is a Rust service running in Intel TDX. It is the single
 entry point for creating, storing and accessing encrypted handle data. It
-encrypts plaintext values using the KMS public key, manages a PostgreSQL
-database of handles, and coordinates decryption delegation with the
+encrypts plaintext values using the KMS public key, interacts with an **AWS S3
+bucket** of handles, and coordinates decryption delegation with the
 [KMS](/protocol/kms).
 
 ## Role in the Protocol
@@ -37,7 +37,7 @@ sequenceDiagram
     SC-->>GW: protocol public encryption key
     U->>GW: POST /v0/secrets (plaintext, type, owner)
     GW->>GW: ECIES encryption with KMS public key
-    GW->>GW: Store (handle, ciphertext, K, nonce) in DB
+    GW->>GW: Store (handle, ciphertext, K, nonce) in AWS S3 bucket
     GW->>GW: Sign HandleProof (EIP-712)
     GW-->>U: handle + proof
 ```
@@ -50,7 +50,7 @@ flowchart LR
     B --> C["Compute shared secret: k * pubkey_KMS"]
     C --> D[Derive AES-256 key via HKDF]
     D --> E[AES-256-GCM encrypt]
-    E --> F["Store (ciphertext, K=k*G, nonce) in DB"]
+    E --> F["Store (ciphertext, K=k*G, nonce) in AWS S3 bucket"]
 ```
 
 ### User Decryption
@@ -64,33 +64,23 @@ sequenceDiagram
     U->>U: Generate ephemeral RSA keypair
     U->>GW: GET /v0/secrets/:handle (RSA pubkey, EIP-712 auth)
     GW->>GW: Verify signature + check on-chain ACL
-    GW->>GW: Retrieve (ciphertext, K, nonce) from DB
+    GW->>GW: Retrieve (ciphertext, K, nonce) from AWS S3 bucket
     GW->>KMS: POST /v0/delegate (K, RSA pubkey)
     KMS-->>GW: encryptedSharedSecret
     GW-->>U: ciphertext + encryptedSharedSecret + nonce
     U->>U: RSA decrypt, HKDF, AES-GCM decrypt → plaintext
 ```
 
-## Database
+## Storage
 
 ::: info Current Implementation
 
-The current implementation uses **PostgreSQL**. The target architecture will
-migrate to an **S3-compatible object store** with finance-grade certifications,
-providing regulatory compliance and auditability guarantees for encrypted data
-at rest.
+The current implementation uses an **AWS S3 bucket** without finance-grade
+certifications. The production environment will target a **S3 bucket service**
+with finance-grade certifications to provide regulatory compliance and
+auditability guarantees for encrypted data at rest.
 
 :::
-
-### Schema
-
-| Column       | Constraint | Description                                    |
-| ------------ | ---------- | ---------------------------------------------- |
-| `handle`     | PK, Unique | 32-byte handle identifier                      |
-| `ciphertext` |            | Encrypted value                                |
-| `public_key` | Unique     | Ephemeral public key for decryption delegation |
-| `nonce`      |            | 12-byte AES-GCM nonce                          |
-| `createdAt`  |            | Creation timestamp                             |
 
 ## Exchange Format Conventions
 
