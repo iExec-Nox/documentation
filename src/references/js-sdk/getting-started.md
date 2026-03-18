@@ -148,13 +148,11 @@ account abstraction. Pass a `SmartAccount` instance directly to the factory.
 ```ts twoslash
 declare const RPC_URL: string;
 declare const PRIVATE_KEY: `0x${string}`;
-declare const BUNDLER_URL: string;
-declare const FACTORY_ADDRESS: `0x${string}`;
 // ---cut---
 import { createViemHandleClient } from '@iexec-nox/handle';
 import { createPublicClient, http } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
-import { toSimpleSmartAccount } from 'viem/account-abstraction';
+import { toSimple7702SmartAccount } from 'viem/account-abstraction';
 import { privateKeyToAccount } from 'viem/accounts';
 
 const publicClient = createPublicClient({
@@ -162,13 +160,12 @@ const publicClient = createPublicClient({
   transport: http(RPC_URL),
 });
 
-const smartAccount = await toSimpleSmartAccount({
+const smartAccount = await toSimple7702SmartAccount({
   owner: privateKeyToAccount(PRIVATE_KEY),
   client: publicClient,
-  factoryAddress: FACTORY_ADDRESS,
 });
 
-const handleClient = await createViemHandleClient(smartAccount);
+const handleClient = await createViemHandleClient(smartAccount as any);
 ```
 
 ::: tip
