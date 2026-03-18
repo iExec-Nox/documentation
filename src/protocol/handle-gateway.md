@@ -37,7 +37,7 @@ sequenceDiagram
     SC-->>GW: protocol public encryption key
     U->>GW: POST /v0/secrets (plaintext, type, owner)
     GW->>GW: ECIES encryption with KMS public key
-    GW->>GW: Store (handle, ciphertext, K, nonce) in DB
+    GW->>GW: Store (handle, ciphertext, K, nonce) in AWS S3 bucket
     GW->>GW: Sign HandleProof (EIP-712)
     GW-->>U: handle + proof
 ```
@@ -50,7 +50,7 @@ flowchart LR
     B --> C["Compute shared secret: k * pubkey_KMS"]
     C --> D[Derive AES-256 key via HKDF]
     D --> E[AES-256-GCM encrypt]
-    E --> F["Store (ciphertext, K=k*G, nonce) in DB"]
+    E --> F["Store (ciphertext, K=k*G, nonce) in AWS S3 bucket"]
 ```
 
 ### User Decryption
@@ -64,7 +64,7 @@ sequenceDiagram
     U->>U: Generate ephemeral RSA keypair
     U->>GW: GET /v0/secrets/:handle (RSA pubkey, EIP-712 auth)
     GW->>GW: Verify signature + check on-chain ACL
-    GW->>GW: Retrieve (ciphertext, K, nonce) from DB
+    GW->>GW: Retrieve (ciphertext, K, nonce) from AW S3 bucket
     GW->>KMS: POST /v0/delegate (K, RSA pubkey)
     KMS-->>GW: encryptedSharedSecret
     GW-->>U: ciphertext + encryptedSharedSecret + nonce
