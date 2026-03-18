@@ -84,7 +84,7 @@ stored in the Handle Gateway).
 1. The user sends a plaintext value to the **Handle Gateway** via the SDK
 2. The Handle Gateway encrypts it with
    [ECIES](/protocol/kms#ecies-encryption-scheme) using the KMS public key and
-   stores the ciphertext in PostgreSQL.
+   stores the ciphertext in an **AWS S3 bucket**.
 3. The Handle Gateway returns a **handle** and an **EIP-712 signed proof**
    attesting the handle's validity.
 4. The user calls a function on a smart contract that uses the **NoxCompute**
@@ -107,9 +107,10 @@ secure environment.
 2. The **Runner** pulls the next message from the queue.
 3. The Runner requests the encrypted operands from the **Handle Gateway**,
    providing an ephemeral RSA public key.
-4. The Handle Gateway retrieves the ciphertext from its database and coordinates
-   with the **KMS** to perform [decryption delegation](/protocol/kms): the KMS
-   computes the ECDH shared secret and encrypts it with the Runner's RSA key.
+4. The Handle Gateway retrieves the object from its **AWS S3 bucket** and
+   coordinates with the **KMS** to perform
+   [decryption delegation](/protocol/kms): the KMS computes the ECDH shared
+   secret and encrypts it with the Runner's RSA key.
 5. The Runner decrypts the inputs locally (RSA decrypt the shared secret, HKDF
    key derivation, AES-GCM decrypt), executes the computation, and encrypts the
    result with ECIES using the KMS public key.
