@@ -64,7 +64,7 @@ sequenceDiagram
     U->>U: Generate ephemeral RSA keypair
     U->>GW: GET /v0/secrets/:handle (RSA pubkey, EIP-712 auth)
     GW->>GW: Verify signature + check on-chain ACL
-    GW->>GW: Retrieve (ciphertext, K, nonce) from AW S3 bucket
+    GW->>GW: Retrieve (ciphertext, K, nonce) from AWS S3 bucket
     GW->>KMS: POST /v0/delegate (K, RSA pubkey)
     KMS-->>GW: encryptedSharedSecret
     GW-->>U: ciphertext + encryptedSharedSecret + nonce
