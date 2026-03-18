@@ -107,9 +107,10 @@ secure environment.
 2. The **Runner** pulls the next message from the queue.
 3. The Runner requests the encrypted operands from the **Handle Gateway**,
    providing an ephemeral RSA public key.
-4. The Handle Gateway retrieves the ciphertext from its database and coordinates
-   with the **KMS** to perform [decryption delegation](/protocol/kms): the KMS
-   computes the ECDH shared secret and encrypts it with the Runner's RSA key.
+4. The Handle Gateway retrieves the object from its **AWS S3 bucket** and
+   coordinates with the **KMS** to perform
+   [decryption delegation](/protocol/kms): the KMS computes the ECDH shared
+   secret and encrypts it with the Runner's RSA key.
 5. The Runner decrypts the inputs locally (RSA decrypt the shared secret, HKDF
    key derivation, AES-GCM decrypt), executes the computation, and encrypts the
    result with ECIES using the KMS public key.

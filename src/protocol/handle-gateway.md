@@ -75,10 +75,10 @@ sequenceDiagram
 
 ::: info Current Implementation
 
-The current implementation uses an **AWS S3 bucket**. The production environment
-will target an **S3-compatible object store** with finance-grade certifications,
-providing regulatory compliance and auditability guarantees for encrypted data
-at rest.
+The current implementation uses an **AWS S3 bucket** without finance-grade
+certifications. The production environment will target a **S3 bucket service**
+with finance-grade certifications to provide regulatory compliance and
+auditability guarantees for encrypted data at rest.
 
 :::
 
