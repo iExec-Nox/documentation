@@ -41,22 +41,22 @@ grows.
   <div class="group relative overflow-hidden rounded-xl bg-soft-bg p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
     <div class="absolute top-0 left-0 w-full h-1 bg-primary transition-transform duration-200 -translate-y-full group-hover:translate-y-0 rounded-t-xl"></div>
     <h3 class="font-semibold text-text1 text-base mt-0! mb-2">Native composability</h3>
-    <p class="text-sm text-text2 m-0!">Privacy that doesn't break DeFi composability</p>
+    <p class="text-sm text-text2 m-0!">Nox implements the confidential token and remains fully ERC-20 compatible. Nox interacts with existing DeFi without custom logic, isolated pools, or liquidity fragmentation.</p>
   </div>
   <div class="group relative overflow-hidden rounded-xl bg-soft-bg p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
     <div class="absolute top-0 left-0 w-full h-1 bg-primary transition-transform duration-200 -translate-y-full group-hover:translate-y-0 rounded-t-xl"></div>
     <h3 class="font-semibold text-text1 text-base mt-0! mb-2">Developer-friendly</h3>
-    <p class="text-sm text-text2 m-0!">Familiar Solidity syntax with privacy primitives</p>
+    <p class="text-sm text-text2 m-0!">Write confidential smart contracts in standard Solidity using Nox privacy primitives. No new language to learn, no specialized toolchain to configure.</p>
   </div>
   <div class="group relative overflow-hidden rounded-xl bg-soft-bg p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
     <div class="absolute top-0 left-0 w-full h-1 bg-primary transition-transform duration-200 -translate-y-full group-hover:translate-y-0 rounded-t-xl"></div>
     <h3 class="font-semibold text-text1 text-base mt-0! mb-2">No special wallets</h3>
-    <p class="text-sm text-text2 m-0!">Works with standard Ethereum wallets and tools</p>
+    <p class="text-sm text-text2 m-0!">Users interact with confidential tokens through any standard Ethereum wallet. No custom client, no UX friction, no migration ask.</p>
   </div>
   <div class="group relative overflow-hidden rounded-xl bg-soft-bg p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
     <div class="absolute top-0 left-0 w-full h-1 bg-primary transition-transform duration-200 -translate-y-full group-hover:translate-y-0 rounded-t-xl"></div>
     <h3 class="font-semibold text-text1 text-base mt-0! mb-2">Production-ready</h3>
-    <p class="text-sm text-text2 m-0!">Built for real-world DeFi applications</p>
+    <p class="text-sm text-text2 m-0!">Built on Intel TDX-based TEEs. iExec has operated confidential computing infrastructure since 2017.</p>
   </div>
 </div>
 
