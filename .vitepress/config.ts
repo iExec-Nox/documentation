@@ -101,7 +101,7 @@ export default withMermaid(
         },
         {
           text: 'Guides',
-          link: '/guides/welcome',
+          link: '/guides/build-confidential-smart-contracts/intro',
           activeMatch: '^/guides/',
         },
         {
