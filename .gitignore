@@ -14,9 +14,10 @@ components.d.ts
 .DS_Store
 protocol-docs
 
-#Claude
-.cursorrules
+#Claude / AI
 CLAUDE.md
+.claude/
 .cursor
-.agents
-.claude
+.agents/
+audit-report.html
+Generation.md
