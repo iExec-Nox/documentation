@@ -15,10 +15,10 @@ You can monitor the real-time status, incident reports, and the 90-day historica
 
 When you visit the status page, you can check the operational status of our key infrastructure components:
 
-* **Nox Handle Gateway:** The primary gateway handling incoming requests.
-* **Nox KMS:** Our Key Management Service responsible for secure cryptographic operations.
-* **Nox Runner:** The execution environment component.
-* **Nox Ingestor:** The service managing data ingestion pipelines.
+* **[Nox Handle Gateway](/nox-protocol/protocol/handle-gateway)**
+* **[Nox KMS](/nox-protocol/protocol/kms)**
+* **[Nox Runner](/nox-protocol/protocol/runner)**
+* **[Nox Ingestor](/nox-protocol/protocol/ingestor)**
 
 ## How to use this page?
 
