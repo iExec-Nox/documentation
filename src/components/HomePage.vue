@@ -58,14 +58,14 @@ const dappFeatures = [
     title: 'Bootstrap on TEE',
     description:
       'Generate and deploy dApps that gives you access to TEEs in just a few minutes with ready-to-use code.',
-    link: '/protocol/global-architecture-overview',
+    link: 'https://docs.iex.ec/guides/build-iapp/build-&-test',
   },
   {
     icon: govIcon,
     title: 'Governance & Ownership',
     description:
       'Choose who can access your data, with which privacy applications, and at what price.',
-    link: '/guides/manage-handle-access/intro',
+    link: 'https://docs.iex.ec/guides/manage-data/manage-access',
   },
   {
     icon: noxIcon,
