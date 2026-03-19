@@ -18,3 +18,5 @@ protocol-docs
 .cursorrules
 CLAUDE.md
 .cursor
+.agents
+.claude

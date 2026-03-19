@@ -7,35 +7,55 @@ description: Welcome to Nox Protocol - Composable Privacy for DeFi
 
 ## Welcome to Nox
 
-Nox is a **composable privacy layer** for DeFi. Just as HTTPS made **secure
-connections invisible and seamless**, Nox makes **privacy the default** for
-blockchain applications.
+Nox is a **privacy layer** that enables confidential computations on encrypted
+data while preserving full DeFi composability. It combines **on-chain smart
+contracts** with **off-chain Trusted Execution Environments (Intel TDX)** to
+process encrypted data without ever exposing plaintext on-chain.
 
-With Nox, you build **confidential smart contracts and tokens** fully composable
-with existing DeFi protocols. Your contracts can **process encrypted inputs**,
-**execute computations privately**, and **maintain confidentiality**.
+With Nox, you build **confidential smart contracts and tokens** that stay fully
+composable with existing DeFi protocols. Your contracts can process encrypted
+inputs, execute computations privately, and maintain **hidden balances**,
+without asking **users to change wallets** or **developers to rewrite
+contracts**.
 
-## Why Nox?
+## Why Nox Matters?
 
-<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-  <div class="rounded-lg border border-border bg-soft-bg p-5">
-    <p class="font-semibold text-text1 mb-1">Native composability</p>
+DeFi is transparent by default. That's a feature for retail users. It's a
+blocker for institutional adoption.
+
+Imagine you want to build:
+
+- A lending protocol that doesn't expose collateral ratios to liquidation bots
+- A yield vault that protects strategy positions from copy-trading
+- A tokenized fund where investor allocations stay off the public ledger
+- A payment system that hides transaction amounts while staying verifiable Your
+  institutional users have the capital. But they won't touch a protocol that
+  exposes everything.
+
+With Nox, they will. You unlock the capital. They get the confidentiality. DeFi
+grows.
+
+## Key Concepts
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+  <div class="group relative overflow-hidden rounded-xl bg-soft-bg p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+    <div class="absolute top-0 left-0 w-full h-1 bg-primary transition-transform duration-200 -translate-y-full group-hover:translate-y-0 rounded-t-xl"></div>
+    <h3 class="font-semibold text-text1 text-base mt-0! mb-2">Native composability</h3>
     <p class="text-sm text-text2 m-0!">Privacy that doesn't break DeFi composability</p>
   </div>
-  <div class="rounded-lg border border-border bg-soft-bg p-5">
-    <p class="font-semibold text-text1 mb-1">Developer-friendly</p>
+  <div class="group relative overflow-hidden rounded-xl bg-soft-bg p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+    <div class="absolute top-0 left-0 w-full h-1 bg-primary transition-transform duration-200 -translate-y-full group-hover:translate-y-0 rounded-t-xl"></div>
+    <h3 class="font-semibold text-text1 text-base mt-0! mb-2">Developer-friendly</h3>
     <p class="text-sm text-text2 m-0!">Familiar Solidity syntax with privacy primitives</p>
   </div>
-  <div class="rounded-lg border border-border bg-soft-bg p-5">
-    <p class="font-semibold text-text1 mb-1">No special wallets</p>
+  <div class="group relative overflow-hidden rounded-xl bg-soft-bg p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+    <div class="absolute top-0 left-0 w-full h-1 bg-primary transition-transform duration-200 -translate-y-full group-hover:translate-y-0 rounded-t-xl"></div>
+    <h3 class="font-semibold text-text1 text-base mt-0! mb-2">No special wallets</h3>
     <p class="text-sm text-text2 m-0!">Works with standard Ethereum wallets and tools</p>
   </div>
-  <div class="rounded-lg border border-border bg-soft-bg p-5">
-    <p class="font-semibold text-text1 mb-1">Omnichain</p>
-    <p class="text-sm text-text2 m-0!">Deploy on multiple blockchain networks</p>
-  </div>
-  <div class="rounded-lg border border-border bg-soft-bg p-5">
-    <p class="font-semibold text-text1 mb-1">Production-ready</p>
+  <div class="group relative overflow-hidden rounded-xl bg-soft-bg p-6 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+    <div class="absolute top-0 left-0 w-full h-1 bg-primary transition-transform duration-200 -translate-y-full group-hover:translate-y-0 rounded-t-xl"></div>
+    <h3 class="font-semibold text-text1 text-base mt-0! mb-2">Production-ready</h3>
     <p class="text-sm text-text2 m-0!">Built for real-world DeFi applications</p>
   </div>
 </div>
@@ -66,7 +86,7 @@ core concepts:
 ## The Nox Toolkit
 
 **Solidity Library:** Add privacy to your contracts using familiar Solidity
-syntax—no specialized wallets or off-chain steps required.
+syntax, no specialized wallets or off-chain steps required.
 
 **JS SDK:** Encrypt sensitive inputs and handle decryption with a
 developer-friendly TypeScript SDK.
@@ -119,8 +139,8 @@ Ready to get started? Here's what to explore next:
 
 Need help building with Nox? We're here to support you:
 
-- **Discord Community** — Connect with other builders, ask questions, and get
+- **Discord Community:** Connect with other builders, ask questions, and get
   real-time support on our
   [Discord server](https://discord.com/invite/5TewNUnJHN)
-- **Get Support** — Visit our [support page](/getting-started/support) for
+- **Get Support:** Visit our [support page](/getting-started/support) for
   additional resources and help
