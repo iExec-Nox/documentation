@@ -7,7 +7,6 @@ import Required from './components/Required.vue';
 import Optional from './components/Optional.vue';
 import RemixButton from '@/components/RemixButton.vue';
 import Glossary from './components/Glossary.vue';
-import HomePage from '@/components/HomePage.vue';
 import type { EnhanceAppContext } from 'vitepress';
 import googleAnalytics from 'vitepress-plugin-google-analytics';
 import 'virtual:group-icons.css';
@@ -33,7 +32,6 @@ export default {
     app.component('Optional', Optional);
     app.component('RemixButton', RemixButton);
     app.component('Glossary', Glossary);
-    app.component('HomePage', HomePage);
     app.use(TwoslashFloatingVue as any);
 
     googleAnalytics({
