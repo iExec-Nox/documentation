@@ -11,7 +11,7 @@
     "format": "prettier --ignore-path .gitignore --write ."
   },
   "dependencies": {
-    "@iexec-nox/handle": "^0.1.0-beta.6",
+    "@iexec-nox/handle": "^0.1.0-beta.7",
     "@tailwindcss/vite": "^4.1.11",
     "@vueuse/core": "^13.6.0",
     "markdown-it-steps": "^0.3.1",
