@@ -5,6 +5,7 @@ description: Build your first confidential smart contract with Nox
 
 <script setup>
 import piggyBankCode from '../contracts/ConfidentialPiggyBank.sol?raw';
+import plainPiggyBankCode from '../contracts/PiggyBank.sol?raw';
 import PiggyBankDemo from '../components/PiggyBankDemo.vue';
 </script>
 
@@ -18,6 +19,10 @@ will be fully encrypted: nobody can see how much is inside.
 ## Write a simple contract
 
 Start with a standard Solidity contract. Nothing encrypted yet:
+
+<ClientOnly>
+  <RemixButton :code="plainPiggyBankCode" />
+</ClientOnly>
 
 ```solidity
 // SPDX-License-Identifier: MIT
