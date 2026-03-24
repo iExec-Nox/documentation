@@ -103,24 +103,24 @@ native confidential assets that maintain full DeFi compatibility.
 With Nox, you can build a wide range of privacy-preserving applications that
 seamlessly integrate with the broader DeFi ecosystem:
 
-- **Yield with confidential vault** Build yield-generating vaults that protect
-  strategy positions and capital allocations from copy-trading and MEV
-- **cRWA with confidential tokenized equity** Enable confidential tokenized
+- **Yield with confidential vault:** Build yield-generating vaults that protect
+  strategy positions and capital allocations from copy-trading and MEV.
+- **cRWA with confidential tokenized equity:** Enable confidential tokenized
   equity on-chain, protecting investor positions and allocations while
-  maintaining regulatory compliance
-- **Confidential value transfers** Create private payment systems, payroll, and
+  maintaining regulatory compliance.
+- **Confidential value transfers:** Create private payment systems, payroll, and
   confidential transfers that hide transaction amounts while remaining
-  verifiable
-- **Privacy-preserving DeFi primitives** Build lending, borrowing, and other
-  DeFi primitives that process sensitive data without exposing it publicly
-- **Tokens with hidden balances & amounts** Create ERC-7984 compliant tokens
-  where balances and transaction amounts are hidden from public view
-- **Selective disclosure workflows** Implement audit and compliance workflows
+  verifiable.
+- **Privacy-preserving DeFi primitives:** Build lending, borrowing, and other
+  DeFi primitives that process sensitive data without exposing it publicly.
+- **Tokens with hidden balances & amounts:** Create ERC-7984 compliant tokens
+  where balances and transaction amounts are hidden from public view.
+- **Selective disclosure workflows:** Implement audit and compliance workflows
   where users control exactly who can access their data, enabling regulatory
-  requirements without sacrificing privacy
-- **Institutional-grade DeFi & RWAs** Enable institutional adoption by removing
+  requirements without sacrificing privacy.
+- **Institutional-grade DeFi & RWAs:** Enable institutional adoption by removing
   transparency blockers, making DeFi and RWA products ready for
-  discretion-sensitive capital
+  discretion-sensitive capital.
 
 The next chapters guide you through our **Hello World journey**: how to protect
 sensitive data and build and deploy confidential smart contracts.
