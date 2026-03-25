@@ -25,8 +25,8 @@ Working with confidential data on Nox follows a three-step workflow:
    can be stored, transferred, or combined in contract logic without ever
    exposing the underlying values.
 
-3. **Decrypt** — When a user needs to read the actual value, there are two
-   paths depending on the handle's visibility:
+3. **Decrypt** — When a user needs to read the actual value, there are two paths
+   depending on the handle's visibility:
    - **ACL-protected handles** — Use
      [`decrypt`](/references/js-sdk/methods/decrypt). The SDK signs an EIP-712
      authorization message (no gas required). If the on-chain ACL authorizes the

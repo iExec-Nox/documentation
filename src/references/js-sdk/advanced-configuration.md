@@ -132,10 +132,10 @@ chain ID detected from your provider:
 | ---------------- | -------- |
 | Arbitrum Sepolia | 421614   |
 
-To use an unsupported chain, you must provide all three settings:
-`gatewayUrl`, `smartContractAddress`, and `subgraphUrl`. Two is not enough for
-a working client (features like [`viewACL`](/references/js-sdk/methods/viewACL)
-require the subgraph).
+To use an unsupported chain, you must provide all three settings: `gatewayUrl`,
+`smartContractAddress`, and `subgraphUrl`. Two is not enough for a working
+client (features like [`viewACL`](/references/js-sdk/methods/viewACL) require
+the subgraph).
 
 ## Advanced Usage Examples
 

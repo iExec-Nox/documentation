@@ -123,9 +123,12 @@ Supported types:
 - **Boolean**: `bool`
 - **Address**: `address` _(coming soon)_
 - **Dynamic types**: `bytes` _(coming soon)_, `string` _(coming soon)_
-- **Unsigned integers**: `uint8` _(coming soon)_, `uint16`, `uint24` _(coming soon)_, ... , `uint256`
-- **Signed integers**: `int8` _(coming soon)_, `int16`, `int24` _(coming soon)_, ... , `int256`
-- **Fixed-size bytes**: `bytes1` _(coming soon)_, `bytes2` _(coming soon)_, ... , `bytes32` _(coming soon)_
+- **Unsigned integers**: `uint8` _(coming soon)_, `uint16`, `uint24` _(coming
+  soon)_, ... , `uint256`
+- **Signed integers**: `int8` _(coming soon)_, `int16`, `int24` _(coming soon)_,
+  ... , `int256`
+- **Fixed-size bytes**: `bytes1` _(coming soon)_, `bytes2` _(coming soon)_, ...
+  , `bytes32` _(coming soon)_
 
 ::: tip
 
