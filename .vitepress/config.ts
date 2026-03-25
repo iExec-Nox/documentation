@@ -16,6 +16,7 @@ export default withMermaid(
     title: 'Nox documentation',
     description:
       'Build decentralized applications that combine ownership, privacy, and monetization.',
+    base: '/nox-protocol/',
     cleanUrls: true,
     lastUpdated: true,
     vite: {
@@ -36,12 +37,22 @@ export default withMermaid(
     },
 
     head: [
-      ['link', { rel: 'icon', href: '/Logo-RLC-Yellow.png' }],
+      // Google Tag Manager
+      [
+        'script',
+        {},
+        `(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+  new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+  j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+  'https://metrics.iex.ec/bs7fgjd8lvy4l31.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+  })(window,document,'script','dataLayer','GTM-P7KSD4T');`,
+      ],
+      ['link', { rel: 'icon', href: '/nox-protocol/Logo-RLC-Yellow.png' }],
       [
         'link',
         {
           rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap',
+          href: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Mulish:wght@400;600;700;800&family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,300;1,400;1,500;1,600;1,700;1,800&display=swap',
         },
       ],
       [
@@ -100,7 +111,7 @@ export default withMermaid(
         },
         {
           text: 'Guides',
-          link: '/guides/welcome',
+          link: '/guides/build-confidential-smart-contracts/intro',
           activeMatch: '^/guides/',
         },
         {
@@ -132,6 +143,8 @@ export default withMermaid(
         pattern: 'https://github.com/iExec-Nox/documentation/blob/main/:path',
         text: 'Suggest changes to this page',
       },
+
+      siteTitle: false,
 
       logo: {
         light: '/Logo-RLC-Yellow.png',

@@ -1,6 +1,17 @@
 {
   "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/nox-protocol/:path*",
+      "destination": "/:path*"
+    }
+  ],
   "redirects": [
+    {
+      "source": "/nox-protocol",
+      "destination": "https://docs.iex.ec/",
+      "has": [{ "type": "host", "value": "docs.iex.ec" }]
+    },
     {
       "source": "/robots.txt",
       "destination": "/robots-prod.txt",

@@ -29,4 +29,16 @@ Create ERC-7984 compliant confidential tokens:
   native confidential tokens
 - [ERC20 to ERC7984](/guides/build-confidential-tokens/erc20-to-erc7984-wrapper) -
   Wrap existing ERC20 tokens
-- [Demo](/guides/build-confidential-tokens/swap) - Token swap demonstration
+- [Live Demo](/guides/build-confidential-tokens/demo) - Explore a live
+  application showcasing confidential tokens
+
+## Manage Handle Access
+
+Control access to encrypted data with Nox:
+
+- [Introduction](/guides/manage-handle-access/intro) - Get started with managing
+  handle access
+- [Viewers](/guides/manage-handle-access/viewers) - Manage viewers for handles
+- [Admins](/guides/manage-handle-access/admins) - Manage admins for handles
+- [Public Decryption](/guides/manage-handle-access/public-decryption) - Manage
+  public decryption for handles

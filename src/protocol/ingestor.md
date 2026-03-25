@@ -58,21 +58,6 @@ Each event corresponds to a computation primitive (arithmetic, comparisons,
 token operations, etc.). See [Solidity Library](/references/solidity-library)
 for the full list.
 
-## Message Format
-
-```rust
-TransactionMessage {
-    chain_id: u32,
-    caller: Address,
-    block_number: u64,
-    transaction_hash: String,
-    events: Vec<TransactionEvent>,  // ordered by log_index
-}
-```
-
-Each `TransactionEvent` contains the operation type and the associated handles
-(input and output).
-
 ## Key Design Choices
 
 - **Optimistic processing**: blocks are processed as soon as they appear,
