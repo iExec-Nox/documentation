@@ -15,7 +15,7 @@ minted 1:1.
 ```mermaid
 sequenceDiagram
     participant User
-    participant Wrapper as ERC7984ERC20Wrapper
+    participant Wrapper as ERC20ToERC7984Wrapper
     participant ERC20 as ERC-20 Token
 
     Note over User,ERC20: Wrap (ERC-20 → ERC-7984)
@@ -29,7 +29,7 @@ sequenceDiagram
     User->>Wrapper: unwrap(from, to, encryptedAmount, proof)
     Wrapper->>Wrapper: _burn(from, encryptedAmount)
     Note over Wrapper: Decrypt burnt amount off-chain
-    User->>Wrapper: finalizeUnwrap(encryptedAmount, cleartext, decryptionProof)
+    User->>Wrapper: finalizeUnwrap(unwrapRequestId, decryptedAmountAndProof)
     Wrapper->>ERC20: transfer(to, cleartext)
     Wrapper-->>User: ERC-20 tokens received
 ```
@@ -64,20 +64,20 @@ wrap:
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.28;
 
-import {ERC7984ERC20Wrapper} from "@iexec-nox/nox-confidential-contracts/contracts/token/utils/ERC7984ERC20Wrapper.sol";
+import {ERC20ToERC7984Wrapper} from "@iexec-nox/nox-confidential-contracts/contracts/token/extensions/ERC20ToERC7984Wrapper.sol";
 import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
-contract WrappedUSDC is ERC7984ERC20Wrapper {
+contract WrappedUSDC is ERC20ToERC7984Wrapper {
     constructor(IERC20 usdc)
-        ERC7984ERC20Wrapper(usdc)
+        ERC20ToERC7984Wrapper(usdc)
         ERC7984("Wrapped Confidential USDC", "wcUSDC", "")
     {}
 }
 ```
 
-The wrapper inherits from both `ERC7984` and `ERC7984ERC20Wrapper`. All ERC-7984
-features (confidential transfers, operators, callbacks) work on the wrapped
-token.
+The wrapper inherits from both `ERC7984` and `ERC20ToERC7984Wrapper`. All
+ERC-7984 features (confidential transfers, operators, callbacks) work on the
+wrapped token.
 
 ## Swap ERC-20 to ERC-7984
 
@@ -86,12 +86,14 @@ Swapping from a plaintext ERC-20 to a confidential ERC-7984 is done via the
 the equivalent confidential tokens:
 
 ```solidity
-function wrap(address to, uint256 amount) public virtual {
+function wrap(address to, uint256 amount) public virtual returns (euint256) {
     // Transfer ERC-20 tokens from the caller to the wrapper
-    SafeERC20.safeTransferFrom(underlying(), msg.sender, address(this), amount);
+    SafeERC20.safeTransferFrom(IERC20(underlying()), msg.sender, address(this), amount);
 
     // Mint equivalent confidential tokens
-    _mint(to, amount);
+    euint256 wrappedAmount = _mint(to, Nox.toEuint256(amount));
+    Nox.allowTransient(wrappedAmount, msg.sender);
+    return wrappedAmount;
 }
 ```
 
@@ -119,12 +121,13 @@ the burn amount is encrypted. This requires two steps:
 ### Step 1: Request unwrap
 
 The user burns their confidential tokens. The burnt amount is recorded as an
-encrypted handle:
+encrypted handle, and the function returns an `unwrapRequestId` needed for
+finalization:
 
 ```solidity
 // Encrypt the amount to unwrap
 // (off-chain via JS SDK, then call the contract)
-wrappedUSDC.unwrap(
+euint256 unwrapRequestId = wrappedUSDC.unwrap(
     msg.sender,      // burn from
     msg.sender,      // send ERC-20 to
     encryptedAmount,
@@ -135,19 +138,19 @@ wrappedUSDC.unwrap(
 ### Step 2: Finalize with decryption proof
 
 After the Nox protocol decrypts the burnt amount off-chain, the user calls
-`finalizeUnwrap` with the decrypted value and a proof:
+`finalizeUnwrap` with the `unwrapRequestId` and the decrypted amount bundled
+with its proof:
 
 ```solidity
 wrappedUSDC.finalizeUnwrap(
-    encryptedAmount,
-    cleartextAmount,
-    decryptionProof
+    unwrapRequestId,
+    decryptedAmountAndProof
 );
 // ERC-20 tokens are transferred to the recipient
 ```
 
-The wrapper verifies the decryption proof, then transfers `cleartextAmount` of
-the underlying ERC-20 to the recipient.
+The wrapper verifies the decryption proof, then transfers the plaintext amount
+of the underlying ERC-20 to the recipient.
 
 ## Next steps
 

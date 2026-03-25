@@ -27,6 +27,6 @@ Create ERC-7984 compliant confidential tokens:
   confidential tokens
 - [ERC7984 Token](/guides/build-confidential-tokens/erc7984-token) - Create
   native confidential tokens
-- [ERC20 to ERC7984](/guides/build-confidential-tokens/erc7984erc20wrapper) -
+- [ERC20 to ERC7984](/guides/build-confidential-tokens/erc20-to-erc7984-wrapper) -
   Wrap existing ERC20 tokens
 - [Demo](/guides/build-confidential-tokens/swap) - Token swap demonstration

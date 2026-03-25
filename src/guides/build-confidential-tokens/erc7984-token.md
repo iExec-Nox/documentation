@@ -215,7 +215,7 @@ function _update(
 
 ## Next steps
 
-- [ERC-20 to ERC-7984](/guides/build-confidential-tokens/erc7984erc20wrapper):
+- [ERC-20 to ERC-7984](/guides/build-confidential-tokens/erc20-to-erc7984-wrapper):
   wrap existing ERC-20 tokens
 - [Solidity Library](/references/solidity-library/getting-started): all Nox
   operations

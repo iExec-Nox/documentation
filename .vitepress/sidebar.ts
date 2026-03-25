@@ -171,7 +171,7 @@ export function getSidebar() {
           },
           {
             text: 'ERC20 to ERC7984',
-            link: '/guides/build-confidential-tokens/erc7984erc20wrapper',
+            link: '/guides/build-confidential-tokens/erc20-to-erc7984-wrapper',
           },
           {
             text: 'Demo',

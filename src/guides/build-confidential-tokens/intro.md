@@ -59,7 +59,7 @@ transferring to a smart contract, the recipient's
 
 - [ERC-7984 Token](/guides/build-confidential-tokens/erc7984-token): create a
   confidential token with mint and burn
-- [ERC-20 to ERC-7984](/guides/build-confidential-tokens/erc7984erc20wrapper):
+- [ERC-20 to ERC-7984](/guides/build-confidential-tokens/erc20-to-erc7984-wrapper):
   wrap existing ERC-20 tokens into confidential ones
 - [Demo](/guides/build-confidential-tokens/swap): confidential token swap
   application
