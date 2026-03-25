@@ -8,7 +8,6 @@ import Optional from './components/Optional.vue';
 import RemixButton from '@/components/RemixButton.vue';
 import Glossary from './components/Glossary.vue';
 import type { EnhanceAppContext } from 'vitepress';
-import googleAnalytics from 'vitepress-plugin-google-analytics';
 import 'virtual:group-icons.css';
 import '@shikijs/vitepress-twoslash/style.css';
 import '../../node_modules/markdown-it-steps/dist/style.css';
@@ -34,11 +33,18 @@ export default {
     app.component('Glossary', Glossary);
     app.use(TwoslashFloatingVue as any);
 
-    googleAnalytics({
-      id: 'GTM-P7KSD4T',
-    });
-
     if (typeof window !== 'undefined') {
+      // Google Tag Manager (noscript)
+      const noscript = document.createElement('noscript');
+      const iframe = document.createElement('iframe');
+      iframe.src = 'https://metrics.iex.ec/ns.html?id=GTM-P7KSD4T';
+      iframe.height = '0';
+      iframe.width = '0';
+      iframe.style.display = 'none';
+      iframe.style.visibility = 'hidden';
+      noscript.appendChild(iframe);
+      document.body.insertBefore(noscript, document.body.firstChild);
+
       // Mermaid diagram zoom modal
       const modal = document.createElement('div');
       modal.className = 'mermaid-zoom-modal';
