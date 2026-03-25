@@ -142,5 +142,3 @@ Need help building with Nox? We're here to support you:
 - **Discord Community:** Connect with other builders, ask questions, and get
   real-time support on our
   [Discord server](https://discord.com/invite/5TewNUnJHN)
-- **Get Support:** Visit our [support page](/getting-started/support) for
-  additional resources and help
