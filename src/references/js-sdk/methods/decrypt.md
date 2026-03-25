@@ -91,6 +91,14 @@ granted access can request decryption.
 
 :::
 
+::: tip Publicly decryptable handles
+
+For handles that have been marked as **publicly decryptable**, use
+[`publicDecrypt`](/references/js-sdk/methods/publicDecrypt) instead. It does not
+require ACL authorization or an EIP-712 signature.
+
+:::
+
 ## Return Value
 
 ```ts

@@ -10,8 +10,10 @@ returns the plaintext value along with a signed **decryption proof**. Unlike
 [`decrypt`](/references/js-sdk/methods/decrypt), this method does not require
 the caller to be in the ACL, anyone can call it as long as the handle is public.
 
-The decryption proof is an EIP-712 signature from the Handle Gateway that can be
-verified in a smart contract to produce the plaintext value on-chain.
+The decryption proof is a signed attestation returned by the Handle Gateway that
+can be verified in a smart contract to produce the plaintext value on-chain.
+Unlike [`decrypt`](/references/js-sdk/methods/decrypt), `publicDecrypt` does not
+involve EIP-712 signatures from the caller.
 
 ### What happens under the hood
 
@@ -124,7 +126,7 @@ The Solidity type decoded from the handle (e.g. `"uint256"`, `"bool"`,
 
 **Type:** `string` (`0x`-prefixed hex string)
 
-A signed EIP-712 proof from the Handle Gateway. The proof contains the gateway
+A signed proof returned by the Handle Gateway. The proof contains the gateway
 signature (65 bytes) concatenated with the ABI-encoded decrypted value. This
 proof can be passed to a smart contract to verify the decryption and use the
 plaintext value on-chain.

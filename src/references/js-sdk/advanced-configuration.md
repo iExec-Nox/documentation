@@ -9,6 +9,14 @@ You can customize the SDK by passing a configuration object when creating the
 client. These options are for advanced use cases — you won't need them for
 standard usage on supported networks.
 
+::: warning Custom / unsupported chains
+
+When targeting an unsupported chain, you must provide **all three** settings:
+`gatewayUrl`, `smartContractAddress`, and `subgraphUrl`. Omitting any of them
+will result in a non-functional client.
+
+:::
+
 ## Usage
 
 ```ts twoslash
@@ -124,8 +132,10 @@ chain ID detected from your provider:
 | ---------------- | -------- |
 | Arbitrum Sepolia | 421614   |
 
-To use an unsupported chain, you must provide both `gatewayUrl` and
-`smartContractAddress`.
+To use an unsupported chain, you must provide all three settings:
+`gatewayUrl`, `smartContractAddress`, and `subgraphUrl`. Two is not enough for
+a working client (features like [`viewACL`](/references/js-sdk/methods/viewACL)
+require the subgraph).
 
 ## Advanced Usage Examples
 
