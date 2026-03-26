@@ -90,6 +90,14 @@ function referencesItems(active: boolean): DefaultTheme.SidebarItem[] {
               text: 'decrypt',
               link: '/references/js-sdk/methods/decrypt',
             },
+            {
+              text: 'publicDecrypt',
+              link: '/references/js-sdk/methods/publicDecrypt',
+            },
+            {
+              text: 'viewACL',
+              link: '/references/js-sdk/methods/viewACL',
+            },
           ],
         },
         {

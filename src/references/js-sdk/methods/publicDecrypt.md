@@ -1,24 +1,29 @@
 ---
-title: decrypt
-description: Retrieve the plaintext value from an encrypted handle
+title: publicDecrypt
+description: Decrypt a publicly decryptable handle and get a verifiable proof
 ---
 
-# decrypt
+# publicDecrypt
 
-Requests the original plaintext value associated with an encrypted handle. The
-connected wallet must be **authorized by the on-chain ACL** to access the data —
-only handle owners or explicitly allowed addresses can decrypt.
+Decrypts a handle that has been marked as **publicly decryptable** on-chain and
+returns the plaintext value along with a signed **decryption proof**. Unlike
+[`decrypt`](/references/js-sdk/methods/decrypt), this method does not require
+the caller to be in the ACL, anyone can call it as long as the handle is public.
 
-Decryption is **gasless**: the SDK authenticates the request with an EIP-712
-signature, not an on-chain transaction.
+The decryption proof is a signed attestation returned by the Handle Gateway that
+can be verified in a smart contract to produce the plaintext value on-chain.
+Unlike [`decrypt`](/references/js-sdk/methods/decrypt), `publicDecrypt` does not
+involve EIP-712 signatures from the caller.
 
 ### What happens under the hood
 
-1. The SDK generates an ephemeral RSA keypair and builds an EIP-712 message.
-2. Your wallet signs the message (no transaction, no gas).
-3. The Handle Gateway verifies the signature and checks the on-chain ACL.
-4. The KMS returns the encrypted data wrapped with your RSA public key.
-5. The SDK decrypts locally — the plaintext never travels over the network.
+1. The SDK checks on-chain that the handle is publicly decryptable
+   (`isPubliclyDecryptable`).
+2. It calls the Handle Gateway's public decryption endpoint.
+3. The gateway verifies the on-chain flag, decrypts the value internally via
+   KMS, and returns a signed `DecryptionProof`.
+4. The SDK extracts the plaintext from the proof and decodes it according to the
+   Solidity type embedded in the handle.
 
 ## Usage
 
@@ -42,7 +47,8 @@ const walletClient = createWalletClient({
 
 const handleClient = await createViemHandleClient(walletClient);
 
-const { value, solidityType } = await handleClient.decrypt(handle);
+const { value, solidityType, decryptionProof } =
+  await handleClient.publicDecrypt(handle);
 ```
 
 ## Parameters
@@ -51,8 +57,8 @@ const { value, solidityType } = await handleClient.decrypt(handle);
 
 **Type:** `Handle<T>` (a `0x`-prefixed hex string, 32 bytes)
 
-The handle to decrypt. It must have been created on the **same chain** as the
-one the client is connected to.
+The handle to decrypt. It must be marked as publicly decryptable on-chain and
+created on the **same chain** as the one the client is connected to.
 
 ```ts twoslash
 declare global {
@@ -73,29 +79,15 @@ const walletClient = createWalletClient({
 const handleClient = await createViemHandleClient(walletClient);
 declare const handle: Handle<'uint256'>;
 // ---cut---
-const { value, solidityType } = await handleClient.decrypt(handle); // [!code focus]
+const { value, solidityType, decryptionProof } =
+  await handleClient.publicDecrypt(handle); // [!code focus]
 ```
 
-::: tip Gasless operation
+::: warning
 
-Decryption uses an EIP-712 signature for authentication — it does not submit an
-on-chain transaction and costs no gas.
-
-:::
-
-::: warning Access control
-
-The connected wallet must be authorized to decrypt the handle. Authorization is
-managed through the on-chain ACL: only the handle owner or addresses explicitly
-granted access can request decryption.
-
-:::
-
-::: tip Publicly decryptable handles
-
-For handles that have been marked as **publicly decryptable**, use
-[`publicDecrypt`](/references/js-sdk/methods/publicDecrypt) instead. It does not
-require ACL authorization or an EIP-712 signature.
+The handle must be publicly decryptable. If it is not, the method throws an
+error. Use [`viewACL`](/references/js-sdk/methods/viewACL) to check the
+`isPublic` flag before calling `publicDecrypt`.
 
 :::
 
@@ -105,6 +97,7 @@ require ACL authorization or an EIP-712 signature.
 {
   value: boolean | string | bigint;
   solidityType: SolidityType;
+  decryptionProof: `0x${string}`;
 }
 ```
 
@@ -127,8 +120,16 @@ encoded in the handle:
 **Type:** `SolidityType`
 
 The Solidity type decoded from the handle (e.g. `"uint256"`, `"bool"`,
-`"address"`). Useful when you receive a handle without knowing its type ahead of
-time.
+`"address"`).
+
+### decryptionProof
+
+**Type:** `string` (`0x`-prefixed hex string)
+
+A signed proof returned by the Handle Gateway. The proof contains the gateway
+signature (65 bytes) concatenated with the ABI-encoded decrypted value. This
+proof can be passed to a smart contract to verify the decryption and use the
+plaintext value on-chain.
 
 ```ts twoslash
 declare global {
@@ -149,8 +150,10 @@ const walletClient = createWalletClient({
 const handleClient = await createViemHandleClient(walletClient);
 declare const handle: Handle<SolidityType>;
 // ---cut---
-const { value, solidityType } = await handleClient.decrypt(handle);
+const { value, solidityType, decryptionProof } =
+  await handleClient.publicDecrypt(handle);
 
+// Pass decryptionProof to a smart contract for on-chain verification
 console.log(`${solidityType}:`, value);
-// e.g. "uint256: 1000n" or "bool: true"
+console.log('proof:', decryptionProof);
 ```

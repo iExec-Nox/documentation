@@ -9,6 +9,14 @@ You can customize the SDK by passing a configuration object when creating the
 client. These options are for advanced use cases — you won't need them for
 standard usage on supported networks.
 
+::: warning Custom / unsupported chains
+
+When targeting an unsupported chain, you must provide **all three** settings:
+`gatewayUrl`, `smartContractAddress`, and `subgraphUrl`. Omitting any of them
+will result in a non-functional client.
+
+:::
+
 ## Usage
 
 ```ts twoslash
@@ -26,6 +34,7 @@ const signer = new BrowserProvider(window.ethereum);
 const handleClient = await createEthersHandleClient(signer, {
   gatewayUrl: 'https://nox-gateway.custom.example.com',
   smartContractAddress: '0xCustomNoxContractAddress',
+  subgraphUrl: 'https://subgraph.custom.example.com',
 });
 ```
 
@@ -88,6 +97,32 @@ const handleClient = await createEthersHandleClient(signer, {
 If not provided, the default contract address for the detected network will be
 used.
 
+### subgraphUrl <Optional />
+
+**Type:** `string` (base URL without path or query parameters)
+
+The subgraph endpoint URL used by the SDK to query on-chain data such as Access
+Control Lists via [`viewACL`](/references/js-sdk/methods/viewACL).
+
+```ts twoslash
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+// ---cut---
+import { createEthersHandleClient } from '@iexec-nox/handle';
+import { BrowserProvider } from 'ethers';
+
+const signer = new BrowserProvider(window.ethereum);
+
+const handleClient = await createEthersHandleClient(signer, {
+  subgraphUrl: 'https://subgraph.custom.example.com', // [!code focus]
+});
+```
+
+If not provided, the default subgraph URL for the detected network will be used.
+
 ## Supported Networks
 
 The SDK automatically resolves configuration for supported networks based on the
@@ -97,8 +132,10 @@ chain ID detected from your provider:
 | ---------------- | -------- |
 | Arbitrum Sepolia | 421614   |
 
-To use an unsupported chain, you must provide both `gatewayUrl` and
-`smartContractAddress`.
+To use an unsupported chain, you must provide all three settings: `gatewayUrl`,
+`smartContractAddress`, and `subgraphUrl`. Two is not enough for a working
+client (features like [`viewACL`](/references/js-sdk/methods/viewACL) require
+the subgraph).
 
 ## Advanced Usage Examples
 
@@ -109,6 +146,7 @@ declare const RPC_URL: string;
 declare const PRIVATE_KEY: string;
 declare const NOX_GATEWAY_URL: `https://${string}`;
 declare const NOX_CONTRACT_ADDRESS: `0x${string}`;
+declare const NOX_SUBGRAPH_URL: `https://${string}`;
 // ---cut---
 import { createEthersHandleClient } from '@iexec-nox/handle';
 import { JsonRpcProvider, Wallet } from 'ethers';
@@ -119,6 +157,7 @@ const signer = new Wallet(PRIVATE_KEY, provider);
 const handleClient = await createEthersHandleClient(signer, {
   gatewayUrl: NOX_GATEWAY_URL,
   smartContractAddress: NOX_CONTRACT_ADDRESS,
+  subgraphUrl: NOX_SUBGRAPH_URL,
 });
 ```
 
@@ -127,6 +166,7 @@ declare const RPC_URL: string;
 declare const PRIVATE_KEY: `0x${string}`;
 declare const NOX_GATEWAY_URL: `https://${string}`;
 declare const NOX_CONTRACT_ADDRESS: `0x${string}`;
+declare const NOX_SUBGRAPH_URL: `https://${string}`;
 // ---cut---
 import { createViemHandleClient } from '@iexec-nox/handle';
 import { createWalletClient, http } from 'viem';
@@ -140,6 +180,7 @@ const walletClient = createWalletClient({
 const handleClient = await createViemHandleClient(walletClient, {
   gatewayUrl: NOX_GATEWAY_URL,
   smartContractAddress: NOX_CONTRACT_ADDRESS,
+  subgraphUrl: NOX_SUBGRAPH_URL,
 });
 ```
 
