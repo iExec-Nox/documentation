@@ -120,7 +120,7 @@ granted access to you.
 
 - [ERC-7984 Token](/guides/build-confidential-tokens/erc7984-token) Learn how to
   create your own confidential token
-- [ERC-20 to ERC-7984](/guides/build-confidential-tokens/erc7984erc20wrapper)
+- [ERC-20 to ERC-7984](/guides/build-confidential-tokens/erc20-to-erc7984-wrapper)
   Wrap an existing ERC-20 into a confidential token
 - [Manage Viewers](/guides/manage-handle-access/viewers) Deep dive into access
   control for confidential data

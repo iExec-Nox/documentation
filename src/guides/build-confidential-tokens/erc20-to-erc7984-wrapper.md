@@ -156,7 +156,7 @@ of the underlying ERC-20 to the recipient.
 
 - [ERC-7984 Token](/guides/build-confidential-tokens/erc7984-token): create a
   native confidential token from scratch
-- [Demo](/guides/build-confidential-tokens/swap): confidential token swap
+- [Demo](/guides/build-confidential-tokens/demo): confidential token swap
   application
 - [JS SDK](/references/js-sdk): encrypt inputs and decrypt balances from
   JavaScript
