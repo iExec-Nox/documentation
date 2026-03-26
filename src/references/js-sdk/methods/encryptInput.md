@@ -21,6 +21,14 @@ The handle can then be passed to a smart contract alongside the `handleProof`
 for on-chain verification. From that point, the contract works with the handle
 without ever seeing the plaintext.
 
+::: warning Currently supported types
+
+`encryptInput` currently accepts only the following types: `bool`, `uint16`,
+`uint256`, `int16`, and `int256`. Support for additional types from the
+`SolidityType` union will be added in future releases.
+
+:::
+
 ## Usage
 
 ```ts twoslash
@@ -113,11 +121,22 @@ interpret the encrypted data.
 Supported types:
 
 - **Boolean**: `bool`
-- **Address**: `address`
-- **Dynamic types**: `bytes`, `string`
-- **Unsigned integers**: `uint8`, `uint16`, `uint24`, ... , `uint256`
-- **Signed integers**: `int8`, `int16`, `int24`, ... , `int256`
-- **Fixed-size bytes**: `bytes1`, `bytes2`, ... , `bytes32`
+- **Address**: `address` _(coming soon)_
+- **Dynamic types**: `bytes` _(coming soon)_, `string` _(coming soon)_
+- **Unsigned integers**: `uint8` _(coming soon)_, `uint16`, `uint24` _(coming
+  soon)_, ... , `uint256`
+- **Signed integers**: `int8` _(coming soon)_, `int16`, `int24` _(coming soon)_,
+  ... , `int256`
+- **Fixed-size bytes**: `bytes1` _(coming soon)_, `bytes2` _(coming soon)_, ...
+  , `bytes32` _(coming soon)_
+
+::: tip
+
+Only `bool`, `uint16`, `uint256`, `int16`, and `int256` are currently supported
+at runtime. The remaining types listed above will be available in future
+releases.
+
+:::
 
 ```ts twoslash
 declare global {

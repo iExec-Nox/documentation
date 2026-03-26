@@ -11,7 +11,7 @@ and use the handle as an input.
 ::: info
 
 Anyone can get the decrypted value of a publicly decryptable handle with the
-[`decrypt` method of the SDK](/references/js-sdk/methods/decrypt).
+[`publicDecrypt` method of the SDK](/references/js-sdk/methods/publicDecrypt).
 
 :::
 

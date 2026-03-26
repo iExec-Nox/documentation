@@ -13,6 +13,7 @@ dealing with the underlying cryptographic complexity.
 ## Key Features
 
 - **Easy Integration**: Works with both Ethers.js and Viem
+- **Account Abstraction**: Supports ERC-4337 Smart Accounts via Viem
 - **Type-Safe**: Full TypeScript support with type inference
 - **Secure**: Handles encryption, decryption, and signature management
   automatically
@@ -46,5 +47,9 @@ authorized addresses (admin or viewers) can decrypt handles.
   - [encryptInput](/references/js-sdk/methods/encryptInput) - Encrypt data and
     create handles
   - [decrypt](/references/js-sdk/methods/decrypt) - Decrypt handles
+  - [publicDecrypt](/references/js-sdk/methods/publicDecrypt) - Decrypt publicly
+    decryptable handles with proof
+  - [viewACL](/references/js-sdk/methods/viewACL) - View the Access Control List
+    of a handle
 - [Advanced Configuration](/references/js-sdk/advanced-configuration) - Custom
   configuration options
