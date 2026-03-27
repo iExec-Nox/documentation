@@ -82,13 +82,17 @@ wrapped token.
 ## Swap ERC-20 to ERC-7984
 
 Swapping from a plaintext ERC-20 to a confidential ERC-7984 is done via the
-`wrap` function. The ERC-20 tokens are transferred into the wrapper, which mints
-the equivalent confidential tokens:
+`wrap` function. It transfers ERC-20 tokens from the caller to the wrapper, then
+mints the equivalent confidential tokens:
 
-The function transfers ERC-20 tokens from the caller to the wrapper, then mints
-the equivalent confidential tokens:
-
-<<< @/contracts/ERC20ToERC7984Wrapper.sol#wrap{solidity}
+```solidity
+function wrap(address to, uint256 amount) public virtual returns (euint256) {
+    SafeERC20.safeTransferFrom(IERC20(underlying()), msg.sender, address(this), amount);
+    euint256 wrappedAmount = _mint(to, Nox.toEuint256(amount));
+    Nox.allowTransient(wrappedAmount, msg.sender);
+    return wrappedAmount;
+}
+```
 
 From the caller's perspective:
 
