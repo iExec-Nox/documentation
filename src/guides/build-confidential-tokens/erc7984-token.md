@@ -21,16 +21,16 @@ minting and burning.
 
 ::: code-group
 
+```sh [pnpm]
+pnpm add @iexec-nox/nox-confidential-contracts
+```
+
 ```sh [npm]
 npm install @iexec-nox/nox-confidential-contracts
 ```
 
 ```sh [yarn]
 yarn add @iexec-nox/nox-confidential-contracts
-```
-
-```sh [pnpm]
-pnpm add @iexec-nox/nox-confidential-contracts
 ```
 
 ```sh [bun]

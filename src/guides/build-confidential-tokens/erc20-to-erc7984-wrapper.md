@@ -53,7 +53,7 @@ requires two steps:
 2. **Finalize unwrap**: after the burnt amount is decrypted off-chain (via the
    Nox protocol), the user calls `finalizeUnwrap()` with the decrypted value and
    a decryption proof. The wrapper then transfers the corresponding ERC-20
-   tokens
+   tokens.
 
 ## Deploying a wrapper
 
@@ -85,17 +85,10 @@ Swapping from a plaintext ERC-20 to a confidential ERC-7984 is done via the
 `wrap` function. The ERC-20 tokens are transferred into the wrapper, which mints
 the equivalent confidential tokens:
 
-```solidity
-function wrap(address to, uint256 amount) public virtual returns (euint256) {
-    // Transfer ERC-20 tokens from the caller to the wrapper
-    SafeERC20.safeTransferFrom(IERC20(underlying()), msg.sender, address(this), amount);
+The function transfers ERC-20 tokens from the caller to the wrapper, then mints
+the equivalent confidential tokens:
 
-    // Mint equivalent confidential tokens
-    euint256 wrappedAmount = _mint(to, Nox.toEuint256(amount));
-    Nox.allowTransient(wrappedAmount, msg.sender);
-    return wrappedAmount;
-}
-```
+<<< @/contracts/ERC20ToERC7984Wrapper.sol#wrap{solidity}
 
 From the caller's perspective:
 
