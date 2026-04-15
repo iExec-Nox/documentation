@@ -40,14 +40,6 @@ function toEbool(bool value) internal returns (ebool)
 
 Converts a plaintext boolean to an encrypted boolean handle.
 
-## toEaddress
-
-```solidity
-function toEaddress(address value) internal returns (eaddress)
-```
-
-Converts a plaintext address to an encrypted address handle.
-
 ## toEuint16
 
 ```solidity

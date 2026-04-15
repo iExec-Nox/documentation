@@ -94,8 +94,9 @@ trigger off-chain computation by the [Runner](/protocol/runner).
 **Core functions:**
 
 ```solidity
-// Encrypt plaintext into a handle
-function plaintextToEncrypted(bytes32 value) returns (euint256);
+// Convert plaintext to encrypted handle
+function toEuint256(uint256 value) returns (euint256);
+function toEbool(bool value) returns (ebool);
 
 // Arithmetic
 function add(euint256 lhs, euint256 rhs) returns (euint256);
@@ -152,38 +153,37 @@ gas costs and off-chain processing overhead.
 
 ```solidity
 // Confidential token transfer
-function transfer(address from, address to, euint256 amount)
-    returns (euint256 newBalanceFrom, euint256 newBalanceTo, euint256 transferredAmount);
+function transfer(euint256 balanceFrom, euint256 balanceTo, euint256 amount)
+    returns (ebool success, euint256 newBalanceFrom, euint256 newBalanceTo);
 
 // Confidential mint
-function mint(euint256 amount, euint256 balanceTo, euint256 totalSupply)
-    returns (euint256 newBalanceTo, euint256 newTotalSupply);
+function mint(euint256 balanceTo, euint256 amount, euint256 totalSupply)
+    returns (ebool success, euint256 newBalanceTo, euint256 newTotalSupply);
 
 // Confidential burn
-function burn(euint256 amount, euint256 balanceFrom, euint256 totalSupply)
-    returns (euint256 newBalanceFrom, euint256 newTotalSupply, euint256 burntAmount);
+function burn(euint256 balanceFrom, euint256 amount, euint256 totalSupply)
+    returns (ebool success, euint256 newBalanceFrom, euint256 newTotalSupply);
 ```
 
 ### Mixing Plaintext and Encrypted Values
 
 All Nox operations require **both operands to be handles**. To combine an
 encrypted value with a plaintext constant, first convert the plaintext to a
-handle using `plaintextToEncrypted`:
+handle using `toEuint256` (or the matching `to*` function for the target type):
 
 ```solidity
 // Goal: compute encryptedBalance + 100
 euint256 handleA = ...; // existing encrypted handle
 
 // Step 1: wrap the plaintext constant into a handle
-euint256 handleB = Nox.plaintextToEncrypted(bytes32(uint256(100)));
+euint256 handleB = Nox.toEuint256(100);
 
 // Step 2: now both operands are handles
 euint256 result = Nox.add(handleA, handleB);
 ```
 
-`plaintextToEncrypted` emits its own event. The Runner encrypts the value
-off-chain and stores it in the Handle Gateway before it can be used as an
-operand.
+`toEuint256` emits its own event. The Runner encrypts the value off-chain and
+stores it in the Handle Gateway before it can be used as an operand.
 
 ::: info
 
