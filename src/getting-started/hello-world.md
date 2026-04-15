@@ -168,7 +168,7 @@ connected to **Arbitrum Sepolia** before hitting **Deploy**.
 
 ```solidity
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.27;
 
 // A piggy bank is a simple savings container: you put money in
 // and only the owner can take it out. This version keeps the
