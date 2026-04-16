@@ -13,8 +13,7 @@ This is the entry point for all user-provided encrypted inputs. The user
 encrypts a value with the [JS SDK](/references/js-sdk/methods/encryptInput), and
 the contract validates the proof on-chain before using the handle.
 
-**Supported types:** `ebool`, `eaddress`, `euint16`, `euint256`, `eint16`,
-`eint256`
+**Supported types:** `ebool`, `euint16`, `euint256`, `eint16`, `eint256`
 
 ::: tip
 
