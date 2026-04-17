@@ -356,10 +356,10 @@ at every step of the developer workflow.
 Developers interact with encrypted values through opaque handles (`euint256`,
 `ebool`, etc.) without ever manipulating ciphertexts directly. The current model
 requires all operands to be handles, including plaintext constants (which must
-first be converted via `wrapAsPublicHandle`). A planned evolution is to
-support **mixed operand operations** natively, allowing a plaintext value to be
-passed directly alongside an encrypted handle without a prior conversion step.
-This removes boilerplate and makes confidential arithmetic feel as natural as
+first be converted via `wrapAsPublicHandle`). A planned evolution is to support
+**mixed operand operations** natively, allowing a plaintext value to be passed
+directly alongside an encrypted handle without a prior conversion step. This
+removes boilerplate and makes confidential arithmetic feel as natural as
 standard Solidity.
 
 ### Hardhat and Foundry Plugins
