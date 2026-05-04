@@ -134,7 +134,7 @@ export default withMermaid(
       },
 
       socialLinks: [
-        { icon: 'github', link: 'https://github.com/iExecBlockchainComputing' },
+        { icon: 'github', link: 'https://github.com/iExec-Nox' },
         { icon: 'x', link: 'https://x.com/iEx_ec' },
         { icon: 'discord', link: 'https://discord.com/invite/5TewNUnJHN' },
       ],
