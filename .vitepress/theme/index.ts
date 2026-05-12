@@ -6,6 +6,7 @@ import Layout from './Layout.vue';
 import Required from './components/Required.vue';
 import Optional from './components/Optional.vue';
 import RemixButton from '@/components/RemixButton.vue';
+import NetworkCard from '@/components/NetworkCard.vue';
 import Glossary from './components/Glossary.vue';
 import type { EnhanceAppContext } from 'vitepress';
 import 'virtual:group-icons.css';
@@ -30,6 +31,7 @@ export default {
     app.component('Required', Required);
     app.component('Optional', Optional);
     app.component('RemixButton', RemixButton);
+    app.component('NetworkCard', NetworkCard);
     app.component('Glossary', Glossary);
     app.use(TwoslashFloatingVue as any);
 

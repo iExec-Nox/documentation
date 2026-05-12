@@ -1,9 +1,26 @@
+<script setup lang="ts">
+import { computed } from 'vue';
+import { withBase } from 'vitepress';
+import { getPrimaryChain } from '@/data/chains';
+
+const networksHref = withBase('/getting-started/networks');
+
+const chainNotice = computed(() => {
+  const primary = getPrimaryChain();
+  if (!primary) return 'Nox runs on testnet only — see supported networks';
+  const network = primary.isTestnet ? `${primary.name} testnet` : primary.name;
+  return `Nox runs on ${network} only`;
+});
+</script>
+
 <template>
   <div class="dev-banner">
     <span class="dev-banner__icon">🚧</span>
     <span class="dev-banner__text">
-      This documentation is currently under development. Content may be
-      incomplete or subject to change.
+      Documentation under development —
+      <strong>{{ chainNotice }}</strong>
+      ·
+      <a :href="networksHref" class="dev-banner__link">Networks &amp; faucets</a>
     </span>
     <span class="dev-banner__icon">🚧</span>
   </div>
@@ -45,7 +62,17 @@
 
 .dev-banner__text {
   flex: 1;
-  max-width: 600px;
+  max-width: 720px;
   letter-spacing: 0.01em;
+}
+
+.dev-banner__link {
+  color: #ffd24a;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.dev-banner__link:hover {
+  color: #fff;
 }
 </style>

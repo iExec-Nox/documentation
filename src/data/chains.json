@@ -1,0 +1,52 @@
+[
+  {
+    "id": 421614,
+    "name": "Arbitrum Sepolia",
+    "hex": "0x66eee",
+    "status": "live",
+    "primary": true,
+    "isTestnet": true,
+    "contract": "0xd464B198f06756a1d00be223634b85E0a731c229",
+    "rpc": "https://sepolia-rollup.arbitrum.io/rpc",
+    "explorer": {
+      "name": "Arbiscan",
+      "url": "https://sepolia.arbiscan.io"
+    },
+    "currency": {
+      "name": "Ether",
+      "symbol": "ETH",
+      "decimals": 18
+    },
+    "faucets": [
+      {
+        "name": "Alchemy Arbitrum Sepolia Faucet",
+        "url": "https://www.alchemy.com/faucets/arbitrum-sepolia",
+        "recommended": true,
+        "note": "Direct Arbitrum Sepolia drip. Requires a small mainnet ETH balance to qualify."
+      },
+      {
+        "name": "QuickNode Arbitrum Sepolia Faucet",
+        "url": "https://faucet.quicknode.com/arbitrum/sepolia",
+        "recommended": true,
+        "note": "Direct Arbitrum Sepolia drip. Requires a small mainnet ETH balance to qualify."
+      },
+      {
+        "name": "Chainlink Arbitrum Sepolia Faucet",
+        "url": "https://faucets.chain.link/arbitrum-sepolia",
+        "note": "Direct Arbitrum Sepolia drip. Requires a mainnet LINK balance to qualify."
+      },
+      {
+        "name": "Google Cloud Web3 Faucet (ETH Sepolia → bridge)",
+        "url": "https://cloud.google.com/application/web3/faucet/ethereum/sepolia",
+        "note": "No mainnet balance required, but hands out Ethereum Sepolia ETH. Bridge to Arbitrum Sepolia afterwards using the bridge link below."
+      }
+    ],
+    "faucetWarnings": [
+      "The Google Cloud Web3 Faucet (cloud.google.com/application/web3/faucet) hands out Ethereum Sepolia ETH, not Arbitrum Sepolia ETH. Tokens from it will not appear on Arbitrum Sepolia — use one of the curated faucets below instead, or bridge from ETH Sepolia."
+    ],
+    "bridge": {
+      "name": "Arbitrum Bridge",
+      "url": "https://bridge.arbitrum.io/?destinationChain=arbitrum-sepolia&sourceChain=sepolia"
+    }
+  }
+]
