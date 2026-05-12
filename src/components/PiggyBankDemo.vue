@@ -266,8 +266,11 @@ watch(chainState.status, (newStatus) => {
       'Connected chain is not supported — switch back to Arbitrum Sepolia';
     handleClient = null;
   } else if (newStatus === 'right-chain') {
-    error.value = 'Back on Arbitrum Sepolia — reconnect to resume';
+    // Back on the right chain: full reset so the Connect button reappears cleanly
     handleClient = null;
+    account.value = null;
+    error.value = '';
+    status.value = '';
   }
 });
 
