@@ -193,6 +193,11 @@ Only allowed admins can allow new admins.
 
 Once allowed, an admin cannot be revoked.
 
+This is by design: once an admin has been granted access, they can decrypt and
+use the handle at any time. Revoking on-chain permission would give a false
+sense of security — the admin may have already decrypted and stored the data
+locally via the Handle Gateway.
+
 :::
 
 ```solidity
@@ -348,5 +353,27 @@ await walletClient.writeContract({
   args: [handle, accountToAllow],
 });
 ```
+
+:::
+
+## Isolating Access via a New Handle
+
+There is no on-chain revoke for admin access. For use cases that require access
+isolation (e.g. end of a regulatory audit), the recommended pattern is to
+migrate to a fresh handle:
+
+1. Create a new handle with the same value — `Nox.add(existingHandle, 0)`
+   produces a new handle with a fresh ACL.
+2. Update your contract's storage to point to the new handle.
+3. Grant access only to the addresses that should retain access on the new
+   handle.
+
+The old handle remains accessible to previous admins, but is no longer used by
+your application.
+
+::: info
+
+This pattern costs extra gas and does not destroy the ciphertext on the Handle
+Gateway. It is an application-level isolation, not a cryptographic revoke.
 
 :::

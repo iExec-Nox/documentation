@@ -51,6 +51,10 @@ function guidesItems(active: boolean): DefaultTheme.SidebarItem[] {
       collapsed: !active,
       items: [
         {
+          text: 'Transient Access',
+          link: '/guides/manage-handle-access/transient-access',
+        },
+        {
           text: 'Manage Viewers',
           link: '/guides/manage-handle-access/viewers',
         },
