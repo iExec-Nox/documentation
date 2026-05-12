@@ -361,8 +361,10 @@ There is no on-chain revoke for viewer access. For use cases that require access
 isolation (e.g. end of a regulatory audit), the recommended pattern is to
 migrate to a fresh handle:
 
-1. Create a new handle with the same value — `Nox.add(existingHandle, 0)`
-   produces a new handle with a fresh ACL.
+1. Create a new handle with the same value —
+   `Nox.add(existingHandle, Nox.toEuint256(0))` produces a new handle with a
+   fresh ACL. Use the matching converter for other types (`Nox.toEuint16`,
+   `Nox.toEbool`, etc.).
 2. Update your contract's storage to point to the new handle.
 3. Grant access only to the addresses that should retain access on the new
    handle.
