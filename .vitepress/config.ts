@@ -13,6 +13,7 @@ const nodeModulesRoot = path.resolve(
   _require.resolve('vitepress/package.json'),
   '../..'
 );
+const root = fileURLToPath(new URL('..', import.meta.url));
 import { getSidebar } from './sidebar';
 import {
   groupIconMdPlugin,
@@ -39,7 +40,7 @@ export default withMermaid(
       },
       server: {
         fs: {
-          allow: [nodeModulesRoot],
+          allow: [root, nodeModulesRoot],
         },
       },
     },

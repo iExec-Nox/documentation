@@ -1,7 +1,7 @@
 import { onMounted, onUnmounted, ref } from 'vue';
 import { getChainById } from '../data/chains';
 
-export type ChainStatus =
+export type WalletChainStatus =
   | 'no-wallet'
   | 'wrong-chain'
   | 'right-chain'
@@ -19,7 +19,7 @@ function isMobile(): boolean {
 const eth = (): any => (window as any).ethereum;
 
 export function useChainState(chainId: number) {
-  const status = ref<ChainStatus>('no-wallet');
+  const status = ref<WalletChainStatus>('no-wallet');
   const currentChainId = ref<string | null>(null);
   const error = ref<Error | null>(null);
   const noWalletHint = ref<NoWalletHint | null>(null);
@@ -52,6 +52,7 @@ export function useChainState(chainId: number) {
       ethereum.on('chainChanged', handleChainChanged);
     } catch (err) {
       error.value = err as Error;
+      status.value = 'wrong-chain';
     }
   });
 

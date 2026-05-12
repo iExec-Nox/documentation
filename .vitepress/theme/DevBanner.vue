@@ -7,7 +7,7 @@ const networksHref = withBase('/getting-started/networks');
 
 const chainNotice = computed(() => {
   const primary = getPrimaryChain();
-  if (!primary) return 'Nox runs on testnet only — see supported networks';
+  if (!primary) return 'see Networks & Faucets for supported chains';
   const network = primary.isTestnet ? `${primary.name} testnet` : primary.name;
   return `Nox runs on ${network} only`;
 });
