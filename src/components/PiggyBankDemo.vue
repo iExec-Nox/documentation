@@ -260,7 +260,7 @@ async function connect() {
 
 // React to mid-session chain changes after wallet is connected
 watch(chainState.status, (newStatus) => {
-  if (!account.value) return; // not yet connected — ignore
+  if (handleClient === null) return; // only react to mid-session changes after full connect
   if (newStatus === 'wrong-chain') {
     error.value =
       'Connected chain is not supported — switch back to Arbitrum Sepolia';
