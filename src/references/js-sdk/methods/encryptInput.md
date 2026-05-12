@@ -13,13 +13,19 @@ the handle was created by a legitimate Handle Gateway.
 ### What happens under the hood
 
 1. The SDK encodes the value according to the given Solidity type.
-2. It sends the encoded value plus the caller's address to the Handle Gateway.
-3. The Handle Gateway encrypts and stores the data, then returns a deterministic
-   handle and a signed EIP-712 proof.
+2. It sends the encoded value plus the caller's address to the Handle Gateway
+   over an attested HTTPS connection (the TLS certificate is bound to the
+   enclave's remote attestation report).
+3. The Handle Gateway — **running inside an Intel TDX enclave** — encrypts the
+   value using ECIES with the KMS public key and stores the ciphertext in AWS
+   S3. The plaintext never leaves the TEE memory.
+4. The Gateway returns a deterministic handle and a signed EIP-712 proof.
 
 The handle can then be passed to a smart contract alongside the `handleProof`
 for on-chain verification. From that point, the contract works with the handle
 without ever seeing the plaintext.
+
+See [Handle Gateway](/protocol/handle-gateway) for the full encryption protocol.
 
 ::: warning Currently supported types
 
