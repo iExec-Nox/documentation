@@ -5,6 +5,10 @@ description: Advanced configuration for Nox JS SDK
 
 # Advanced Configuration
 
+::: tip Network setup
+📍 For network setup (add to wallet, faucets), see [Networks & Faucets](/getting-started/networks). This page documents SDK configuration.
+:::
+
 You can customize the SDK by passing a configuration object when creating the
 client. These options are for advanced use cases — you won't need them for
 standard usage on supported networks.

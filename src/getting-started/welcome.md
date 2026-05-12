@@ -127,6 +127,10 @@ sensitive data and build and deploy confidential smart contracts.
 
 ## Start Building
 
+::: tip Before you deploy
+Nox runs on **Arbitrum Sepolia**. Make sure your wallet is connected to the right network and you have testnet ETH. See [Networks & Faucets](/getting-started/networks).
+:::
+
 Ready to get started? Here's what to explore next:
 
 - **Quick Start:** Follow our [Hello World guide](/getting-started/hello-world)
