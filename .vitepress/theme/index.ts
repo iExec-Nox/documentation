@@ -10,7 +10,7 @@ import Glossary from './components/Glossary.vue';
 import type { EnhanceAppContext } from 'vitepress';
 import 'virtual:group-icons.css';
 import '@shikijs/vitepress-twoslash/style.css';
-import '../../node_modules/markdown-it-steps/dist/style.css';
+import 'markdown-it-steps/dist/style.css';
 import './style.css';
 
 declare global {
