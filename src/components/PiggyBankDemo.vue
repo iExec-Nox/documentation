@@ -192,8 +192,6 @@ const status = ref('');
 const error = ref('');
 const loading = ref(false);
 const copied = ref('');
-const watchActive = ref(false);
-
 let handleClient: any = null;
 
 const shortAddress = (addr: string) =>
@@ -250,7 +248,6 @@ async function connect() {
     });
 
     handleClient = await createViemHandleClient(walletClient);
-    watchActive.value = true;
     status.value = '';
   } catch (e: any) {
     error.value = e.shortMessage || e.message;
@@ -260,22 +257,15 @@ async function connect() {
   }
 }
 
-// React to mid-session chain changes after wallet is connected.
-// watchActive is set only after a full successful connect, so transitions
-// during the connect flow itself are ignored. wrong-chain nulls handleClient
-// but keeps watchActive so the subsequent right-chain can still fire.
+// React to mid-session chain changes. handleClient guard ensures this only
+// fires after a full successful connect, not during the connect flow itself.
 watch(chainState.status, (newStatus) => {
-  if (!watchActive.value) return;
+  if (handleClient === null) return;
   if (newStatus === 'wrong-chain') {
     error.value =
       'Connected chain is not supported — switch back to Arbitrum Sepolia';
-    handleClient = null;
   } else if (newStatus === 'right-chain') {
-    handleClient = null;
-    account.value = null;
     error.value = '';
-    status.value = '';
-    watchActive.value = false;
   }
 });
 
