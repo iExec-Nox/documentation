@@ -2,6 +2,14 @@ import { transformerTwoslash } from '@shikijs/vitepress-twoslash';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vitepress';
 import { fileURLToPath, URL } from 'node:url';
+import { createRequire } from 'node:module';
+import path from 'node:path';
+
+// Resolve node_modules location dynamically so the config works from both the
+// main repo root and any nested git worktree (where node_modules lives in the
+// parent repo rather than alongside the worktree checkout).
+const _require = createRequire(import.meta.url);
+const nodeModulesRoot = path.resolve(_require.resolve('vitepress/package.json'), '../..');
 import { getSidebar } from './sidebar';
 import {
   groupIconMdPlugin,
@@ -24,6 +32,11 @@ export default withMermaid(
       resolve: {
         alias: {
           '@': fileURLToPath(new URL('../src', import.meta.url)),
+        },
+      },
+      server: {
+        fs: {
+          allow: [nodeModulesRoot],
         },
       },
     },

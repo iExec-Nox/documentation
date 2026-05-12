@@ -5,6 +5,8 @@ description: Current status and health of Nox services
 
 # System Status
 
+Live deployment on Arbitrum Sepolia · [chain details](/getting-started/networks)
+
 At Nox Protocol, we are committed to providing a reliable infrastructure and
 maintaining full transparency with our users.
 

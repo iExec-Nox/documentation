@@ -158,9 +158,15 @@ details.
 ## Final result
 
 Here is the complete confidential piggy bank. Click **Open in Remix** to load
-it, then compile with Solidity `0.8.24+`. To deploy, select **WalletConnect** or
-**Browser Extension** in the Remix **Deploy** panel and make sure your wallet is
-connected to **Arbitrum Sepolia** before hitting **Deploy**.
+it, then compile with Solidity `0.8.24+`.
+
+### Deploy in Remix on Arbitrum Sepolia
+
+1. Click **Open in Remix** below
+2. In Remix's **Deploy & Run** panel, set **Environment** to **Injected Provider - MetaMask**
+3. Verify the popup chain id matches Arbitrum Sepolia (`421614`). If not, add or switch via [Networks & Faucets](/getting-started/networks)
+4. Get testnet ETH from a faucet on the [Networks & Faucets](/getting-started/networks) page if needed
+5. Click **Deploy** and sign the transaction
 
 <ClientOnly>
   <RemixButton :code="piggyBankCode" />
