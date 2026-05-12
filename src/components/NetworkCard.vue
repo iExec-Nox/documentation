@@ -4,7 +4,10 @@
     <div class="network-card__header">
       <div class="network-card__title-row">
         <span class="network-card__name">{{ chain.name }}</span>
-        <span v-if="chain.isTestnet" class="network-card__badge network-card__badge--testnet">
+        <span
+          v-if="chain.isTestnet"
+          class="network-card__badge network-card__badge--testnet"
+        >
           Testnet
         </span>
         <span
@@ -60,7 +63,8 @@
       <div class="network-card__row">
         <span class="network-card__label">Currency</span>
         <span class="network-card__value">
-          {{ chain.currency.symbol }} ({{ chain.currency.name }}, {{ chain.currency.decimals }} decimals)
+          {{ chain.currency.symbol }} ({{ chain.currency.name }},
+          {{ chain.currency.decimals }} decimals)
         </span>
       </div>
     </div>
@@ -68,14 +72,14 @@
 </template>
 
 <script setup lang="ts">
-import type { Chain } from '../data/chains'
+import type { Chain } from '../data/chains';
 
 defineProps<{
-  chain: Chain
-}>()
+  chain: Chain;
+}>();
 
 function shortAddress(addr: string): string {
-  return `${addr.slice(0, 10)}…${addr.slice(-6)}`
+  return `${addr.slice(0, 10)}…${addr.slice(-6)}`;
 }
 </script>
 

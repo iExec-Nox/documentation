@@ -1,7 +1,10 @@
 <template>
   <div class="add-chain-wrapper">
     <!-- right-chain: success badge -->
-    <div v-if="status === 'right-chain'" class="chain-badge chain-badge--success">
+    <div
+      v-if="status === 'right-chain'"
+      class="chain-badge chain-badge--success"
+    >
       <svg
         class="chain-badge__icon"
         viewBox="0 0 24 24"
@@ -33,7 +36,8 @@
           target="_blank"
           rel="noopener noreferrer"
           class="chain-hint__link"
-        >Install MetaMask</a>
+          >Install MetaMask</a
+        >
       </p>
     </template>
 
@@ -61,20 +65,24 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useChainState } from '../composables/useChainState'
-import { getChainById } from '../data/chains'
+import { computed } from 'vue';
+import { useChainState } from '../composables/useChainState';
+import { getChainById } from '../data/chains';
 
 const props = defineProps<{
-  chainId: number
-}>()
+  chainId: number;
+}>();
 
-const { status, error, noWalletHint, addOrSwitch } = useChainState(props.chainId)
+const { status, error, noWalletHint, addOrSwitch } = useChainState(
+  props.chainId
+);
 
-const chainName = computed(() => getChainById(props.chainId)?.name ?? `Chain ${props.chainId}`)
+const chainName = computed(
+  () => getChainById(props.chainId)?.name ?? `Chain ${props.chainId}`
+);
 
 async function handleClick() {
-  await addOrSwitch()
+  await addOrSwitch();
 }
 </script>
 

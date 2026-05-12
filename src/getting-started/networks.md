@@ -57,7 +57,7 @@ actually distribute the right network's tokens.
 <ul v-if="sortedFaucets.length > 0" class="faucet-list">
   <li v-for="faucet in sortedFaucets" :key="faucet.url">
     <div class="faucet-list__line">
-      <a :href="faucet.url" target="_blank" rel="noopener">{{ faucet.name }}</a>
+      <a :href="faucet.url" target="_blank" rel="noopener noreferrer">{{ faucet.name }}</a>
       <span v-if="faucet.recommended" class="faucet-list__badge">recommended</span>
     </div>
     <p v-if="faucet.note" class="faucet-list__note">{{ faucet.note }}</p>
@@ -69,7 +69,7 @@ actually distribute the right network's tokens.
   <p>
     If faucets are dry, you can bridge ETH Sepolia tokens to {{ primary.name }}
     via the
-    <a :href="primary.bridge.url" target="_blank" rel="noopener">{{ primary.bridge.name }}</a>.
+    <a :href="primary.bridge.url" target="_blank" rel="noopener noreferrer">{{ primary.bridge.name }}</a>.
   </p>
 </div>
 
@@ -92,8 +92,8 @@ one wallet to the next, but the input fields are the same:
 1. Open your wallet's network selector and choose <em>Add network</em> (or
    <em>Add custom network</em> / <em>Add a network manually</em>, depending on
    the wallet).
-2. Fill in the values from the [Supported networks](#supported-networks)
-   section above:
+2. Fill in the values from the [Supported networks](#supported-networks) section
+   above:
    - <strong>Network name</strong>
    - <strong>RPC URL</strong>
    - <strong>Chain ID</strong>
@@ -102,9 +102,9 @@ one wallet to the next, but the input fields are the same:
 3. Save, then select the new network from the dropdown so your wallet signs
    transactions on it.
 
-Mobile wallets typically expose the same form under <em>Settings → Networks</em>.
-If your wallet does not support custom networks, switch to one that does
-before continuing.
+Mobile wallets typically expose the same form under <em>Settings →
+Networks</em>. If your wallet does not support custom networks, switch to one
+that does before continuing.
 
 <style scoped>
 .networks-intro {

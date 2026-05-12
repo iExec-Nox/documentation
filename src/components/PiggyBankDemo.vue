@@ -234,7 +234,6 @@ async function connect() {
     const accounts: string[] = await window.ethereum.request({
       method: 'eth_requestAccounts',
     });
-    account.value = accounts[0];
 
     await chainState.addOrSwitch();
     if (chainState.error.value) {
@@ -248,6 +247,7 @@ async function connect() {
     });
 
     handleClient = await createViemHandleClient(walletClient);
+    account.value = accounts[0];
     status.value = '';
   } catch (e: any) {
     error.value = e.shortMessage || e.message;

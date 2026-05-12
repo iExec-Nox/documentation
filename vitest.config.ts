@@ -1,4 +1,4 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig } from 'vitest/config';
 
 // Browser APIs (window, document, navigator) are simulated via happy-dom.
 // For window.ethereum and other injected providers, use the mock helper in
@@ -8,4 +8,4 @@ export default defineConfig({
     environment: 'happy-dom',
     include: ['src/**/*.test.ts'],
   },
-})
+});

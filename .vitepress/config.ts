@@ -9,7 +9,10 @@ import path from 'node:path';
 // main repo root and any nested git worktree (where node_modules lives in the
 // parent repo rather than alongside the worktree checkout).
 const _require = createRequire(import.meta.url);
-const nodeModulesRoot = path.resolve(_require.resolve('vitepress/package.json'), '../..');
+const nodeModulesRoot = path.resolve(
+  _require.resolve('vitepress/package.json'),
+  '../..'
+);
 import { getSidebar } from './sidebar';
 import {
   groupIconMdPlugin,

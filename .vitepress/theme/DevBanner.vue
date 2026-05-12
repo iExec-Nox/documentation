@@ -20,7 +20,9 @@ const chainNotice = computed(() => {
       Documentation under development —
       <strong>{{ chainNotice }}</strong>
       ·
-      <a :href="networksHref" class="dev-banner__link">Networks &amp; faucets</a>
+      <a :href="networksHref" class="dev-banner__link"
+        >Networks &amp; faucets</a
+      >
     </span>
     <span class="dev-banner__icon">🚧</span>
   </div>

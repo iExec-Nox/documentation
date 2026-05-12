@@ -163,9 +163,12 @@ it, then compile with Solidity `0.8.24+`.
 ### Deploy in Remix on Arbitrum Sepolia
 
 1. Click **Open in Remix** below
-2. In Remix's **Deploy & Run** panel, set **Environment** to **Injected Provider - MetaMask**
-3. Verify the popup chain id matches Arbitrum Sepolia (`421614`). If not, add or switch via [Networks & Faucets](/getting-started/networks)
-4. Get testnet ETH from a faucet on the [Networks & Faucets](/getting-started/networks) page if needed
+2. In Remix's **Deploy & Run** panel, set **Environment** to **Injected
+   Provider - MetaMask**
+3. Verify the popup chain id matches Arbitrum Sepolia (`421614`). If not, add or
+   switch via [Networks & Faucets](/getting-started/networks)
+4. Get testnet ETH from a faucet on the
+   [Networks & Faucets](/getting-started/networks) page if needed
 5. Click **Deploy** and sign the transaction
 
 <ClientOnly>
