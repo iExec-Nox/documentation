@@ -1,154 +1,194 @@
-<script setup lang="ts">
-import type { Chain } from '@/data/chains';
-
-defineProps<{ chain: Chain }>();
-</script>
-
 <template>
   <div class="network-card">
-    <div class="header">
-      <span class="header-title">{{ chain.name }}</span>
-      <span v-if="chain.isTestnet" class="header-badge">testnet</span>
+    <!-- Card header -->
+    <div class="network-card__header">
+      <div class="network-card__title-row">
+        <span class="network-card__name">{{ chain.name }}</span>
+        <span v-if="chain.isTestnet" class="network-card__badge network-card__badge--testnet">
+          Testnet
+        </span>
+        <span
+          :class="[
+            'network-card__badge',
+            chain.status === 'live'
+              ? 'network-card__badge--live'
+              : 'network-card__badge--inactive',
+          ]"
+        >
+          {{ chain.status }}
+        </span>
+      </div>
+
+      <!-- Add to wallet button -->
+      <ClientOnly>
+        <AddChainButton :chain-id="chain.id" />
+      </ClientOnly>
     </div>
 
-    <div class="result-card">
-      <div class="result-item">
-        <div class="result-label">Chain ID</div>
-        <div class="result-content">
-          <code>{{ chain.id }}</code>
-          <span class="result-muted">({{ chain.hex }})</span>
-        </div>
+    <!-- Metadata grid -->
+    <div class="network-card__body">
+      <div class="network-card__row">
+        <span class="network-card__label">Chain ID</span>
+        <code class="network-card__value">{{ chain.id }}</code>
       </div>
-
-      <div class="result-item">
-        <div class="result-label">Nox compute contract</div>
-        <div class="result-content">
-          <a
-            :href="`${chain.explorer.url}/address/${chain.contract}`"
-            target="_blank"
-            rel="noopener"
-          >
-            <code>{{ chain.contract }}</code>
-          </a>
-        </div>
+      <div class="network-card__row">
+        <span class="network-card__label">Nox Contract</span>
+        <a
+          :href="`${chain.explorer.url}/address/${chain.contract}`"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="network-card__value network-card__link"
+        >
+          <code>{{ shortAddress(chain.contract) }}</code>
+        </a>
       </div>
-
-      <div class="result-item">
-        <div class="result-label">RPC URL</div>
-        <div class="result-content">
-          <code>{{ chain.rpc }}</code>
-        </div>
+      <div class="network-card__row">
+        <span class="network-card__label">RPC URL</span>
+        <code class="network-card__value">{{ chain.rpc }}</code>
       </div>
-
-      <div class="result-item">
-        <div class="result-label">Block explorer</div>
-        <div class="result-content">
-          <a :href="chain.explorer.url" target="_blank" rel="noopener">
-            {{ chain.explorer.name }}
-          </a>
-        </div>
+      <div class="network-card__row">
+        <span class="network-card__label">Explorer</span>
+        <a
+          :href="chain.explorer.url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="network-card__value network-card__link"
+        >
+          {{ chain.explorer.name }}
+        </a>
       </div>
-
-      <div class="result-item">
-        <div class="result-label">Native currency</div>
-        <div class="result-content">
-          <span>{{ chain.currency.name }}</span>
-          <span class="result-muted">
-            ({{ chain.currency.symbol }}, {{ chain.currency.decimals }} decimals)
-          </span>
-        </div>
+      <div class="network-card__row">
+        <span class="network-card__label">Currency</span>
+        <span class="network-card__value">
+          {{ chain.currency.symbol }} ({{ chain.currency.name }}, {{ chain.currency.decimals }} decimals)
+        </span>
       </div>
     </div>
   </div>
 </template>
+
+<script setup lang="ts">
+import type { Chain } from '../data/chains'
+
+defineProps<{
+  chain: Chain
+}>()
+
+function shortAddress(addr: string): string {
+  return `${addr.slice(0, 10)}…${addr.slice(-6)}`
+}
+</script>
 
 <style scoped>
 .network-card {
   border: 1px solid var(--vp-c-border);
   border-radius: 12px;
   background: var(--vp-c-bg);
-  margin: 1.5rem 0;
+  margin: 1.25rem 0;
   overflow: hidden;
 }
 
-.header {
+/* Header */
+.network-card__header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  padding: 0.75rem 1.25rem;
+  gap: 1rem;
+  padding: 0.875rem 1.25rem;
   border-bottom: 1px solid var(--vp-c-border);
   background: var(--vp-c-bg-soft);
-}
-
-.header-title {
-  font-size: 0.8125rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--vp-c-text-2);
-}
-
-.header-badge {
-  display: inline-flex;
-  align-items: center;
-  font-size: 0.6875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--vp-c-brand-1);
-  background: var(--vp-c-brand-soft);
-  border-radius: 999px;
-  padding: 0.125rem 0.5rem;
-}
-
-.result-card {
-  background: var(--vp-c-bg);
-}
-
-.result-item {
-  padding: 0.625rem 1.25rem;
-}
-
-.result-item + .result-item {
-  border-top: 1px solid var(--vp-c-border);
-}
-
-.result-label {
-  font-size: 0.6875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--vp-c-text-3);
-  margin-bottom: 0.25rem;
-}
-
-.result-content {
-  display: flex;
   flex-wrap: wrap;
+}
+
+.network-card__title-row {
+  display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
-.result-content code {
-  font-size: 0.8125rem;
-  line-height: 1.5;
-  word-break: break-all;
-  background: none;
-  padding: 0;
+.network-card__name {
+  font-size: 0.9375rem;
+  font-weight: 600;
   color: var(--vp-c-text-1);
 }
 
-.result-content a {
-  text-decoration: none;
-  border-bottom: 1px dashed var(--vp-c-brand-1);
+/* Status / type badges */
+.network-card__badge {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.1875rem 0.5rem;
+  border-radius: 999px;
+  border: 1px solid;
 }
 
-.result-content a:hover {
-  border-bottom-style: solid;
+.network-card__badge--testnet {
+  background: var(--vp-c-yellow-soft);
+  border-color: var(--vp-c-yellow-2);
+  color: var(--vp-c-yellow-1);
 }
 
-.result-muted {
-  font-size: 0.8125rem;
+.network-card__badge--live {
+  background: var(--vp-c-green-soft);
+  border-color: var(--vp-c-green-2);
+  color: var(--vp-c-green-1);
+}
+
+.network-card__badge--inactive {
+  background: var(--vp-c-bg-mute);
+  border-color: var(--vp-c-border);
   color: var(--vp-c-text-3);
+}
+
+/* Metadata rows */
+.network-card__body {
+  padding: 0.25rem 0;
+}
+
+.network-card__row {
+  display: flex;
+  align-items: baseline;
+  gap: 0.75rem;
+  padding: 0.5rem 1.25rem;
+  border-bottom: 1px solid var(--vp-c-divider);
+}
+
+.network-card__row:last-child {
+  border-bottom: none;
+}
+
+.network-card__label {
+  flex-shrink: 0;
+  width: 7.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--vp-c-text-3);
+}
+
+.network-card__value {
+  font-size: 0.8125rem;
+  color: var(--vp-c-text-1);
+  word-break: break-all;
+}
+
+.network-card__value code {
+  background: none;
+  padding: 0;
+  font-size: 0.8125rem;
+}
+
+.network-card__link {
+  color: var(--vp-c-brand-1);
+  text-decoration: none;
+}
+
+.network-card__link:hover {
+  color: var(--vp-c-brand-2);
+  text-decoration: underline;
+  text-underline-offset: 2px;
 }
 </style>

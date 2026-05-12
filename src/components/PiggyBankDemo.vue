@@ -1,5 +1,28 @@
 <template>
   <div class="piggy-demo">
+    <!-- Pre-connect notice -->
+    <div v-if="!account" class="chain-notice">
+      <svg
+        class="chain-notice-icon"
+        width="14"
+        height="14"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <line x1="12" y1="8" x2="12" y2="12" />
+        <line x1="12" y1="16" x2="12.01" y2="16" />
+      </svg>
+      <span>
+        This demo runs on <strong>Arbitrum Sepolia</strong>. Connecting will
+        prompt your wallet to add or switch to it.
+      </span>
+    </div>
+
     <!-- Header -->
     <div class="header">
       <span class="header-title">Nox SDK Playground</span>
@@ -146,7 +169,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, watch } from 'vue';
+import { useChainState } from '@/composables/useChainState';
 
 declare global {
   interface Window {
@@ -154,7 +178,8 @@ declare global {
   }
 }
 
-const ARBITRUM_SEPOLIA_HEX = '0x66eee';
+const ARBITRUM_SEPOLIA_ID = 421614;
+const chainState = useChainState(ARBITRUM_SEPOLIA_ID);
 
 const contractAddress = ref('');
 const plainValue = ref('');
@@ -212,28 +237,9 @@ async function connect() {
     });
     account.value = accounts[0];
 
-    try {
-      await window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: ARBITRUM_SEPOLIA_HEX }],
-      });
-    } catch (e: any) {
-      if (e.code === 4902) {
-        await window.ethereum.request({
-          method: 'wallet_addEthereumChain',
-          params: [
-            {
-              chainId: ARBITRUM_SEPOLIA_HEX,
-              chainName: 'Arbitrum Sepolia',
-              nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
-              rpcUrls: ['https://sepolia-rollup.arbitrum.io/rpc'],
-              blockExplorerUrls: ['https://sepolia.arbiscan.io'],
-            },
-          ],
-        });
-      } else {
-        throw e;
-      }
+    await chainState.addOrSwitch();
+    if (chainState.error.value) {
+      throw chainState.error.value;
     }
 
     const walletClient = createWalletClient({
@@ -251,6 +257,19 @@ async function connect() {
     loading.value = false;
   }
 }
+
+// React to mid-session chain changes after wallet is connected
+watch(chainState.status, (newStatus) => {
+  if (!account.value) return; // not yet connected — ignore
+  if (newStatus === 'wrong-chain') {
+    error.value =
+      'Connected chain is not supported — switch back to Arbitrum Sepolia';
+    handleClient = null;
+  } else if (newStatus === 'right-chain') {
+    error.value = 'Back on Arbitrum Sepolia — reconnect to resume';
+    handleClient = null;
+  }
+});
 
 async function doEncrypt() {
   error.value = '';
@@ -300,6 +319,28 @@ async function doDecrypt() {
   background: var(--vp-c-bg);
   margin: 1.5rem 0;
   overflow: hidden;
+}
+
+/* Pre-connect chain notice */
+.chain-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.625rem 1.25rem;
+  font-size: 0.8125rem;
+  color: var(--vp-c-text-2);
+  background: var(--vp-c-bg-soft);
+  border-bottom: 1px solid var(--vp-c-border);
+}
+
+.chain-notice-icon {
+  flex-shrink: 0;
+  margin-top: 1px;
+  color: var(--vp-c-text-3);
+}
+
+.chain-notice strong {
+  color: var(--vp-c-text-1);
 }
 
 /* Header */

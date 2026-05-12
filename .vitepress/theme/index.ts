@@ -7,11 +7,12 @@ import Required from './components/Required.vue';
 import Optional from './components/Optional.vue';
 import RemixButton from '@/components/RemixButton.vue';
 import NetworkCard from '@/components/NetworkCard.vue';
+import AddChainButton from '@/components/AddChainButton.vue';
 import Glossary from './components/Glossary.vue';
 import type { EnhanceAppContext } from 'vitepress';
 import 'virtual:group-icons.css';
 import '@shikijs/vitepress-twoslash/style.css';
-import 'markdown-it-steps/style.css';
+import '../../node_modules/markdown-it-steps/dist/style.css';
 import './style.css';
 
 declare global {
@@ -32,6 +33,7 @@ export default {
     app.component('Optional', Optional);
     app.component('RemixButton', RemixButton);
     app.component('NetworkCard', NetworkCard);
+    app.component('AddChainButton', AddChainButton);
     app.component('Glossary', Glossary);
     app.use(TwoslashFloatingVue as any);
 
