@@ -26,7 +26,7 @@ Start with a standard Solidity contract. Nothing encrypted yet:
 
 ```solidity
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.24;
+pragma solidity ^0.8.27;
 
 contract PiggyBank {
     uint256 private balance;
@@ -62,7 +62,19 @@ remain visible on-chain, only **balances and amounts** are encrypted.
 
 :::steps
 
-1. ### Import Nox and update types
+1. ### Drop the public balance reader
+
+   Delete `getBalance()`. In a confidential contract, the balance is only
+   readable through the JS SDK `decrypt()` call with an on-chain ACL check — a
+   public Solidity getter would expose the encrypted handle but not the value.
+
+   ```solidity
+   function getBalance() external view returns (uint256) { // [!code --]
+       return balance; // [!code --]
+   } // [!code --]
+   ```
+
+2. ### Import Nox and update types
 
    Add the Nox library and swap `uint256` for `euint256`. On-chain, the value is
    now stored as a 32-byte **handle** that points to encrypted data. The actual
@@ -76,7 +88,7 @@ remain visible on-chain, only **balances and amounts** are encrypted.
        euint256 public balance; // [!code ++]
    ```
 
-2. ### Initialize encrypted state
+3. ### Initialize encrypted state
 
    Unlike plain `uint256` (which defaults to `0`), an `euint256` must be
    explicitly initialized to a valid encrypted handle. Use `Nox.toEuint256()` in
@@ -89,7 +101,7 @@ remain visible on-chain, only **balances and amounts** are encrypted.
    }
    ```
 
-3. ### Convert `deposit()`
+4. ### Convert `deposit()`
 
    Users encrypt values off-chain with the JS SDK and send a **handle** (a
    reference to the encrypted data) along with a **proof** that the encryption
@@ -107,7 +119,7 @@ remain visible on-chain, only **balances and amounts** are encrypted.
    } // [!code ++]
    ```
 
-4. ### Convert `withdraw()`
+5. ### Convert `withdraw()`
 
    The `require(amount <= balance)` check cannot work on encrypted values.
    Replace it with `Nox.sub()`, which subtracts two encrypted values:
@@ -125,7 +137,7 @@ remain visible on-chain, only **balances and amounts** are encrypted.
    } // [!code ++]
    ```
 
-5. ### Grant permissions
+6. ### Grant permissions
 
    By default, only the handle creator has access. After each operation that
    produces a new handle, you need to grant two permissions:
@@ -134,11 +146,37 @@ remain visible on-chain, only **balances and amounts** are encrypted.
    - `Nox.allow(balance, owner)`: lets the **owner** decrypt the balance
      off-chain
 
+   <!-- prettier-ignore -->
+   ::: warning #1 NOX bug for new developers
+   Forgetting `Nox.allowThis` and `Nox.allow` after each operation makes the
+   handle inaccessible on the next transaction. Transient access is cleared at
+   end-of-tx — always grant permissions before the function returns.
+   :::
+
    Add both calls at the end of the constructor, `deposit()`, and `withdraw()`:
 
    ```solidity
-   Nox.allowThis(balance);
-   Nox.allow(balance, owner);
+   constructor() {
+       owner = msg.sender;
+       balance = Nox.toEuint256(0);
+       Nox.allowThis(balance); // [!code ++]
+       Nox.allow(balance, owner); // [!code ++]
+   }
+
+   function deposit(externalEuint256 inputHandle, bytes calldata inputProof) external {
+       euint256 amount = Nox.fromExternal(inputHandle, inputProof);
+       balance = Nox.add(balance, amount);
+       Nox.allowThis(balance); // [!code ++]
+       Nox.allow(balance, owner); // [!code ++]
+   }
+
+   function withdraw(externalEuint256 inputHandle, bytes calldata inputProof) external {
+       require(msg.sender == owner);
+       euint256 amount = Nox.fromExternal(inputHandle, inputProof);
+       balance = Nox.sub(balance, amount);
+       Nox.allowThis(balance); // [!code ++]
+       Nox.allow(balance, owner); // [!code ++]
+   }
    ```
 
 :::
@@ -158,7 +196,7 @@ details.
 ## Final result
 
 Here is the complete confidential piggy bank. Click **Open in Remix** to load
-it, then compile with Solidity `0.8.24+`. To deploy, select **WalletConnect** or
+it, then compile with Solidity `0.8.27+`. To deploy, select **WalletConnect** or
 **Browser Extension** in the Remix **Deploy** panel and make sure your wallet is
 connected to **Arbitrum Sepolia** before hitting **Deploy**.
 
