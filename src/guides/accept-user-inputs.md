@@ -26,7 +26,7 @@ Encryption must happen **before** the transaction is sent.
 │                              CONTRACT_ADDRESS) │
 └────────────────────────────────────────────────┘
                      ↓ tx ↓
-┌─ CALLDATA (public on a block explorer) ────────────────┐
+┌─ CALLDATA (public on a block explorer) ────────┐
 │  contract.contribute(handle, handleProof)      │
 │  ← 100 does NOT appear                         │
 └────────────────────────────────────────────────┘
@@ -49,7 +49,7 @@ Only the user's browser and the Nox TEE ever see `100`.
 │  ← no encryptInput call                        │
 └────────────────────────────────────────────────┘
                      ↓ tx ↓
-┌─ CALLDATA (public on a block explorer) ────────────────┐
+┌─ CALLDATA (public on a block explorer) ────────┐
 │  contract.contribute(100)                      │
 │  ← 100 IS VISIBLE TO EVERYONE                  │
 └────────────────────────────────────────────────┘
