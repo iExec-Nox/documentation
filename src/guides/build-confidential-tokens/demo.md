@@ -64,10 +64,11 @@ Only you can do this.
 ### 3. Transfer confidentially
 
 This is where things get interesting. Select a confidential token, enter a
-recipient address and an amount. Before the transaction is sent, the amount is
-**encrypted client-side** using the Nox JS SDK. On-chain, the transaction only
-contains an encrypted handle. No observer can determine how much was
-transferred.
+recipient address and an amount. Before the transaction is sent, the JS SDK
+sends the amount to the **Handle Gateway** over an attested HTTPS connection;
+the Gateway encrypts it inside its **Intel TDX enclave** and returns a handle.
+On-chain, the transaction only contains that encrypted handle. No observer can
+determine how much was transferred.
 
 The recipient sees a new confidential balance on their end, which they can
 decrypt with their own wallet.
@@ -100,14 +101,16 @@ Under the hood, the demo relies on three building blocks:
 
 - **ERC-7984 smart contracts** the on-chain standard for confidential tokens,
   handling wrap, unwrap, and encrypted transfers
-- **Nox JS SDK** encrypts amounts client-side before sending them on-chain, and
-  decrypts balance handles for the wallet owner
+- **Nox JS SDK** sends amounts to the Handle Gateway for encryption, and
+  decrypts balance handles locally for the wallet owner
 - **Handle Gateway** the off-chain service that manages encryption keys and
   processes decryption requests inside a Trusted Execution Environment (TEE)
 
-The application never sees plaintext amounts. Encryption happens in the browser,
-decryption happens inside the TEE, and the smart contract only manipulates
-encrypted handles.
+The application never sees plaintext amounts. The JS SDK forwards the amount to
+the Handle Gateway (running inside a TDX TEE) over an attested HTTPS connection;
+encryption and storage happen there. Decryption is local — the SDK derives the
+plaintext from cryptographic material provided by the KMS, without the KMS ever
+seeing the plaintext. The smart contract only manipulates encrypted handles.
 
 ## Activity and audit trail
 
