@@ -174,6 +174,9 @@ admins management).
 
 Once a handle is made publicly decryptable, it cannot be reversed.
 
+Anyone can decrypt and store the value once it is public. Revoking public access
+would not erase copies already made.
+
 :::
 
 ```solidity

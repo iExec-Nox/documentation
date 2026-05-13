@@ -52,6 +52,14 @@ handle you do not control.
 
 :::
 
+::: warning
+
+This permission is permanent and cannot be revoked. See
+[Managing Admins](/guides/manage-handle-access/admins#isolating-access-via-a-new-handle)
+for the new-handle isolation pattern.
+
+:::
+
 ## allowThis
 
 ```solidity
@@ -92,6 +100,14 @@ through the Handle Gateway using the
 [JS SDK](/references/js-sdk/methods/decrypt) but cannot use the handle as input
 in computations.
 
+::: warning
+
+This permission is permanent and cannot be revoked. See
+[Managing Viewers](/guides/manage-handle-access/viewers#isolating-access-via-a-new-handle)
+for the new-handle isolation pattern.
+
+:::
+
 ## isViewer
 
 ```solidity
@@ -108,6 +124,15 @@ function allowPublicDecryption(euint256 value) internal
 
 Makes the handle's data decryptable by anyone. Use this for values that should
 be publicly visible (e.g. total supply, auction results, public counters).
+
+::: warning
+
+This permission is permanent and cannot be revoked. Once public, anyone can
+decrypt and store the value. See
+[Manage Public Decryption](/guides/manage-handle-access/public-decryption) for
+details.
+
+:::
 
 ## isPubliclyDecryptable
 

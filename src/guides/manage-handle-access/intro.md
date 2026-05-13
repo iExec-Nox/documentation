@@ -25,9 +25,21 @@ determine their permissions:
 | none               | ❌      | ❌           | ❌         | ❌          | ❌          |
 | viewer             | ✅      | ❌           | ❌         | ❌          | ❌          |
 | admin              | ✅      | ✅           | ✅         | ✅          | ✅          |
+| transient          | ✅      | ✅           | ❌         | ❌          | ❌          |
+
+::: info
+
+Transient access expires automatically at the end of the transaction — no revoke
+needed. See [Transient Access](/guides/manage-handle-access/transient-access).
+
+:::
 
 ## What You'll Learn
 
+- Manage transient access
+  - Understand the default transient behavior of new handles
+  - Persist contract access with `allowThis`
+  - Pass handles between contracts with `allowTransient`
 - Manage viewers
   - Check if an address is a viewer for a handle
   - Add viewers to a handle
@@ -40,6 +52,8 @@ determine their permissions:
 
 ## Next Steps
 
+- [Transient Access](/guides/manage-handle-access/transient-access) - Learn
+  about the default transient behavior and how to persist handle access
 - [Manage viewers](/guides/manage-handle-access/viewers) - Learn how to manage
   viewers for a handle
 - [Manage admins](/guides/manage-handle-access/admins) - Learn how to manage
