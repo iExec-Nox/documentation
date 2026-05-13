@@ -9,7 +9,7 @@ description:
 import { withBase } from 'vitepress'
 import { ref, onMounted } from 'vue'
 
-const llmsFullAbsoluteUrl = ref('')
+const llmsFullAbsoluteUrl = ref(withBase('/llms-full.txt'))
 
 onMounted(() => {
   llmsFullAbsoluteUrl.value = window.location.origin + withBase('/llms-full.txt')
@@ -48,12 +48,5 @@ will fetch and read the documentation.
 
 The following resources are in progress:
 
-- **Cursor rules file** — a `.mdc` rule set pre-loaded with the handle
-  lifecycle, ACL patterns, NoxCompute address, ECIES gotchas, and the NOX/iExec
-  distinction. Drop it into `.cursor/rules/nox.mdc` and your assistant will
-  apply NOX conventions automatically.
-- **Prompt templates** — copy-pastable prompts for common tasks: wrap a value
-  into a handle, set ACL, trigger a decrypt flow.
-- **Build confidential AI agents with NOX** — how to design agents that operate
-  on encrypted handles without ever seeing plaintext, using the NOX TEE
-  infrastructure.
+- **Cursor rules file**
+- **Skills**
