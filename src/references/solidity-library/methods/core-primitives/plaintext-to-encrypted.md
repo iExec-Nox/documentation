@@ -12,7 +12,9 @@ encrypted data is stored in the [Handle Gateway](/protocol/handle-gateway).
 ::: warning
 
 The value you pass here is visible in plain text on-chain — anyone can read it
-on a block explorer. This is intentional for constants and state initialization.
+on a block explorer. This is intentional for constants, state initialization or to convert values already visible on-chain in handles.
+
+This is useful because nox primitives only take handles as inputs.
 
 If the value must stay private (e.g. a user-submitted amount, vote, or bid), it
 must be encrypted before the transaction is sent. →
