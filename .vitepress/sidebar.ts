@@ -46,6 +46,10 @@ function guidesItems(active: boolean): DefaultTheme.SidebarItem[] {
       ],
     },
     {
+      text: 'Accepting Private User Inputs',
+      link: '/guides/accept-user-inputs',
+    },
+    {
       text: 'Manage Handle Access',
       link: '/guides/manage-handle-access/intro',
       collapsed: !active,
