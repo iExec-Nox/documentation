@@ -16,7 +16,7 @@ Encryption must happen **before** the transaction is sent.
 
 ## Two patterns
 
-### Pattern A — Encrypt client-side (correct)
+### Pattern A — Encrypt before the transaction via the JS SDK (correct)
 
 ```
 ┌─ BROWSER ─────────────────────────────────────┐
@@ -26,7 +26,7 @@ Encryption must happen **before** the transaction is sent.
 │                              CONTRACT_ADDRESS) │
 └────────────────────────────────────────────────┘
                      ↓ tx ↓
-┌─ CALLDATA (public on Arbiscan) ────────────────┐
+┌─ CALLDATA (public on a block explorer) ────────────────┐
 │  contract.contribute(handle, handleProof)      │
 │  ← 100 does NOT appear                         │
 └────────────────────────────────────────────────┘
@@ -49,7 +49,7 @@ Only the user's browser and the Nox TEE ever see `100`.
 │  ← no encryptInput call                        │
 └────────────────────────────────────────────────┘
                      ↓ tx ↓
-┌─ CALLDATA (public on Arbiscan) ────────────────┐
+┌─ CALLDATA (public on a block explorer) ────────────────┐
 │  contract.contribute(100)                      │
 │  ← 100 IS VISIBLE TO EVERYONE                  │
 └────────────────────────────────────────────────┘
@@ -92,7 +92,7 @@ const { handle, handleProof } = await handleClient.encryptInput(
 to validate the proof and receive the encrypted handle:
 
 ```solidity
-function contribute(ExternalEuint256 handle, bytes calldata handleProof) external {
+function contribute(externalEuint256 handle, bytes calldata handleProof) external {
     euint256 amount = Nox.fromExternal(handle, handleProof);
     // use amount in confidential computations
 }
