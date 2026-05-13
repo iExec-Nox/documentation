@@ -9,12 +9,14 @@ Convert plaintext values to encrypted handles. The contract emits an event, and
 the [Runner](/protocol/runner) encrypts the value off-chain inside a TEE. The
 encrypted data is stored in the [Handle Gateway](/protocol/handle-gateway).
 
-::: info
+::: warning
 
-Plaintext to handle convertion is useful for initializing state variables and
-constants. For user-provided values, prefer
-[fromExternal](/references/solidity-library/methods/core-primitives/fromExternal)
-with the [JS SDK](/references/js-sdk) to avoid exposing plaintext on-chain.
+The value you pass here is visible in plain text on-chain — anyone can read it
+on a block explorer. This is intentional for constants and state initialization.
+
+If the value must stay private (e.g. a user-submitted amount, vote, or bid), it
+must be encrypted before the transaction is sent. →
+[Accepting private user inputs](/guides/accept-user-inputs)
 
 :::
 
