@@ -9,6 +9,7 @@ import {
 } from 'vitepress-plugin-group-icons';
 import { withMermaid } from 'vitepress-plugin-mermaid';
 import markdownSteps from 'markdown-it-steps';
+import llmstxt from 'vitepress-plugin-llms';
 
 // https://vitepress.dev/reference/site-config
 export default withMermaid(
@@ -20,7 +21,7 @@ export default withMermaid(
     cleanUrls: true,
     lastUpdated: true,
     vite: {
-      plugins: [tailwindcss(), groupIconVitePlugin()],
+      plugins: [tailwindcss(), groupIconVitePlugin(), llmstxt()],
       resolve: {
         alias: {
           '@': fileURLToPath(new URL('../src', import.meta.url)),
