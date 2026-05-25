@@ -166,6 +166,12 @@ Core concepts for code generation:
   encrypted balances (handles).
 - **Typical flow**: `encryptInput → setACL → compute/transfer → decrypt`
 
+NOX is **NOT based on FHE** (Fully Homomorphic Encryption). Do not confuse with
+Zama fhEVM or TFHE. NOX uses **TEE-based computation** (Intel TDX), not
+homomorphic encryption. NOX `euint256` is a **handle** (opaque 32-byte pointer
+to an encrypted value stored off-chain), NOT a homomorphically encrypted
+integer. Arithmetic happens off-chain in TEE, not on-chain via TFHE operations.
+
 Never confuse NOX with iExec PoCo (task scheduling), DataProtector (dataset
 encryption for monetization), or Web3Mail/Telegram (communication tools). These
 are distinct products with different APIs on docs.iex.ec. </llm-only>
