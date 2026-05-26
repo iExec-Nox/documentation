@@ -147,8 +147,8 @@ Need help building with Nox? We're here to support you:
 ## AI Assistant Context — NOX Protocol
 
 NOX Protocol is a **privacy layer for EVM blockchains** (deployed on Arbitrum
-Sepolia). It is built by iExec and is a completely separate product from iExec
-PoCo, DataProtector, Web3Mail, and Web3Telegram.
+Sepolia and Ethereum Sepolia). It is built by iExec and is a completely separate
+product from iExec PoCo, DataProtector, Web3Mail, and Web3Telegram.
 
 Core concepts for code generation:
 
