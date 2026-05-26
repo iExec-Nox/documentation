@@ -7,6 +7,7 @@ import Required from './components/Required.vue';
 import Optional from './components/Optional.vue';
 import RemixButton from '@/components/RemixButton.vue';
 import Glossary from './components/Glossary.vue';
+import NetworkCode from './components/NetworkCode.vue';
 import type { EnhanceAppContext } from 'vitepress';
 import 'virtual:group-icons.css';
 import '@shikijs/vitepress-twoslash/style.css';
@@ -31,6 +32,7 @@ export default {
     app.component('Optional', Optional);
     app.component('RemixButton', RemixButton);
     app.component('Glossary', Glossary);
+    app.component('NetworkCode', NetworkCode);
     app.use(TwoslashFloatingVue as any);
 
     if (typeof window !== 'undefined') {

@@ -147,6 +147,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { useNetwork } from '../../.vitepress/theme/composables/useNetwork';
 
 declare global {
   interface Window {
@@ -154,7 +155,7 @@ declare global {
   }
 }
 
-const ARBITRUM_SEPOLIA_HEX = '0x66eee';
+const { selectedNetwork } = useNetwork();
 
 const contractAddress = ref('');
 const plainValue = ref('');
@@ -203,6 +204,8 @@ async function connect() {
       throw new Error('MetaMask not found. Please install it.');
     }
 
+    const network = selectedNetwork.value;
+
     const { createWalletClient, custom } = await import('viem');
     const { arbitrumSepolia } = await import('viem/chains');
     const { createViemHandleClient } = await import('@iexec-nox/handle');
@@ -215,7 +218,7 @@ async function connect() {
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: ARBITRUM_SEPOLIA_HEX }],
+        params: [{ chainId: network.chainIdHex }],
       });
     } catch (e: any) {
       if (e.code === 4902) {
@@ -223,11 +226,11 @@ async function connect() {
           method: 'wallet_addEthereumChain',
           params: [
             {
-              chainId: ARBITRUM_SEPOLIA_HEX,
-              chainName: 'Arbitrum Sepolia',
+              chainId: network.chainIdHex,
+              chainName: network.name,
               nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
-              rpcUrls: ['https://sepolia-rollup.arbitrum.io/rpc'],
-              blockExplorerUrls: ['https://sepolia.arbiscan.io'],
+              rpcUrls: [network.rpcUrl],
+              blockExplorerUrls: [network.blockExplorerUrl],
             },
           ],
         });
