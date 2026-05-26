@@ -6,8 +6,8 @@ description: Explore a live application showcasing confidential tokens in action
 # Live Demo
 
 We built a complete application to show what confidential tokens look like in
-practice. It connects to Arbitrum Sepolia testnet and lets you wrap, transfer,
-and manage confidential tokens, all from your browser.
+practice. It connects to the <NetworkName /> testnet and lets you wrap,
+transfer, and manage confidential tokens, all from your browser.
 
 <a href="https://cdefi.iex.ec" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium text-white! bg-[var(--vp-c-brand-1)] no-underline! transition-all duration-200 my-4 hover:bg-[var(--vp-c-brand-2)] hover:-translate-y-px">
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
@@ -32,12 +32,12 @@ The application walks through four core capabilities of confidential tokens:
 To use the demo you need:
 
 - A browser wallet (MetaMask, Rabby, Coinbase Wallet…)
-- A small amount of **Arbitrum Sepolia ETH** for gas fees
+- A small amount of **<NetworkName /> ETH** for gas fees
 - Some testnet tokens to wrap. The app includes a faucet to get USDC and RLC
 
 <!-- prettier-ignore -->
 ::: tip No real funds involved
-The demo runs entirely on **Arbitrum Sepolia** (testnet). All tokens are free
+The demo runs entirely on **<NetworkName />** (testnet). All tokens are free
 and have no monetary value.
 :::
 
