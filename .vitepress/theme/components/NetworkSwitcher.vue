@@ -47,7 +47,14 @@ onUnmounted(() => {
       aria-label="Select network"
       @click="toggle"
     >
-      <span class="nox-switcher-dot" aria-hidden="true" />
+      <img
+        class="nox-switcher-logo"
+        :src="selectedNetwork.logo"
+        alt=""
+        aria-hidden="true"
+        width="18"
+        height="18"
+      />
       <span class="nox-switcher-label">{{ selectedNetwork.name }}</span>
       <svg
         class="nox-switcher-chevron"
@@ -78,6 +85,15 @@ onUnmounted(() => {
           :aria-selected="network.id === selectedNetwork.id"
           @click="select(network.id)"
         >
+          <img
+            class="nox-switcher-item-logo"
+            :src="network.logo"
+            alt=""
+            aria-hidden="true"
+            width="20"
+            height="20"
+          />
+          <span class="nox-switcher-item-name">{{ network.name }}</span>
           <span class="nox-switcher-check" aria-hidden="true">
             <svg
               v-if="network.id === selectedNetwork.id"
@@ -93,8 +109,6 @@ onUnmounted(() => {
               <polyline points="20 6 9 17 4 12" />
             </svg>
           </span>
-          <span class="nox-switcher-item-name">{{ network.name }}</span>
-          <span class="nox-switcher-item-chain">{{ network.chainId }}</span>
         </button>
       </div>
     </Transition>
@@ -138,12 +152,11 @@ onUnmounted(() => {
   border-color: var(--vp-c-brand-1);
 }
 
-.nox-switcher-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--vp-c-brand-1);
+.nox-switcher-logo {
+  width: 18px;
+  height: 18px;
   flex-shrink: 0;
+  display: block;
 }
 
 .nox-switcher-label {
@@ -211,6 +224,13 @@ onUnmounted(() => {
   color: var(--vp-c-brand-1);
 }
 
+.nox-switcher-item-logo {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  display: block;
+}
+
 .nox-switcher-check {
   display: inline-flex;
   align-items: center;
@@ -222,13 +242,6 @@ onUnmounted(() => {
 
 .nox-switcher-item-name {
   flex: 1;
-}
-
-.nox-switcher-item-chain {
-  font-size: 12px;
-  font-weight: 400;
-  color: var(--vp-c-text-3);
-  font-variant-numeric: tabular-nums;
 }
 
 .nox-switcher-fade-enter-active,

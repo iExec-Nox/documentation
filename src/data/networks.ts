@@ -24,6 +24,11 @@ export interface Network {
   chainIdHex: string;
   /** Name of the chain export from `viem/chains` (e.g. "arbitrumSepolia"). */
   viemChain: string;
+  /**
+   * Path to the chain logo (served from `src/public`, base path included).
+   * Testnets reuse their mainnet logo, per the usual explorer convention.
+   */
+  logo: string;
   /** Public JSON-RPC endpoint. */
   rpcUrl: string;
   /** Block explorer base URL. */
@@ -43,6 +48,7 @@ export const NETWORKS: Network[] = [
     chainId: 421614,
     chainIdHex: '0x66eee',
     viemChain: 'arbitrumSepolia',
+    logo: '/nox-protocol/chain-logos/arbitrum.svg',
     rpcUrl: 'https://sepolia-rollup.arbitrum.io/rpc',
     blockExplorerUrl: 'https://sepolia.arbiscan.io',
     noxComputeAddress: '0xd464B198f06756a1d00be223634b85E0a731c229',
@@ -57,6 +63,7 @@ export const NETWORKS: Network[] = [
     chainId: 11155111,
     chainIdHex: '0xaa36a7',
     viemChain: 'sepolia',
+    logo: '/nox-protocol/chain-logos/ethereum.svg',
     rpcUrl: 'https://ethereum-sepolia-rpc.publicnode.com',
     blockExplorerUrl: 'https://sepolia.etherscan.io',
     // ⚠️ TODO: replace the three placeholders below before shipping (see header).
