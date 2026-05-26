@@ -150,6 +150,9 @@ const handleClient = await createViemHandleClient(walletClient);
 The SDK supports [viem Smart Accounts](https://viem.sh/account-abstraction) for
 account abstraction. Pass a `SmartAccount` instance directly to the factory.
 
+<NetworkCode>
+<template #arbitrum-sepolia>
+
 ```ts twoslash
 declare const RPC_URL: string;
 declare const PRIVATE_KEY: `0x${string}`;
@@ -172,6 +175,35 @@ const smartAccount = await toSimple7702SmartAccount({
 
 const handleClient = await createViemHandleClient(smartAccount as any);
 ```
+
+</template>
+<template #ethereum-sepolia>
+
+```ts twoslash
+declare const RPC_URL: string;
+declare const PRIVATE_KEY: `0x${string}`;
+// ---cut---
+import { createViemHandleClient } from '@iexec-nox/handle';
+import { createPublicClient, http } from 'viem';
+import { sepolia } from 'viem/chains';
+import { toSimple7702SmartAccount } from 'viem/account-abstraction';
+import { privateKeyToAccount } from 'viem/accounts';
+
+const publicClient = createPublicClient({
+  chain: sepolia,
+  transport: http(RPC_URL),
+});
+
+const smartAccount = await toSimple7702SmartAccount({
+  owner: privateKeyToAccount(PRIVATE_KEY),
+  client: publicClient,
+});
+
+const handleClient = await createViemHandleClient(smartAccount as any);
+```
+
+</template>
+</NetworkCode>
 
 ::: tip
 

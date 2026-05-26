@@ -37,6 +37,9 @@ See [Handle Gateway](/protocol/handle-gateway) for the full encryption protocol.
 
 ## Usage
 
+<NetworkCode>
+<template #arbitrum-sepolia>
+
 ```ts twoslash
 declare global {
   interface Window {
@@ -62,6 +65,37 @@ const { handle, handleProof } = await handleClient.encryptInput(
 );
 ```
 
+</template>
+<template #ethereum-sepolia>
+
+```ts twoslash
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+// ---cut---
+import { createViemHandleClient } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+import { sepolia } from 'viem/chains';
+
+const walletClient = createWalletClient({
+  chain: sepolia,
+  transport: custom(window.ethereum),
+});
+
+const handleClient = await createViemHandleClient(walletClient);
+
+const { handle, handleProof } = await handleClient.encryptInput(
+  100_000_000n,
+  'uint256',
+  '0x123...abc' // applicationContract - the contract that will use this handle
+);
+```
+
+</template>
+</NetworkCode>
+
 ## Parameters
 
 ```ts twoslash
@@ -83,6 +117,9 @@ The plaintext value to encrypt. The expected JavaScript type depends on the
 | `uintN`, `intN`              | `bigint`        | `1000n`                                |
 
 <!-- prettier-ignore-start -->
+<NetworkCode>
+<template #arbitrum-sepolia>
+
 ```ts twoslash
 declare global {
   interface Window {
@@ -108,12 +145,52 @@ await handleClient.encryptInput(true, 'bool', CONTRACT_ADDRESS); // [!code focus
 await handleClient.encryptInput(1000n, 'uint256', CONTRACT_ADDRESS); // [!code focus]
 
 // Encrypt an Ethereum address
-await handleClient.encryptInput(// [!code focus]
+await handleClient.encryptInput(
+  // [!code focus]
   '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0', // [!code focus]
   'address', // [!code focus]
   CONTRACT_ADDRESS // [!code focus]
 ); // [!code focus]
 ```
+
+</template>
+<template #ethereum-sepolia>
+
+```ts twoslash
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+import { createViemHandleClient } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+import { sepolia } from 'viem/chains';
+
+const walletClient = createWalletClient({
+  chain: sepolia,
+  transport: custom(window.ethereum),
+});
+
+const handleClient = await createViemHandleClient(walletClient);
+declare const CONTRACT_ADDRESS: `0x${string}`;
+// ---cut---
+// Encrypt a boolean flag
+await handleClient.encryptInput(true, 'bool', CONTRACT_ADDRESS); // [!code focus]
+
+// Encrypt a token amount
+await handleClient.encryptInput(1000n, 'uint256', CONTRACT_ADDRESS); // [!code focus]
+
+// Encrypt an Ethereum address
+await handleClient.encryptInput(
+  // [!code focus]
+  '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0', // [!code focus]
+  'address', // [!code focus]
+  CONTRACT_ADDRESS // [!code focus]
+); // [!code focus]
+```
+
+</template>
+</NetworkCode>
 <!-- prettier-ignore-end -->
 
 ### solidityType <Required />
@@ -144,6 +221,9 @@ releases.
 
 :::
 
+<NetworkCode>
+<template #arbitrum-sepolia>
+
 ```ts twoslash
 declare global {
   interface Window {
@@ -166,6 +246,34 @@ await handleClient.encryptInput(42n, 'uint64', '0x123...abc'); // [!code focus]
 await handleClient.encryptInput('Hello, Nox!', 'string', '0x123...abc'); // [!code focus]
 ```
 
+</template>
+<template #ethereum-sepolia>
+
+```ts twoslash
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+import { createViemHandleClient } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+import { sepolia } from 'viem/chains';
+
+const walletClient = createWalletClient({
+  chain: sepolia,
+  transport: custom(window.ethereum),
+});
+
+const handleClient = await createViemHandleClient(walletClient);
+// ---cut---
+await handleClient.encryptInput(true, 'bool', '0x123...abc'); // [!code focus]
+await handleClient.encryptInput(42n, 'uint64', '0x123...abc'); // [!code focus]
+await handleClient.encryptInput('Hello, Nox!', 'string', '0x123...abc'); // [!code focus]
+```
+
+</template>
+</NetworkCode>
+
 ### applicationContract <Required />
 
 **Type:** `string` (Ethereum address)
@@ -175,6 +283,9 @@ to this contract: only the application contract can validate the `handleProof`
 on-chain. After successful validation, it receives transient access on the ACL
 for this handle. The contract must then explicitly persist that access and grant
 permissions to any address that needs to use or decrypt the handle.
+
+<NetworkCode>
+<template #arbitrum-sepolia>
 
 ```ts twoslash
 declare global {
@@ -200,6 +311,37 @@ await handleClient.encryptInput(
   '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0' // [!code focus]
 );
 ```
+
+</template>
+<template #ethereum-sepolia>
+
+```ts twoslash
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+import { createViemHandleClient } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+import { sepolia } from 'viem/chains';
+
+const walletClient = createWalletClient({
+  chain: sepolia,
+  transport: custom(window.ethereum),
+});
+
+const handleClient = await createViemHandleClient(walletClient);
+// ---cut---
+// The handle will be used by contract at 0x742d...bEb0
+await handleClient.encryptInput(
+  1000n,
+  'uint256',
+  '0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb0' // [!code focus]
+);
+```
+
+</template>
+</NetworkCode>
 
 ## Return Value
 

@@ -5,6 +5,13 @@
 //
 // The `id` slug must match the slot names used by <NetworkCode>
 // (e.g. <template #arbitrum-sepolia>) and the value persisted in localStorage.
+//
+// ⚠️ TODO — Ethereum Sepolia is not deployed yet. The following fields are
+// placeholders and MUST be filled in before this network is announced/shipped:
+//   - noxComputeAddress: 'TODO_ETH_SEPOLIA_NOX_COMPUTE_ADDRESS'
+//   - gatewayUrl:        'TODO_ETH_SEPOLIA_GATEWAY_URL'
+//   - subgraphUrl:       'TODO_ETH_SEPOLIA_SUBGRAPH_URL'
+// (rpcUrl and blockExplorerUrl below use the well-known public Sepolia values.)
 
 export interface Network {
   /** URL/slot-friendly slug, e.g. "arbitrum-sepolia". */
@@ -43,6 +50,19 @@ export const NETWORKS: Network[] = [
       'https://2e1800fc0dddeeadc189283ed1dce13c1ae28d48-3000.apps.ovh-tdx-dev.noxprotocol.dev',
     subgraphUrl:
       'https://thegraph.arbitrum-sepolia-testnet.noxprotocol.io/api/subgraphs/id/BjQAX2HpmsSAzURJimKDhjZZnkSJtaczA8RPumggrStb',
+  },
+  {
+    id: 'ethereum-sepolia',
+    name: 'Ethereum Sepolia',
+    chainId: 11155111,
+    chainIdHex: '0xaa36a7',
+    viemChain: 'sepolia',
+    rpcUrl: 'https://ethereum-sepolia-rpc.publicnode.com',
+    blockExplorerUrl: 'https://sepolia.etherscan.io',
+    // ⚠️ TODO: replace the three placeholders below before shipping (see header).
+    noxComputeAddress: 'TODO_ETH_SEPOLIA_NOX_COMPUTE_ADDRESS',
+    gatewayUrl: 'TODO_ETH_SEPOLIA_GATEWAY_URL',
+    subgraphUrl: 'TODO_ETH_SEPOLIA_SUBGRAPH_URL',
   },
 ];
 

@@ -29,6 +29,9 @@ the full cryptographic flow.
 
 ## Usage
 
+<NetworkCode>
+<template #arbitrum-sepolia>
+
 ```ts twoslash
 declare global {
   interface Window {
@@ -52,6 +55,35 @@ const handleClient = await createViemHandleClient(walletClient);
 const { value, solidityType } = await handleClient.decrypt(handle);
 ```
 
+</template>
+<template #ethereum-sepolia>
+
+```ts twoslash
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+import type { Handle } from '@iexec-nox/handle';
+declare const handle: Handle<'uint256'>;
+// ---cut---
+import { createViemHandleClient } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+import { sepolia } from 'viem/chains';
+
+const walletClient = createWalletClient({
+  chain: sepolia,
+  transport: custom(window.ethereum),
+});
+
+const handleClient = await createViemHandleClient(walletClient);
+
+const { value, solidityType } = await handleClient.decrypt(handle);
+```
+
+</template>
+</NetworkCode>
+
 ## Parameters
 
 ### handle <Required />
@@ -60,6 +92,9 @@ const { value, solidityType } = await handleClient.decrypt(handle);
 
 The handle to decrypt. It must have been created on the **same chain** as the
 one the client is connected to.
+
+<NetworkCode>
+<template #arbitrum-sepolia>
 
 ```ts twoslash
 declare global {
@@ -82,6 +117,34 @@ declare const handle: Handle<'uint256'>;
 // ---cut---
 const { value, solidityType } = await handleClient.decrypt(handle); // [!code focus]
 ```
+
+</template>
+<template #ethereum-sepolia>
+
+```ts twoslash
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+import { createViemHandleClient } from '@iexec-nox/handle';
+import type { Handle } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+import { sepolia } from 'viem/chains';
+
+const walletClient = createWalletClient({
+  chain: sepolia,
+  transport: custom(window.ethereum),
+});
+
+const handleClient = await createViemHandleClient(walletClient);
+declare const handle: Handle<'uint256'>;
+// ---cut---
+const { value, solidityType } = await handleClient.decrypt(handle); // [!code focus]
+```
+
+</template>
+</NetworkCode>
 
 ::: tip Gasless operation
 
@@ -137,6 +200,9 @@ The Solidity type decoded from the handle (e.g. `"uint256"`, `"bool"`,
 `"address"`). Useful when you receive a handle without knowing its type ahead of
 time.
 
+<NetworkCode>
+<template #arbitrum-sepolia>
+
 ```ts twoslash
 declare global {
   interface Window {
@@ -161,3 +227,34 @@ const { value, solidityType } = await handleClient.decrypt(handle);
 console.log(`${solidityType}:`, value);
 // e.g. "uint256: 1000n" or "bool: true"
 ```
+
+</template>
+<template #ethereum-sepolia>
+
+```ts twoslash
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+import { createViemHandleClient } from '@iexec-nox/handle';
+import type { Handle, SolidityType } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+import { sepolia } from 'viem/chains';
+
+const walletClient = createWalletClient({
+  chain: sepolia,
+  transport: custom(window.ethereum),
+});
+
+const handleClient = await createViemHandleClient(walletClient);
+declare const handle: Handle<SolidityType>;
+// ---cut---
+const { value, solidityType } = await handleClient.decrypt(handle);
+
+console.log(`${solidityType}:`, value);
+// e.g. "uint256: 1000n" or "bool: true"
+```
+
+</template>
+</NetworkCode>

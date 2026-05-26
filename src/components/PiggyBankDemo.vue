@@ -207,7 +207,8 @@ async function connect() {
     const network = selectedNetwork.value;
 
     const { createWalletClient, custom } = await import('viem');
-    const { arbitrumSepolia } = await import('viem/chains');
+    const viemChains = await import('viem/chains');
+    const viemChain = (viemChains as Record<string, any>)[network.viemChain];
     const { createViemHandleClient } = await import('@iexec-nox/handle');
 
     const accounts: string[] = await window.ethereum.request({
@@ -241,7 +242,7 @@ async function connect() {
 
     const walletClient = createWalletClient({
       account: accounts[0] as `0x${string}`,
-      chain: arbitrumSepolia,
+      chain: viemChain,
       transport: custom(window.ethereum),
     });
 
