@@ -123,6 +123,8 @@ declare global {
     ethereum: any;
   }
 }
+declare const CONTRACT_ADDRESS: `0x${string}`;
+// ---cut---
 import { createViemHandleClient } from '@iexec-nox/handle';
 import { createWalletClient, custom } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
@@ -133,8 +135,6 @@ const walletClient = createWalletClient({
 });
 
 const handleClient = await createViemHandleClient(walletClient);
-declare const CONTRACT_ADDRESS: `0x${string}`;
-// ---cut---
 // Encrypt a boolean flag
 await handleClient.encryptInput(true, 'bool', CONTRACT_ADDRESS); // [!code focus]
 
@@ -159,6 +159,8 @@ declare global {
     ethereum: any;
   }
 }
+declare const CONTRACT_ADDRESS: `0x${string}`;
+// ---cut---
 import { createViemHandleClient } from '@iexec-nox/handle';
 import { createWalletClient, custom } from 'viem';
 import { sepolia } from 'viem/chains';
@@ -169,8 +171,6 @@ const walletClient = createWalletClient({
 });
 
 const handleClient = await createViemHandleClient(walletClient);
-declare const CONTRACT_ADDRESS: `0x${string}`;
-// ---cut---
 // Encrypt a boolean flag
 await handleClient.encryptInput(true, 'bool', CONTRACT_ADDRESS); // [!code focus]
 
@@ -225,6 +225,7 @@ declare global {
     ethereum: any;
   }
 }
+// ---cut---
 import { createViemHandleClient } from '@iexec-nox/handle';
 import { createWalletClient, custom } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
@@ -235,7 +236,6 @@ const walletClient = createWalletClient({
 });
 
 const handleClient = await createViemHandleClient(walletClient);
-// ---cut---
 await handleClient.encryptInput(true, 'bool', '0x123...abc'); // [!code focus]
 await handleClient.encryptInput(42n, 'uint64', '0x123...abc'); // [!code focus]
 await handleClient.encryptInput('Hello, Nox!', 'string', '0x123...abc'); // [!code focus]
@@ -250,6 +250,7 @@ declare global {
     ethereum: any;
   }
 }
+// ---cut---
 import { createViemHandleClient } from '@iexec-nox/handle';
 import { createWalletClient, custom } from 'viem';
 import { sepolia } from 'viem/chains';
@@ -260,7 +261,6 @@ const walletClient = createWalletClient({
 });
 
 const handleClient = await createViemHandleClient(walletClient);
-// ---cut---
 await handleClient.encryptInput(true, 'bool', '0x123...abc'); // [!code focus]
 await handleClient.encryptInput(42n, 'uint64', '0x123...abc'); // [!code focus]
 await handleClient.encryptInput('Hello, Nox!', 'string', '0x123...abc'); // [!code focus]
@@ -286,6 +286,7 @@ declare global {
     ethereum: any;
   }
 }
+// ---cut---
 import { createViemHandleClient } from '@iexec-nox/handle';
 import { createWalletClient, custom } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
@@ -296,7 +297,6 @@ const walletClient = createWalletClient({
 });
 
 const handleClient = await createViemHandleClient(walletClient);
-// ---cut---
 // The handle will be used by contract at 0x742d...bEb0
 await handleClient.encryptInput(
   1000n,
@@ -314,6 +314,7 @@ declare global {
     ethereum: any;
   }
 }
+// ---cut---
 import { createViemHandleClient } from '@iexec-nox/handle';
 import { createWalletClient, custom } from 'viem';
 import { sepolia } from 'viem/chains';
@@ -324,7 +325,6 @@ const walletClient = createWalletClient({
 });
 
 const handleClient = await createViemHandleClient(walletClient);
-// ---cut---
 // The handle will be used by contract at 0x742d...bEb0
 await handleClient.encryptInput(
   1000n,

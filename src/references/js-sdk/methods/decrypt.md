@@ -99,8 +99,10 @@ declare global {
     ethereum: any;
   }
 }
-import { createViemHandleClient } from '@iexec-nox/handle';
 import type { Handle } from '@iexec-nox/handle';
+declare const handle: Handle<'uint256'>;
+// ---cut---
+import { createViemHandleClient } from '@iexec-nox/handle';
 import { createWalletClient, custom } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
 
@@ -110,8 +112,6 @@ const walletClient = createWalletClient({
 });
 
 const handleClient = await createViemHandleClient(walletClient);
-declare const handle: Handle<'uint256'>;
-// ---cut---
 const { value, solidityType } = await handleClient.decrypt(handle); // [!code focus]
 ```
 
@@ -124,8 +124,10 @@ declare global {
     ethereum: any;
   }
 }
-import { createViemHandleClient } from '@iexec-nox/handle';
 import type { Handle } from '@iexec-nox/handle';
+declare const handle: Handle<'uint256'>;
+// ---cut---
+import { createViemHandleClient } from '@iexec-nox/handle';
 import { createWalletClient, custom } from 'viem';
 import { sepolia } from 'viem/chains';
 
@@ -135,8 +137,6 @@ const walletClient = createWalletClient({
 });
 
 const handleClient = await createViemHandleClient(walletClient);
-declare const handle: Handle<'uint256'>;
-// ---cut---
 const { value, solidityType } = await handleClient.decrypt(handle); // [!code focus]
 ```
 
@@ -204,8 +204,10 @@ declare global {
     ethereum: any;
   }
 }
-import { createViemHandleClient } from '@iexec-nox/handle';
 import type { Handle, SolidityType } from '@iexec-nox/handle';
+declare const handle: Handle<SolidityType>;
+// ---cut---
+import { createViemHandleClient } from '@iexec-nox/handle';
 import { createWalletClient, custom } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
 
@@ -215,8 +217,6 @@ const walletClient = createWalletClient({
 });
 
 const handleClient = await createViemHandleClient(walletClient);
-declare const handle: Handle<SolidityType>;
-// ---cut---
 const { value, solidityType } = await handleClient.decrypt(handle);
 
 console.log(`${solidityType}:`, value);
@@ -232,8 +232,10 @@ declare global {
     ethereum: any;
   }
 }
-import { createViemHandleClient } from '@iexec-nox/handle';
 import type { Handle, SolidityType } from '@iexec-nox/handle';
+declare const handle: Handle<SolidityType>;
+// ---cut---
+import { createViemHandleClient } from '@iexec-nox/handle';
 import { createWalletClient, custom } from 'viem';
 import { sepolia } from 'viem/chains';
 
@@ -243,8 +245,6 @@ const walletClient = createWalletClient({
 });
 
 const handleClient = await createViemHandleClient(walletClient);
-declare const handle: Handle<SolidityType>;
-// ---cut---
 const { value, solidityType } = await handleClient.decrypt(handle);
 
 console.log(`${solidityType}:`, value);
