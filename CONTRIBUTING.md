@@ -227,6 +227,186 @@ Create your `.env` file based on `.env.example`.
 ::: tip Success! Your installation is now complete! :::
 ````
 
+## 🔗 Multi-chain Content
+
+Nox documentation is **multi-chain**. The list of supported networks lives in
+`src/utils/chain.utils.ts` (`getSupportedChains()` / `getChainById()`), and the
+reader picks the active chain with the `ChainSelector` in the navbar. The
+selected chain is stored in the Pinia store `src/stores/useUser.store.ts` and
+exposed through `getCurrentChainId()`.
+
+Because of this, any content that differs from one chain to another must adapt
+to the reader's selection instead of hard-coding a single chain. There are two
+patterns for this:
+
+- **Pattern A — value injection**: for chain-specific _values_ in prose (chain
+  name, chain id, contract address, RPC URL, native currency symbol).
+- **Pattern B — template fork**: for chain-divergent _code blocks_ (imports,
+  twoslash type-checked snippets).
+
+### Adding a new chain
+
+When Nox is deployed to a new network, add it in one place and the rest of the
+docs follow.
+
+1. **Add one entry to `getSupportedChains()`** in `src/utils/chain.utils.ts`
+   with all required fields from the `Chain` interface:
+
+   ```ts
+   {
+     id: myChain.id,
+     name: 'My Chain',
+     icon: myChainLogo, // imported from @/assets/icons/…
+     nativeCurrency: myChain.nativeCurrency,
+     rpcUrls: myChain.rpcUrls,
+     blockExplorers: myChain.blockExplorers,
+     chainName: 'my-chain-testnet',
+     noxComputeAddress: '0x…', // the NoxCompute contract on this chain
+     gatewayUrl: 'https://…', // the Handle Gateway URL
+     subgraphUrl: 'https://…', // the subgraph endpoint
+   }
+   ```
+
+   The `id`, `nativeCurrency`, `rpcUrls`, and `blockExplorers` fields are reused
+   from viem's well-known chains (`import { myChain } from 'viem/chains'`) so
+   they stay correct. The `noxComputeAddress`, `gatewayUrl`, and `subgraphUrl`
+   are Nox-specific and must be the real deployed values.
+
+2. **Verify the wallet "add chain" payload (EIP-3085).** The demo components
+   build the `wallet_addEthereumChain` request from the `Chain` entry, so the
+   fields must be coherent:
+
+   ```ts
+   {
+     chainId: `0x${chain.id.toString(16)}`,
+     chainName: chain.name,
+     nativeCurrency: chain.nativeCurrency,
+     rpcUrls: [...chain.rpcUrls.default.http],
+     blockExplorerUrls: [chain.blockExplorers.default.url],
+   }
+   ```
+
+   If any of these are wrong, "add to wallet" will fail for the new chain.
+
+3. **Add a row to the "Supported Networks" table** in
+   `src/references/js-sdk/advanced-configuration.md`:
+
+   ```markdown
+   | Network          | Chain ID   |
+   | ---------------- | ---------- |
+   | Arbitrum Sepolia | `421614`   |
+   | Ethereum Sepolia | `11155111` |
+   | My Chain         | `<id>`     |
+   ```
+
+4. **Fill the per-chain branch of every existing `<template v-if>` snippet.**
+   Pattern B blocks branch on the chain id (see below). Adding a chain means
+   adding the matching `<template v-else-if="selectedChain === <id>">` branch to
+   each forked code block so the new chain is not left blank.
+
+### Pattern A — value injection
+
+Use this when prose mentions a chain-specific **value** (name, chain id,
+contract address, RPC URL, native currency symbol). Reference the value with a
+`{{ … }}` expression and expose it via a `<script setup>` block that reads the
+store.
+
+In the prose, write the chain-dependent value as an interpolation:
+
+```markdown
+Make sure your wallet is connected to **{{ chainName }}** (use the chain
+switcher in the top bar) before hitting **Deploy**.
+```
+
+Then add a `<script setup>` block (`src/getting-started/hello-world.md` does
+exactly this) that derives the value from the selected chain:
+
+```vue
+<script setup>
+import { computed } from 'vue';
+import useUserStore from '@/stores/useUser.store';
+import { getChainById } from '@/utils/chain.utils';
+
+const userStore = useUserStore();
+const selectedChain = computed(() => userStore.getCurrentChainId());
+const chainData = computed(() => getChainById(selectedChain.value));
+const chainName = computed(() => chainData.value?.name);
+</script>
+```
+
+Expose whichever fields the page needs — e.g.
+`const chainId = computed(() => chainData.value?.id)` or
+`const noxComputeAddress = computed(() => chainData.value?.noxComputeAddress)` —
+and reference them as `{{ chainId }}`, `{{ noxComputeAddress }}`, etc. Pull
+every value from `getChainById()` so it stays correct when chains change.
+
+### Pattern B — template fork
+
+Use this when a **code block** has chain-divergent structural content (different
+imports, different `viem/chains` chain object, twoslash type-checked code that
+must compile). Fork the whole block into per-chain `<template>` branches keyed
+by chain id, as the JS SDK method pages do (see
+`src/references/js-sdk/methods/encryptInput.md`):
+
+````md
+<template v-if="selectedChain === 421614">
+
+```ts twoslash
+import { createViemHandleClient } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+import { arbitrumSepolia } from 'viem/chains';
+
+const walletClient = createWalletClient({
+  chain: arbitrumSepolia,
+  transport: custom(window.ethereum),
+});
+
+const handleClient = await createViemHandleClient(walletClient);
+```
+
+</template>
+<template v-else-if="selectedChain === 11155111">
+
+```ts twoslash
+import { createViemHandleClient } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+import { sepolia } from 'viem/chains';
+
+const walletClient = createWalletClient({
+  chain: sepolia,
+  transport: custom(window.ethereum),
+});
+
+const handleClient = await createViemHandleClient(walletClient);
+```
+
+</template>
+````
+
+The `selectedChain` variable comes from the same `<script setup>` block as
+Pattern A:
+
+```vue
+<script setup>
+import { computed } from 'vue';
+import useUserStore from '@/stores/useUser.store';
+
+const userStore = useUserStore();
+const selectedChain = computed(() => userStore.getCurrentChainId());
+</script>
+```
+
+Notes:
+
+- Branch on the numeric chain id (`421614`, `11155111`, …), matching the `id`
+  field in `getSupportedChains()`.
+- Keep each branch's code identical except for the lines that actually differ
+  (here, the `viem/chains` import and the `chain:` value) so the branches stay
+  easy to diff and maintain.
+- When wrapping forked blocks that Prettier reflows incorrectly, use
+  `<!-- prettier-ignore-start -->` / `<!-- prettier-ignore-end -->` around them,
+  as `encryptInput.md` does.
+
 ## 📚 Project Structure
 
 ### File Organization
