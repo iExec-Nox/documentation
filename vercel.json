@@ -1,21 +1,20 @@
 {
   "cleanUrls": true,
-  "rewrites": [
-    {
-      "source": "/nox-protocol/:path*",
-      "destination": "/:path*"
-    }
-  ],
   "redirects": [
     {
+      "source": "/nox-protocol/:path*",
+      "destination": "/:path*",
+      "statusCode": 301
+    },
+    {
       "source": "/nox-protocol",
-      "destination": "https://docs.iex.ec/",
-      "has": [{ "type": "host", "value": "docs.iex.ec" }]
+      "destination": "/",
+      "statusCode": 301
     },
     {
       "source": "/robots.txt",
       "destination": "/robots-prod.txt",
-      "has": [{ "type": "host", "value": "docs.iex.ec" }]
+      "has": [{ "type": "host", "value": "docs.noxprotocol.io" }]
     },
     {
       "source": "/robots.txt",

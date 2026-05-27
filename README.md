@@ -36,6 +36,6 @@ npm run build
 
 ## 🆘 Support
 
-- 📖 [Documentation](https://docs.iex.ec)
+- 📖 [Documentation](https://docs.noxprotocol.io)
 - 💬 [Discord Community](https://discord.com/invite/5TewNUnJHN)
 - 🐛 [Issue Tracker](https://github.com/iExec-Nox/documentation/issues)
