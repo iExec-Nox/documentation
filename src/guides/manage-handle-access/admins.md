@@ -115,7 +115,7 @@ const noxContract = new Contract(
   NOX_CONTRACT_ABI,
   provider
 );
-const isAllowed: boolean = await noxContract.isAllowed(handle, account);
+const isAllowed: boolean = await noxContract.isAllowed(handle, account); // [!code focus]
 ```
 
 ```ts twoslash [viem]
@@ -169,11 +169,12 @@ const NOX_CONTRACT_ADDRESS: `0x${string}` =
   '0xd464B198f06756a1d00be223634b85E0a731c229';
 
 const isAllowed = await publicClient.readContract({
-  address: NOX_CONTRACT_ADDRESS,
-  abi: NOX_CONTRACT_ABI,
-  functionName: 'isAllowed',
-  args: [handle, account],
-});
+  // [!code focus]
+  address: NOX_CONTRACT_ADDRESS, // [!code focus]
+  abi: NOX_CONTRACT_ABI, // [!code focus]
+  functionName: 'isAllowed', // [!code focus]
+  args: [handle, account], // [!code focus]
+}); // [!code focus]
 ```
 
 :::
@@ -283,8 +284,8 @@ const noxContract = new Contract(
   NOX_CONTRACT_ABI,
   signer
 );
-const tx = await noxContract.allow(handle, accountToAllow);
-await tx.wait();
+const tx = await noxContract.allow(handle, accountToAllow); // [!code focus]
+await tx.wait(); // [!code focus]
 ```
 
 ```ts twoslash [viem]
@@ -345,13 +346,14 @@ const NOX_CONTRACT_ADDRESS: `0x${string}` =
 const [userAddress] = await walletClient.getAddresses();
 
 await walletClient.writeContract({
-  account: userAddress,
-  chain: CHAIN,
-  address: NOX_CONTRACT_ADDRESS,
-  abi: NOX_CONTRACT_ABI,
-  functionName: 'allow',
-  args: [handle, accountToAllow],
-});
+  // [!code focus]
+  account: userAddress, // [!code focus]
+  chain: CHAIN, // [!code focus]
+  address: NOX_CONTRACT_ADDRESS, // [!code focus]
+  abi: NOX_CONTRACT_ABI, // [!code focus]
+  functionName: 'allow', // [!code focus]
+  args: [handle, accountToAllow], // [!code focus]
+}); // [!code focus]
 ```
 
 :::

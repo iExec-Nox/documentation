@@ -99,8 +99,8 @@ const noxContract = new Contract(
   NOX_CONTRACT_ABI,
   provider
 );
-const isPubliclyDecryptable: boolean =
-  await noxContract.isPubliclyDecryptable(handle);
+const isPubliclyDecryptable: boolean = // [!code focus]
+  await noxContract.isPubliclyDecryptable(handle); // [!code focus]
 ```
 
 ```ts twoslash [viem]
@@ -148,11 +148,12 @@ const NOX_CONTRACT_ADDRESS: `0x${string}` =
   '0xd464B198f06756a1d00be223634b85E0a731c229';
 
 const isPubliclyDecryptable = await publicClient.readContract({
-  address: NOX_CONTRACT_ADDRESS,
-  abi: NOX_CONTRACT_ABI,
-  functionName: 'isPubliclyDecryptable',
-  args: [handle],
-});
+  // [!code focus]
+  address: NOX_CONTRACT_ADDRESS, // [!code focus]
+  abi: NOX_CONTRACT_ABI, // [!code focus]
+  functionName: 'isPubliclyDecryptable', // [!code focus]
+  args: [handle], // [!code focus]
+}); // [!code focus]
 ```
 
 :::
@@ -251,8 +252,8 @@ const noxContract = new Contract(
   NOX_CONTRACT_ABI,
   signer
 );
-const tx = await noxContract.allowPublicDecryption(handle);
-await tx.wait();
+const tx = await noxContract.allowPublicDecryption(handle); // [!code focus]
+await tx.wait(); // [!code focus]
 ```
 
 ```ts twoslash [viem]
@@ -307,13 +308,14 @@ const NOX_CONTRACT_ADDRESS: `0x${string}` =
 const [userAddress] = await walletClient.getAddresses();
 
 await walletClient.writeContract({
-  account: userAddress,
-  chain: CHAIN,
-  address: NOX_CONTRACT_ADDRESS,
-  abi: NOX_CONTRACT_ABI,
-  functionName: 'allowPublicDecryption',
-  args: [handle],
-});
+  // [!code focus]
+  account: userAddress, // [!code focus]
+  chain: CHAIN, // [!code focus]
+  address: NOX_CONTRACT_ADDRESS, // [!code focus]
+  abi: NOX_CONTRACT_ABI, // [!code focus]
+  functionName: 'allowPublicDecryption', // [!code focus]
+  args: [handle], // [!code focus]
+}); // [!code focus]
 ```
 
 :::
