@@ -18,11 +18,13 @@ npm install
 ### Environment variables
 
 The chain switcher integrates [Reown AppKit](https://cloud.reown.com)
-(WalletConnect), which requires a project id. Without it, both `npm run dev` and
-`npm run build` fail with
-`You need to provide VITE_REOWN_PROJECT_ID env variable`.
+(WalletConnect). Set `VITE_REOWN_PROJECT_ID` to enable WalletConnect (the QR
+modal). It is optional: without it, `npm run dev` and `npm run build` still
+work, and so do doc-view chain switching and the injected-wallet (MetaMask) path
+— only the WalletConnect QR modal is unavailable.
 
-Create a `.env.local` file at the project root (it is git-ignored):
+To enable WalletConnect, create a `.env.local` file at the project root (it is
+git-ignored):
 
 ```bash
 VITE_REOWN_PROJECT_ID=your_project_id_here
