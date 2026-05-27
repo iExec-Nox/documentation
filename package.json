@@ -12,9 +12,16 @@
   },
   "dependencies": {
     "@iexec-nox/handle": "^0.1.0-beta.10",
+    "@reown/appkit": "1.8.14",
+    "@reown/appkit-adapter-wagmi": "1.8.14",
     "@tailwindcss/vite": "^4.1.11",
+    "@tanstack/vue-query": "^5.92.0",
     "@vueuse/core": "^13.6.0",
+    "@wagmi/vue": "^0.1.24",
+    "clsx": "^2.1.1",
     "markdown-it-steps": "^0.3.1",
+    "pinia": "^3.0.3",
+    "reka-ui": "^2.4.1",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.11",
     "turndown": "^7.2.0",
@@ -27,10 +34,19 @@
     "@shikijs/vitepress-twoslash": "^3.19.0",
     "@types/react": "^18.3.23",
     "ethers": "^6.16.0",
+    "mermaid": "^11.14.0",
     "prettier": "^3.7.4",
     "prettier-plugin-tailwindcss": "^0.6.14",
+    "typescript": "^5.9.3",
     "viem": "^2.47.5",
     "vitepress": "^1.6.3",
     "vitepress-plugin-llms": "^1.12.2"
+  },
+  "overrides": {
+    "@reown/appkit-adapter-wagmi": {
+      "wagmi": "<3",
+      "@wagmi/core": "<3",
+      "@wagmi/connectors": "<7"
+    }
   }
 }

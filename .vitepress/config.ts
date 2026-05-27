@@ -1,7 +1,17 @@
 import { transformerTwoslash } from '@shikijs/vitepress-twoslash';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vitepress';
+import { loadEnv } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
+
+// `vitepress build` does not inject .env.local into the SSR bundle's
+// import.meta.env, so the chain switcher's wagmi config would throw at build
+// time. Load the VITE_* vars (notably VITE_REOWN_PROJECT_ID) into process.env
+// here so they are available to both `dev` and `build`.
+Object.assign(
+  process.env,
+  loadEnv(process.env.NODE_ENV || '', process.cwd(), 'VITE_')
+);
 import { getSidebar } from './sidebar';
 import {
   groupIconMdPlugin,
@@ -119,6 +129,10 @@ export default withMermaid(
           text: 'Protocol',
           link: '/protocol/global-architecture-overview',
           activeMatch: '^/(protocol|references)/',
+        },
+        {
+          component: 'ChainSelector',
+          props: { className: 'w-48' },
         },
       ],
       outline: {
