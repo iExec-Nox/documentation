@@ -78,7 +78,7 @@ const account = '0xAccountAddress';
  * See deployment page for more details.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
+  '0xd464B198f06756a1d00be223634b85E0a731c229';
 
 /**
  * `isAllowed` ABI fragment
@@ -136,7 +136,7 @@ const publicClient = createPublicClient({
  * See deployment page for more details.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
+  '0xd464B198f06756a1d00be223634b85E0a731c229';
 
 /**
  * `isAllowed` ABI fragment
@@ -252,7 +252,7 @@ const accountToAllow = '0xAccountAddress';
  * See deployment page for more details.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
+  '0xd464B198f06756a1d00be223634b85E0a731c229';
 
 /**
  * `allow` ABI fragment
@@ -316,7 +316,7 @@ const walletClient: WalletClient = createWalletClient({
  * See deployment page for more details.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
+  '0xd464B198f06756a1d00be223634b85E0a731c229';
 
 /**
  * `allow` ABI fragment
