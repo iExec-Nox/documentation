@@ -4,9 +4,17 @@ description: Build your first confidential smart contract with Nox
 ---
 
 <script setup>
+import { computed } from 'vue';
 import piggyBankCode from '../contracts/ConfidentialPiggyBank.sol?raw';
 import plainPiggyBankCode from '../contracts/PiggyBank.sol?raw';
 import PiggyBankDemo from '../components/PiggyBankDemo.vue';
+import useUserStore from '@/stores/useUser.store';
+import { getChainById } from '@/utils/chain.utils';
+
+const userStore = useUserStore();
+const selectedChain = computed(() => userStore.getCurrentChainId());
+const chainData = computed(() => getChainById(selectedChain.value));
+const chainName = computed(() => chainData.value?.name);
 </script>
 
 # Hello World
@@ -198,11 +206,10 @@ details.
 Here is the complete confidential piggy bank. Click **Open in Remix** to load
 it, then compile with Solidity `0.8.27+`. To deploy, select **WalletConnect** or
 **Browser Extension** in the Remix **Deploy** panel and make sure your wallet is
-connected to **the selected network** (use the network switcher in the top bar)
+connected to **{{ chainName }}** (use the chain switcher in the top bar)
 before hitting **Deploy**.
 
-<NetworkCode>
-<template #arbitrum-sepolia>
+<template v-if="selectedChain === 421614">
 
 <!-- prettier-ignore -->
 ::: warning Gas estimation on Arbitrum Sepolia
@@ -214,7 +221,6 @@ error, then retry.
 :::
 
 </template>
-</NetworkCode>
 
 <ClientOnly>
   <RemixButton :code="piggyBankCode" />

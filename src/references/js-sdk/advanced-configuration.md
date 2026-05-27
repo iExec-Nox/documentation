@@ -128,7 +128,10 @@ If not provided, the default subgraph URL for the detected network will be used.
 The SDK automatically resolves configuration for supported networks based on the
 chain ID detected from your provider:
 
-<NetworkTable />
+| Network          | Chain ID   |
+| ---------------- | ---------- |
+| Arbitrum Sepolia | `421614`   |
+| Ethereum Sepolia | `11155111` |
 
 To use an unsupported chain, you must provide all three settings: `gatewayUrl`,
 `smartContractAddress`, and `subgraphUrl`. Two is not enough for a working

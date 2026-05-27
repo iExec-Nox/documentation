@@ -27,8 +27,7 @@ involve EIP-712 signatures from the caller.
 
 ## Usage
 
-<NetworkCode>
-<template #arbitrum-sepolia>
+<template v-if="selectedChain === 421614">
 
 ```ts twoslash
 declare global {
@@ -55,7 +54,7 @@ const { value, solidityType, decryptionProof } =
 ```
 
 </template>
-<template #ethereum-sepolia>
+<template v-else-if="selectedChain === 11155111">
 
 ```ts twoslash
 declare global {
@@ -82,7 +81,6 @@ const { value, solidityType, decryptionProof } =
 ```
 
 </template>
-</NetworkCode>
 
 ## Parameters
 
@@ -93,8 +91,7 @@ const { value, solidityType, decryptionProof } =
 The handle to decrypt. It must be marked as publicly decryptable on-chain and
 created on the **same chain** as the one the client is connected to.
 
-<NetworkCode>
-<template #arbitrum-sepolia>
+<template v-if="selectedChain === 421614">
 
 ```ts twoslash
 declare global {
@@ -120,7 +117,7 @@ const { value, solidityType, decryptionProof } =
 ```
 
 </template>
-<template #ethereum-sepolia>
+<template v-else-if="selectedChain === 11155111">
 
 ```ts twoslash
 declare global {
@@ -146,7 +143,6 @@ const { value, solidityType, decryptionProof } =
 ```
 
 </template>
-</NetworkCode>
 
 ::: warning
 
@@ -196,8 +192,7 @@ signature (65 bytes) concatenated with the ABI-encoded decrypted value. This
 proof can be passed to a smart contract to verify the decryption and use the
 plaintext value on-chain.
 
-<NetworkCode>
-<template #arbitrum-sepolia>
+<template v-if="selectedChain === 421614">
 
 ```ts twoslash
 declare global {
@@ -227,7 +222,7 @@ console.log('proof:', decryptionProof);
 ```
 
 </template>
-<template #ethereum-sepolia>
+<template v-else-if="selectedChain === 11155111">
 
 ```ts twoslash
 declare global {
@@ -257,4 +252,11 @@ console.log('proof:', decryptionProof);
 ```
 
 </template>
-</NetworkCode>
+
+<script setup>
+import { computed } from 'vue';
+import useUserStore from '@/stores/useUser.store';
+
+const userStore = useUserStore();
+const selectedChain = computed(() => userStore.getCurrentChainId());
+</script>

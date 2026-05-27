@@ -29,8 +29,7 @@ the full cryptographic flow.
 
 ## Usage
 
-<NetworkCode>
-<template #arbitrum-sepolia>
+<template v-if="selectedChain === 421614">
 
 ```ts twoslash
 declare global {
@@ -56,7 +55,7 @@ const { value, solidityType } = await handleClient.decrypt(handle);
 ```
 
 </template>
-<template #ethereum-sepolia>
+<template v-else-if="selectedChain === 11155111">
 
 ```ts twoslash
 declare global {
@@ -82,7 +81,6 @@ const { value, solidityType } = await handleClient.decrypt(handle);
 ```
 
 </template>
-</NetworkCode>
 
 ## Parameters
 
@@ -93,8 +91,7 @@ const { value, solidityType } = await handleClient.decrypt(handle);
 The handle to decrypt. It must have been created on the **same chain** as the
 one the client is connected to.
 
-<NetworkCode>
-<template #arbitrum-sepolia>
+<template v-if="selectedChain === 421614">
 
 ```ts twoslash
 declare global {
@@ -119,7 +116,7 @@ const { value, solidityType } = await handleClient.decrypt(handle); // [!code fo
 ```
 
 </template>
-<template #ethereum-sepolia>
+<template v-else-if="selectedChain === 11155111">
 
 ```ts twoslash
 declare global {
@@ -144,7 +141,6 @@ const { value, solidityType } = await handleClient.decrypt(handle); // [!code fo
 ```
 
 </template>
-</NetworkCode>
 
 ::: tip Gasless operation
 
@@ -200,8 +196,7 @@ The Solidity type decoded from the handle (e.g. `"uint256"`, `"bool"`,
 `"address"`). Useful when you receive a handle without knowing its type ahead of
 time.
 
-<NetworkCode>
-<template #arbitrum-sepolia>
+<template v-if="selectedChain === 421614">
 
 ```ts twoslash
 declare global {
@@ -229,7 +224,7 @@ console.log(`${solidityType}:`, value);
 ```
 
 </template>
-<template #ethereum-sepolia>
+<template v-else-if="selectedChain === 11155111">
 
 ```ts twoslash
 declare global {
@@ -257,4 +252,11 @@ console.log(`${solidityType}:`, value);
 ```
 
 </template>
-</NetworkCode>
+
+<script setup>
+import { computed } from 'vue';
+import useUserStore from '@/stores/useUser.store';
+
+const userStore = useUserStore();
+const selectedChain = computed(() => userStore.getCurrentChainId());
+</script>

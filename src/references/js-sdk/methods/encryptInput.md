@@ -37,8 +37,7 @@ See [Handle Gateway](/protocol/handle-gateway) for the full encryption protocol.
 
 ## Usage
 
-<NetworkCode>
-<template #arbitrum-sepolia>
+<template v-if="selectedChain === 421614">
 
 ```ts twoslash
 declare global {
@@ -66,7 +65,7 @@ const { handle, handleProof } = await handleClient.encryptInput(
 ```
 
 </template>
-<template #ethereum-sepolia>
+<template v-else-if="selectedChain === 11155111">
 
 ```ts twoslash
 declare global {
@@ -94,7 +93,6 @@ const { handle, handleProof } = await handleClient.encryptInput(
 ```
 
 </template>
-</NetworkCode>
 
 ## Parameters
 
@@ -117,8 +115,7 @@ The plaintext value to encrypt. The expected JavaScript type depends on the
 | `uintN`, `intN`              | `bigint`        | `1000n`                                |
 
 <!-- prettier-ignore-start -->
-<NetworkCode>
-<template #arbitrum-sepolia>
+<template v-if="selectedChain === 421614">
 
 ```ts twoslash
 declare global {
@@ -154,7 +151,7 @@ await handleClient.encryptInput(
 ```
 
 </template>
-<template #ethereum-sepolia>
+<template v-else-if="selectedChain === 11155111">
 
 ```ts twoslash
 declare global {
@@ -190,7 +187,6 @@ await handleClient.encryptInput(
 ```
 
 </template>
-</NetworkCode>
 <!-- prettier-ignore-end -->
 
 ### solidityType <Required />
@@ -221,8 +217,7 @@ releases.
 
 :::
 
-<NetworkCode>
-<template #arbitrum-sepolia>
+<template v-if="selectedChain === 421614">
 
 ```ts twoslash
 declare global {
@@ -247,7 +242,7 @@ await handleClient.encryptInput('Hello, Nox!', 'string', '0x123...abc'); // [!co
 ```
 
 </template>
-<template #ethereum-sepolia>
+<template v-else-if="selectedChain === 11155111">
 
 ```ts twoslash
 declare global {
@@ -272,7 +267,6 @@ await handleClient.encryptInput('Hello, Nox!', 'string', '0x123...abc'); // [!co
 ```
 
 </template>
-</NetworkCode>
 
 ### applicationContract <Required />
 
@@ -284,8 +278,7 @@ on-chain. After successful validation, it receives transient access on the ACL
 for this handle. The contract must then explicitly persist that access and grant
 permissions to any address that needs to use or decrypt the handle.
 
-<NetworkCode>
-<template #arbitrum-sepolia>
+<template v-if="selectedChain === 421614">
 
 ```ts twoslash
 declare global {
@@ -313,7 +306,7 @@ await handleClient.encryptInput(
 ```
 
 </template>
-<template #ethereum-sepolia>
+<template v-else-if="selectedChain === 11155111">
 
 ```ts twoslash
 declare global {
@@ -341,7 +334,6 @@ await handleClient.encryptInput(
 ```
 
 </template>
-</NetworkCode>
 
 ## Return Value
 
@@ -368,3 +360,11 @@ handle.
 An EIP-712 signed proof from the Handle Gateway attesting that the handle was
 created legitimately. Pass this proof alongside the handle when calling smart
 contract functions that verify encrypted inputs.
+
+<script setup>
+import { computed } from 'vue';
+import useUserStore from '@/stores/useUser.store';
+
+const userStore = useUserStore();
+const selectedChain = computed(() => userStore.getCurrentChainId());
+</script>

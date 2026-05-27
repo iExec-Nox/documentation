@@ -150,8 +150,7 @@ const handleClient = await createViemHandleClient(walletClient);
 The SDK supports [viem Smart Accounts](https://viem.sh/account-abstraction) for
 account abstraction. Pass a `SmartAccount` instance directly to the factory.
 
-<NetworkCode>
-<template #arbitrum-sepolia>
+<template v-if="selectedChain === 421614">
 
 ```ts twoslash
 declare const RPC_URL: string;
@@ -177,7 +176,7 @@ const handleClient = await createViemHandleClient(smartAccount as any);
 ```
 
 </template>
-<template #ethereum-sepolia>
+<template v-else-if="selectedChain === 11155111">
 
 ```ts twoslash
 declare const RPC_URL: string;
@@ -203,7 +202,6 @@ const handleClient = await createViemHandleClient(smartAccount as any);
 ```
 
 </template>
-</NetworkCode>
 
 ::: tip
 
@@ -273,3 +271,11 @@ const handleClient = await createHandleClient(walletClient);
   the Access Control List of a handle
 - Configure advanced options in
   [Advanced Configuration](/references/js-sdk/advanced-configuration)
+
+<script setup>
+import { computed } from 'vue';
+import useUserStore from '@/stores/useUser.store';
+
+const userStore = useUserStore();
+const selectedChain = computed(() => userStore.getCurrentChainId());
+</script>

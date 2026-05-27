@@ -147,7 +147,9 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { useNetwork } from '../../.vitepress/theme/composables/useNetwork';
+import useUserStore from '@/stores/useUser.store';
+import { getChainById } from '@/utils/chain.utils';
+import { useChainSwitch } from '@/hooks/useChainSwitch';
 
 declare global {
   interface Window {
@@ -155,7 +157,8 @@ declare global {
   }
 }
 
-const { selectedNetwork } = useNetwork();
+const userStore = useUserStore();
+const { requestChainChange } = useChainSwitch();
 
 const contractAddress = ref('');
 const plainValue = ref('');
@@ -204,11 +207,15 @@ async function connect() {
       throw new Error('MetaMask not found. Please install it.');
     }
 
-    const network = selectedNetwork.value;
+    const chainId = userStore.getCurrentChainId();
+    const chain = chainId ? getChainById(chainId) : undefined;
+    if (!chain) {
+      throw new Error(
+        'No chain selected. Use the chain switcher in the top bar.'
+      );
+    }
 
     const { createWalletClient, custom } = await import('viem');
-    const viemChains = await import('viem/chains');
-    const viemChain = (viemChains as Record<string, any>)[network.viemChain];
     const { createViemHandleClient } = await import('@iexec-nox/handle');
 
     const accounts: string[] = await window.ethereum.request({
@@ -216,10 +223,15 @@ async function connect() {
     });
     account.value = accounts[0];
 
+    // Keep the global selection (and any wagmi-connected wallet) in sync.
+    await requestChainChange(chain.id);
+
+    // Make sure the injected wallet itself targets the selected chain.
+    const chainIdHex = `0x${chain.id.toString(16)}`;
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: network.chainIdHex }],
+        params: [{ chainId: chainIdHex }],
       });
     } catch (e: any) {
       if (e.code === 4902) {
@@ -227,11 +239,11 @@ async function connect() {
           method: 'wallet_addEthereumChain',
           params: [
             {
-              chainId: network.chainIdHex,
-              chainName: network.name,
-              nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
-              rpcUrls: [network.rpcUrl],
-              blockExplorerUrls: [network.blockExplorerUrl],
+              chainId: chainIdHex,
+              chainName: chain.name,
+              nativeCurrency: chain.nativeCurrency,
+              rpcUrls: [...chain.rpcUrls.default.http],
+              blockExplorerUrls: [chain.blockExplorers.default.url],
             },
           ],
         });
@@ -242,7 +254,12 @@ async function connect() {
 
     const walletClient = createWalletClient({
       account: accounts[0] as `0x${string}`,
-      chain: viemChain,
+      chain: {
+        id: chain.id,
+        name: chain.name,
+        nativeCurrency: chain.nativeCurrency,
+        rpcUrls: chain.rpcUrls,
+      } as any,
       transport: custom(window.ethereum),
     });
 

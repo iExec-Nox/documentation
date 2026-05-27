@@ -14,8 +14,7 @@ is fast and does not require gas.
 
 ## Usage
 
-<NetworkCode>
-<template #arbitrum-sepolia>
+<template v-if="selectedChain === 421614">
 
 ```ts twoslash
 declare global {
@@ -41,7 +40,7 @@ const { isPublic, admins, viewers } = await handleClient.viewACL(handle);
 ```
 
 </template>
-<template #ethereum-sepolia>
+<template v-else-if="selectedChain === 11155111">
 
 ```ts twoslash
 declare global {
@@ -67,7 +66,6 @@ const { isPublic, admins, viewers } = await handleClient.viewACL(handle);
 ```
 
 </template>
-</NetworkCode>
 
 ## Parameters
 
@@ -77,8 +75,7 @@ const { isPublic, admins, viewers } = await handleClient.viewACL(handle);
 
 The handle whose ACL you want to inspect.
 
-<NetworkCode>
-<template #arbitrum-sepolia>
+<template v-if="selectedChain === 421614">
 
 ```ts twoslash
 declare global {
@@ -103,7 +100,7 @@ const acl = await handleClient.viewACL(handle); // [!code focus]
 ```
 
 </template>
-<template #ethereum-sepolia>
+<template v-else-if="selectedChain === 11155111">
 
 ```ts twoslash
 declare global {
@@ -128,7 +125,6 @@ const acl = await handleClient.viewACL(handle); // [!code focus]
 ```
 
 </template>
-</NetworkCode>
 
 ## Return Value
 
@@ -167,8 +163,7 @@ List of Ethereum addresses that have **viewer** permissions on this handle.
 Viewers can call [`decrypt`](/references/js-sdk/methods/decrypt) to retrieve the
 plaintext value.
 
-<NetworkCode>
-<template #arbitrum-sepolia>
+<template v-if="selectedChain === 421614">
 
 ```ts twoslash
 declare global {
@@ -200,7 +195,7 @@ if (isPublic) {
 ```
 
 </template>
-<template #ethereum-sepolia>
+<template v-else-if="selectedChain === 11155111">
 
 ```ts twoslash
 declare global {
@@ -232,4 +227,11 @@ if (isPublic) {
 ```
 
 </template>
-</NetworkCode>
+
+<script setup>
+import { computed } from 'vue';
+import useUserStore from '@/stores/useUser.store';
+
+const userStore = useUserStore();
+const selectedChain = computed(() => userStore.getCurrentChainId());
+</script>
