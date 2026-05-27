@@ -38,7 +38,7 @@
     "prettier": "^3.7.4",
     "prettier-plugin-tailwindcss": "^0.6.14",
     "typescript": "^5.9.3",
-    "viem": "2.41.2",
+    "viem": "^2.47.5",
     "vitepress": "^1.6.3",
     "vitepress-plugin-llms": "^1.12.2"
   },
