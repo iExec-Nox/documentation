@@ -8,7 +8,6 @@ import Optional from './components/Optional.vue';
 import RemixButton from '@/components/RemixButton.vue';
 import Glossary from './components/Glossary.vue';
 import ChainSelector from '@/components/ChainSelector.vue';
-import ChainNotSupportedBadge from '@/components/ChainNotSupportedBadge.vue';
 import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query';
 import { WagmiPlugin } from '@wagmi/vue';
 import { createPinia } from 'pinia';
@@ -45,7 +44,6 @@ export default {
     app.use(VueQueryPlugin, { queryClient });
     app.use(WagmiPlugin, { config: wagmiAdapter.wagmiConfig });
     app.component('ChainSelector', ChainSelector);
-    app.component('ChainNotSupportedBadge', ChainNotSupportedBadge);
 
     if (typeof window !== 'undefined') {
       // Google Tag Manager (noscript)
