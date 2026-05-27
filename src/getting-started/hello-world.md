@@ -206,8 +206,8 @@ details.
 Here is the complete confidential piggy bank. Click **Open in Remix** to load
 it, then compile with Solidity `0.8.27+`. To deploy, select **WalletConnect** or
 **Browser Extension** in the Remix **Deploy** panel and make sure your wallet is
-connected to **{{ chainName }}** (use the chain switcher in the top bar)
-before hitting **Deploy**.
+connected to **{{ chainName }}** (use the chain switcher in the top bar) before
+hitting **Deploy**.
 
 <template v-if="selectedChain === 421614">
 

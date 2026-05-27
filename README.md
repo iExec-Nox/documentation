@@ -19,7 +19,8 @@ npm install
 
 The chain switcher integrates [Reown AppKit](https://cloud.reown.com)
 (WalletConnect), which requires a project id. Without it, both `npm run dev` and
-`npm run build` fail with `You need to provide VITE_REOWN_PROJECT_ID env variable`.
+`npm run build` fail with
+`You need to provide VITE_REOWN_PROJECT_ID env variable`.
 
 Create a `.env.local` file at the project root (it is git-ignored):
 
