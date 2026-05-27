@@ -21,7 +21,7 @@ The chain switcher integrates [Reown AppKit](https://cloud.reown.com)
 (WalletConnect). Set `VITE_REOWN_PROJECT_ID` to enable WalletConnect (the QR
 modal). It is optional: without it, `npm run dev` and `npm run build` still
 work, and so do doc-view chain switching and the injected-wallet (MetaMask) path
-— only the WalletConnect QR modal is unavailable.
+— the WalletConnect QR modal will still appear but won't connect.
 
 To enable WalletConnect, create a `.env.local` file at the project root (it is
 git-ignored):
