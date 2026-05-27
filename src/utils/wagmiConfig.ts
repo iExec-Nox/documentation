@@ -7,12 +7,11 @@ import { InjectedWalletProvider } from '@/utils/injected-wallet-provider/injecte
 import { EIP6963ProviderDetail } from '@/utils/injected-wallet-provider/types';
 import { AppKitNetwork } from '@reown/appkit/networks';
 
-export const projectId = import.meta.env.VITE_REOWN_PROJECT_ID as string;
-
-// Wagmi Client initialization
-if (!projectId) {
-  throw new Error('You need to provide VITE_REOWN_PROJECT_ID env variable');
-}
+// VITE_REOWN_PROJECT_ID is optional: set it to enable WalletConnect (QR modal).
+// Without it, doc-view chain switching and the injected-wallet (MetaMask) path
+// still work — we fall back to a placeholder so dev/build never hard-fail.
+export const projectId =
+  (import.meta.env.VITE_REOWN_PROJECT_ID as string) || 'nox-docs-fallback';
 
 // Connectors initialization
 const connectors: CreateConnectorFn[] = [];
