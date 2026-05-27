@@ -519,24 +519,3 @@ input {
   margin-top: 0 !important;
   padding-top: 0 !important;
 }
-
-/**
- * Component: NetworkSwitcher placement
- *
- * The switcher is injected via the `nav-bar-content-after` slot (which renders
- * at the end of the navbar content row). There is no native slot between the
- * nav links and the social icons, so we reorder the flex children to place it
- * right after the menu (Get Started / Guides / Protocol) and before the social
- * icons. Uses stable VitePress class names.
- * -------------------------------------------------------------------------- */
-
-.VPNavBar .content-body .nox-switcher {
-  order: 1;
-}
-
-.VPNavBar .content-body .translations,
-.VPNavBar .content-body .appearance,
-.VPNavBar .content-body .social-links,
-.VPNavBar .content-body .extra {
-  order: 2;
-}
