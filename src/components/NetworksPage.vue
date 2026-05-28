@@ -296,7 +296,8 @@ async function addToWallet(chain: Chain) {
       params: [{ chainId: chainIdHex }],
     });
     await syncStoreAfterWallet(chain.id);
-    statuses[chain.id] = 'added';
+    statuses[chain.id] = 'idle';
+    await readEthereumChainId();
   } catch (switchErr: any) {
     // EIP-1193 4902: chain not added yet — add then switch.
     if (switchErr?.code === 4902) {
