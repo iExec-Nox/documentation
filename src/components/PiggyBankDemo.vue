@@ -5,7 +5,7 @@
       <span class="header-title">Nox SDK Playground</span>
       <button
         v-if="!account"
-        :disabled="loading"
+        :disabled="loading || !!chainNotReady"
         class="btn-brand btn-sm"
         @click="connect"
       >
@@ -15,6 +15,26 @@
         <span class="wallet-dot" />
         <code>{{ shortAddress(account) }}</code>
       </div>
+    </div>
+
+    <!-- Chain-not-ready notice (placeholder values in chain.utils.ts) -->
+    <div v-if="chainNotReady" class="chain-not-ready">
+      <p>
+        <strong>{{ chainNotReady.chainName }}</strong> is not yet live on Nox —
+        the gateway, contract, and subgraph URLs for this network are still
+        placeholders, so the demo will fail.
+      </p>
+      <p v-if="chainNotReady.liveChain">
+        Switch the selector back to
+        <strong>{{ chainNotReady.liveChain.name }}</strong> to continue.
+        <button
+          type="button"
+          class="chain-not-ready__btn"
+          @click="switchToLiveChain"
+        >
+          Switch to {{ chainNotReady.liveChain.name }}
+        </button>
+      </p>
     </div>
 
     <!-- Chain mismatch warning -->
@@ -157,10 +177,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
 import { useAccount } from '@wagmi/vue';
 import useUserStore from '@/stores/useUser.store';
-import { getChainById } from '@/utils/chain.utils';
+import { getChainById, getSupportedChains } from '@/utils/chain.utils';
 import { useChainSwitch } from '@/hooks/useChainSwitch';
 
 declare global {
@@ -232,11 +252,64 @@ const isValidAddress = computed(() =>
 
 const canEncrypt = computed(
   () =>
-    account.value && isValidAddress.value && plainValue.value && !loading.value
+    account.value &&
+    isValidAddress.value &&
+    plainValue.value &&
+    !loading.value &&
+    !chainNotReady.value
 );
 
 const canDecrypt = computed(
-  () => account.value && handleToDecrypt.value && !loading.value
+  () =>
+    account.value &&
+    handleToDecrypt.value &&
+    !loading.value &&
+    !chainNotReady.value
+);
+
+// Detect a selected chain that still ships with `TODO_*` placeholders in
+// chain.utils.ts (Nox not deployed on that chain yet). When true, the gateway
+// / contract calls will fail; surface a clear notice + an action to switch
+// back to a live chain rather than letting the user hit an opaque error.
+function hasPlaceholderFields(chain: { [key: string]: unknown }): boolean {
+  for (const k of ['noxComputeAddress', 'gatewayUrl', 'subgraphUrl']) {
+    const v = chain[k];
+    if (typeof v === 'string' && v.startsWith('TODO_')) return true;
+  }
+  return false;
+}
+
+const chainNotReady = computed(() => {
+  const selected = userStore.getCurrentChainId();
+  const chain = selected ? getChainById(selected) : undefined;
+  if (!chain || !hasPlaceholderFields(chain)) return null;
+  const liveChain = getSupportedChains().find((c) => !hasPlaceholderFields(c));
+  return {
+    chainName: chain.name,
+    liveChain, // may be undefined if every chain is placeholder
+  };
+});
+
+function switchToLiveChain() {
+  const fallback = chainNotReady.value?.liveChain;
+  if (fallback) {
+    userStore.setSelectedChain(fallback);
+  }
+}
+
+// Clear transient state when the doc-selector chain changes — otherwise an
+// error from a previous chain's failed connect remains visible after the
+// user switches with the selector, and a leftover handle / decryption from
+// the previous chain is no longer meaningful.
+watch(
+  () => userStore.getCurrentChainId(),
+  () => {
+    error.value = '';
+    status.value = '';
+    handle.value = '';
+    handleProof.value = '';
+    decryptedValue.value = null;
+  }
 );
 
 const chainMismatch = computed(() => {
@@ -441,6 +514,45 @@ async function doDecrypt() {
 .chain-mismatch strong {
   font-weight: 600;
   color: var(--vp-c-warning-1);
+}
+
+/* Chain-not-ready notice (placeholder values) */
+.chain-not-ready {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--vp-c-danger-1);
+  background: var(--vp-c-danger-soft);
+  border-bottom: 1px solid var(--vp-c-danger-2);
+}
+
+.chain-not-ready p {
+  margin: 0;
+}
+
+.chain-not-ready p + p {
+  margin-top: 0.5rem;
+}
+
+.chain-not-ready strong {
+  font-weight: 600;
+  color: var(--vp-c-danger-1);
+}
+
+.chain-not-ready__btn {
+  margin-left: 0.5rem;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--vp-c-bg);
+  background: var(--vp-c-danger-1);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.chain-not-ready__btn:hover {
+  background: var(--vp-c-danger-2);
 }
 
 /* Sections */
