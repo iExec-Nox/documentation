@@ -10,14 +10,14 @@ import NetworksPage from '../components/NetworksPage.vue';
 
 # Networks
 
-Nox runs on several testnets. This page lists every chain Nox currently
-supports, with the data you need to wire your dApp end-to-end: the NoxCompute
-contract address, the canonical RPC URL, the block explorer, faucet links for
-test funds, and a one-click **Add to wallet** action.
+Nox runs on several testnets. This page lists every supported chain with the
+data you need to wire your dApp end-to-end: the NoxCompute contract address, the
+canonical RPC URL, the block explorer, faucet links for test funds, and a
+one-click _Add to wallet_ action.
 
-Pick the chain you want to build on from the **chain selector in the top
-navigation** — code snippets across the documentation will then automatically
-reflect that chain's NoxCompute address.
+Pick the chain you want to build on from the chain selector in the top bar. Code
+snippets across the documentation will then reflect that chain's NoxCompute
+address.
 
 <ClientOnly>
   <NetworksPage />
