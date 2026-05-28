@@ -17,7 +17,6 @@
       </div>
     </div>
 
-    <!-- Chain-not-ready notice (placeholder values in chain.utils.ts) -->
     <div v-if="chainNotReady" class="chain-not-ready">
       <p>
         <strong>{{ chainNotReady.chainName }}</strong> is not yet live on Nox —
@@ -191,33 +190,38 @@ declare global {
 
 const userStore = useUserStore();
 const { requestChainChange } = useChainSwitch();
-const { chainId: walletChainId } = useAccount();
+const { chainId: walletChainId, isConnected } = useAccount();
 
 // The widget connects via `eth_requestAccounts` directly, not through wagmi,
 // so wagmi's `isConnected` / `chainId` stay falsy on that path. Track the
 // wallet's chain id from the injected provider as well, so the mismatch
 // warning works regardless of which connect path the user used.
+// TODO remove localWalletChainId once the widget connects through wagmi.
 const localWalletChainId = ref<number | undefined>(undefined);
 const onChainChanged = (hex: unknown) => {
   if (typeof hex === 'string') {
     localWalletChainId.value = parseInt(hex, 16);
   }
 };
+// Capture the provider reference at mount so cleanup targets the same object,
+// even if `window.ethereum` is later replaced (EIP-6963 multi-wallet, HMR).
+let ethereumAtMount: any = null;
 onMounted(async () => {
   if (typeof window === 'undefined' || !window.ethereum) return;
-  window.ethereum.on?.('chainChanged', onChainChanged);
+  ethereumAtMount = window.ethereum;
+  ethereumAtMount.on?.('chainChanged', onChainChanged);
   // Read the wallet's current chain id once at mount; if the wallet is
   // already injected we have a value before any `chainChanged` fires.
   try {
-    const hex = await window.ethereum.request({ method: 'eth_chainId' });
+    const hex = await ethereumAtMount.request({ method: 'eth_chainId' });
     onChainChanged(hex);
   } catch {
     // Wallet may not be ready / may reject; ignore.
   }
 });
 onBeforeUnmount(() => {
-  if (typeof window !== 'undefined' && window.ethereum?.removeListener) {
-    window.ethereum.removeListener('chainChanged', onChainChanged);
+  if (ethereumAtMount?.removeListener) {
+    ethereumAtMount.removeListener('chainChanged', onChainChanged);
   }
 });
 
@@ -239,11 +243,18 @@ const shortAddress = (addr: string) =>
   `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
 async function copy(text: string, key = 'handle') {
-  await navigator.clipboard.writeText(text);
-  copied.value = key;
-  setTimeout(() => {
-    copied.value = '';
-  }, 1500);
+  try {
+    await navigator.clipboard.writeText(text);
+    copied.value = key;
+    setTimeout(() => {
+      copied.value = '';
+    }, 1500);
+  } catch {
+    error.value = 'Failed to copy to clipboard.';
+    setTimeout(() => {
+      error.value = '';
+    }, 1500);
+  }
 }
 
 const isValidAddress = computed(() =>
@@ -293,14 +304,21 @@ const chainNotReady = computed(() => {
 async function switchToLiveChain() {
   const fallback = chainNotReady.value?.liveChain;
   if (!fallback) return;
-  // Mirror what the navbar ChainSelector does on a user pick: write to the
-  // store AND ask the wallet to switch via requestChainChange. The selector's
-  // display reads `chainId.value (wallet) || userStore.chainId`, so when a
-  // wallet is connected through wagmi, updating the store alone isn't enough
-  // — the wallet's chain wins. requestChainChange triggers a real
-  // wallet_switchEthereumChain (or just writes the store when disconnected).
-  userStore.setSelectedChain(fallback);
-  await requestChainChange(fallback.id);
+  // When wagmi is connected, the wallet's chain is the source of truth and
+  // beats the store, so updating the store alone won't move the selector.
+  // requestChainChange triggers a real wallet_switchEthereumChain when
+  // connected (and wagmi's chainChanged listener syncs the store), or writes
+  // the store's numeric chain id directly when disconnected — in that
+  // disconnected branch we still need an explicit setSelectedChain to keep
+  // the selector's `selectedChain` object accurate.
+  try {
+    if (!isConnected.value) {
+      userStore.setSelectedChain(fallback);
+    }
+    await requestChainChange(fallback.id);
+  } catch (e: any) {
+    error.value = e.shortMessage || e.message || 'Unknown error';
+  }
 }
 
 // Clear transient state when the doc-selector chain changes — otherwise an
@@ -367,29 +385,51 @@ async function connect() {
     // Keep the global selection (and any wagmi-connected wallet) in sync.
     await requestChainChange(chain.id);
 
-    // Make sure the injected wallet itself targets the selected chain.
-    const chainIdHex = `0x${chain.id.toString(16)}`;
-    try {
-      await window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: chainIdHex }],
-      });
-    } catch (e: any) {
-      if (e.code === 4902) {
+    // Make sure the injected wallet itself targets the selected chain. When
+    // wagmi is connected, `requestChainChange` above already prompted
+    // wallet_switchEthereumChain, so skip this branch to avoid a duplicate
+    // prompt. We still need the wallet_addEthereumChain fallback for
+    // first-time users whose wallet doesn't know the chain yet.
+    if (!isConnected.value) {
+      const chainIdHex = `0x${chain.id.toString(16)}`;
+      try {
         await window.ethereum.request({
-          method: 'wallet_addEthereumChain',
-          params: [
-            {
-              chainId: chainIdHex,
-              chainName: chain.name,
-              nativeCurrency: chain.nativeCurrency,
-              rpcUrls: [...chain.rpcUrls.default.http],
-              blockExplorerUrls: [chain.blockExplorers.default.url],
-            },
-          ],
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: chainIdHex }],
         });
-      } else {
-        throw e;
+      } catch (e: any) {
+        if (e.code === 4902) {
+          try {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [
+                {
+                  chainId: chainIdHex,
+                  chainName: chain.name,
+                  nativeCurrency: chain.nativeCurrency,
+                  rpcUrls: [...chain.rpcUrls.default.http],
+                  blockExplorerUrls: [chain.blockExplorers.default.url],
+                },
+              ],
+            });
+          } catch (addErr: any) {
+            if (addErr.code === 4001) {
+              error.value =
+                'You rejected the request in your wallet. Click Connect to retry.';
+              status.value = '';
+              return;
+            }
+            throw addErr;
+          }
+          // MetaMask doesn't always switch the active chain after a
+          // successful add; explicitly re-issue the switch.
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: chainIdHex }],
+          });
+        } else {
+          throw e;
+        }
       }
     }
 
@@ -407,7 +447,7 @@ async function connect() {
     handleClient = await createViemHandleClient(walletClient);
     status.value = '';
   } catch (e: any) {
-    error.value = e.shortMessage || e.message;
+    error.value = e.shortMessage || e.message || 'Unknown error';
     status.value = '';
   } finally {
     loading.value = false;
@@ -430,7 +470,7 @@ async function doEncrypt() {
     handleProof.value = result.handleProof;
     status.value = '';
   } catch (e: any) {
-    error.value = e.shortMessage || e.message;
+    error.value = e.shortMessage || e.message || 'Unknown error';
     status.value = '';
   } finally {
     loading.value = false;
@@ -447,7 +487,7 @@ async function doDecrypt() {
     decryptedValue.value = value.toString();
     status.value = '';
   } catch (e: any) {
-    error.value = e.shortMessage || e.message;
+    error.value = e.shortMessage || e.message || 'Unknown error';
     status.value = '';
   } finally {
     loading.value = false;
