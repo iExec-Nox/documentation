@@ -157,7 +157,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
 import { useAccount } from '@wagmi/vue';
 import useUserStore from '@/stores/useUser.store';
 import { getChainById } from '@/utils/chain.utils';
@@ -171,7 +171,35 @@ declare global {
 
 const userStore = useUserStore();
 const { requestChainChange } = useChainSwitch();
-const { chainId: walletChainId, isConnected } = useAccount();
+const { chainId: walletChainId } = useAccount();
+
+// The widget connects via `eth_requestAccounts` directly, not through wagmi,
+// so wagmi's `isConnected` / `chainId` stay falsy on that path. Track the
+// wallet's chain id from the injected provider as well, so the mismatch
+// warning works regardless of which connect path the user used.
+const localWalletChainId = ref<number | undefined>(undefined);
+const onChainChanged = (hex: unknown) => {
+  if (typeof hex === 'string') {
+    localWalletChainId.value = parseInt(hex, 16);
+  }
+};
+onMounted(async () => {
+  if (typeof window === 'undefined' || !window.ethereum) return;
+  window.ethereum.on?.('chainChanged', onChainChanged);
+  // Read the wallet's current chain id once at mount; if the wallet is
+  // already injected we have a value before any `chainChanged` fires.
+  try {
+    const hex = await window.ethereum.request({ method: 'eth_chainId' });
+    onChainChanged(hex);
+  } catch {
+    // Wallet may not be ready / may reject; ignore.
+  }
+});
+onBeforeUnmount(() => {
+  if (typeof window !== 'undefined' && window.ethereum?.removeListener) {
+    window.ethereum.removeListener('chainChanged', onChainChanged);
+  }
+});
 
 const contractAddress = ref('');
 const plainValue = ref('');
@@ -212,8 +240,12 @@ const canDecrypt = computed(
 );
 
 const chainMismatch = computed(() => {
-  if (!isConnected.value) return null;
-  const wallet = walletChainId.value;
+  // Gate on the local connect state (`account.value`) — the widget connects
+  // via `eth_requestAccounts`, not wagmi, so `walletChainId` from wagmi may
+  // be undefined even after a successful connect. Fall back to the chain id
+  // tracked from the injected provider (`localWalletChainId`).
+  if (!account.value) return null;
+  const wallet = walletChainId.value ?? localWalletChainId.value;
   const selected = userStore.getCurrentChainId();
   if (!wallet || !selected || wallet === selected) return null;
   const selectedChain = getChainById(selected);
