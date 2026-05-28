@@ -17,6 +17,17 @@
       </div>
     </div>
 
+    <!-- Chain mismatch warning -->
+    <div v-if="chainMismatch" class="chain-mismatch">
+      Your wallet is on <strong>{{ chainMismatch.walletChainName }}</strong> but
+      the doc is set to <strong>{{ chainMismatch.selectedChainName }}</strong
+      >. Switch your wallet to
+      <strong>{{ chainMismatch.selectedChainName }}</strong
+      >, or change the selector to
+      <strong>{{ chainMismatch.walletChainName }}</strong>
+      to match.
+    </div>
+
     <!-- Encrypt section -->
     <div class="section">
       <div class="section-header">Encrypt</div>
@@ -147,6 +158,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { useAccount } from '@wagmi/vue';
 import useUserStore from '@/stores/useUser.store';
 import { getChainById } from '@/utils/chain.utils';
 import { useChainSwitch } from '@/hooks/useChainSwitch';
@@ -159,6 +171,7 @@ declare global {
 
 const userStore = useUserStore();
 const { requestChainChange } = useChainSwitch();
+const { chainId: walletChainId, isConnected } = useAccount();
 
 const contractAddress = ref('');
 const plainValue = ref('');
@@ -197,6 +210,23 @@ const canEncrypt = computed(
 const canDecrypt = computed(
   () => account.value && handleToDecrypt.value && !loading.value
 );
+
+const chainMismatch = computed(() => {
+  if (!isConnected.value) return null;
+  const wallet = walletChainId.value;
+  const selected = userStore.getCurrentChainId();
+  if (!wallet || !selected || wallet === selected) return null;
+  const selectedChain = getChainById(selected);
+  if (!selectedChain) return null;
+  const walletChain = getChainById(wallet);
+  const walletChainName = walletChain
+    ? walletChain.name
+    : `chain 0x${wallet.toString(16)}`;
+  return {
+    walletChainName,
+    selectedChainName: selectedChain.name,
+  };
+});
 
 async function connect() {
   error.value = '';
@@ -364,6 +394,21 @@ async function doDecrypt() {
   height: 6px;
   border-radius: 50%;
   background: var(--vp-c-green-1);
+}
+
+/* Chain mismatch warning */
+.chain-mismatch {
+  padding: 0.625rem 1.25rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--vp-c-warning-1);
+  background: var(--vp-c-warning-soft);
+  border-bottom: 1px solid var(--vp-c-warning-2);
+}
+
+.chain-mismatch strong {
+  font-weight: 600;
+  color: var(--vp-c-warning-1);
 }
 
 /* Sections */
