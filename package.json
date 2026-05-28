@@ -8,7 +8,8 @@
     "build": "vitepress build",
     "preview": "vitepress preview",
     "check-format": "prettier --ignore-path .gitignore --check .",
-    "format": "prettier --ignore-path .gitignore --write ."
+    "format": "prettier --ignore-path .gitignore --write .",
+    "test": "vitest"
   },
   "dependencies": {
     "@iexec-nox/handle": "^0.1.0-beta.10",
@@ -35,13 +36,15 @@
     "@types/react": "^18.3.23",
     "ethers": "^6.16.0",
     "graphql": "^16.9.0",
+    "happy-dom": "^15.11.7",
     "mermaid": "^11.14.0",
     "prettier": "^3.7.4",
     "prettier-plugin-tailwindcss": "^0.6.14",
     "typescript": "^5.9.3",
     "viem": "^2.47.5",
     "vitepress": "^1.6.3",
-    "vitepress-plugin-llms": "^1.12.2"
+    "vitepress-plugin-llms": "^1.12.2",
+    "vitest": "^2.1.9"
   },
   "overrides": {
     "@reown/appkit-adapter-wagmi": {
