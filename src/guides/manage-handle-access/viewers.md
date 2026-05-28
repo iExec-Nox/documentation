@@ -3,6 +3,16 @@ title: Managing Viewers
 description: Managing handles viewers with Nox
 ---
 
+<script setup>
+import { computed } from 'vue';
+import useUserStore from '@/stores/useUser.store';
+import { getChainById } from '@/utils/chain.utils';
+
+const userStore = useUserStore();
+const selectedChain = computed(() => userStore.getCurrentChainId());
+const chainData = computed(() => getChainById(selectedChain.value));
+</script>
+
 # Viewers
 
 Viewers are addresses that have permission to decrypt the data associated with a

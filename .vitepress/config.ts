@@ -1,4 +1,5 @@
 import { transformerTwoslash } from '@shikijs/vitepress-twoslash';
+import { readFileSync } from 'node:fs';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vitepress';
 import { loadEnv, createLogger } from 'vite';
@@ -59,7 +60,40 @@ export default withMermaid(
     },
     srcDir: './src',
     markdown: {
-      codeTransformers: [transformerTwoslash()],
+      codeTransformers: [
+        transformerTwoslash(),
+        // Swap any hardcoded per-chain NOX compute address inside fenced code
+        // blocks with the Vue interpolation `{{ chainData?.noxComputeAddress }}`,
+        // so the rendered snippet tracks the chain picked in the ChainSelector.
+        // Addresses are parsed from chain.utils.ts at config-load time (we
+        // can't import it directly: it pulls SVG assets that only Vite can
+        // resolve). Pages that rely on this MUST expose `chainData` via
+        // <script setup>.
+        (() => {
+          const chainUtilsSrc = readFileSync(
+            fileURLToPath(new URL('../src/utils/chain.utils.ts', import.meta.url)),
+            'utf-8'
+          );
+          const noxAddresses = Array.from(
+            chainUtilsSrc.matchAll(
+              /noxComputeAddress:\s*['"](0x[0-9a-fA-F]{40})['"]/g
+            ),
+            (m) => m[1]
+          );
+          return {
+            name: 'dynamic-nox-address',
+            postprocess(html: string) {
+              let out = html;
+              for (const addr of noxAddresses) {
+                out = out
+                  .split(addr)
+                  .join('{{ chainData?.noxComputeAddress }}');
+              }
+              return out;
+            },
+          };
+        })(),
+      ],
       config(md) {
         md.use(groupIconMdPlugin);
         md.use(markdownSteps);

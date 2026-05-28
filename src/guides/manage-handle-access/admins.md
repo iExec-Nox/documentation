@@ -3,6 +3,16 @@ title: Managing Admins
 description: Managing handles admins with Nox
 ---
 
+<script setup>
+import { computed } from 'vue';
+import useUserStore from '@/stores/useUser.store';
+import { getChainById } from '@/utils/chain.utils';
+
+const userStore = useUserStore();
+const selectedChain = computed(() => userStore.getCurrentChainId());
+const chainData = computed(() => getChainById(selectedChain.value));
+</script>
+
 # Admins
 
 Admins are addresses that have the most permissions on a handle. Admins can:

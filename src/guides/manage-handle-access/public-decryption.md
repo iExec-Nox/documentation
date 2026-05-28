@@ -3,6 +3,16 @@ title: Managing Public Decryption
 description: Managing public decryption of handles with Nox
 ---
 
+<script setup>
+import { computed } from 'vue';
+import useUserStore from '@/stores/useUser.store';
+import { getChainById } from '@/utils/chain.utils';
+
+const userStore = useUserStore();
+const selectedChain = computed(() => userStore.getCurrentChainId());
+const chainData = computed(() => getChainById(selectedChain.value));
+</script>
+
 # Public Decryption
 
 A handle can be made publicly decryptable, allowing anyone to decrypt its value
