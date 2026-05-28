@@ -134,9 +134,9 @@ declare global {
   }
 }
 
-// `'added'` is intentionally absent — the "currently on this chain" affordance
-// is derived from `currentWalletChainId`, so it self-corrects when the user
-// moves to a different card.
+// We don't track an 'added' state; the "Current network ✓" affordance is
+// derived live from currentWalletChainId, so it self-corrects when the user
+// switches chains outside the page (via MetaMask, another tab, etc.).
 type AddStatus = 'idle' | 'pending' | 'rejected' | 'error';
 
 interface FaucetLink {
@@ -145,9 +145,9 @@ interface FaucetLink {
   note?: string;
 }
 
-// Per-chain faucet data. `chain.utils.ts` does not expose a `faucetUrls` field,
-// so we keep this map here for now — when that field is added, swap this map
-// for `chain.faucetUrls`.
+// Per-chain faucet data. chain.utils.ts has no faucetUrls field today — keep
+// this map here until that field is added (open a follow-up issue before
+// extending this).
 const FAUCETS: Record<number, FaucetLink[]> = {
   // Arbitrum Sepolia (421614)
   421614: [
@@ -185,6 +185,14 @@ const currentWalletChainId = ref<number | undefined>(undefined);
 const statuses = reactive<Record<number, AddStatus>>({});
 const errors = reactive<Record<number, string>>({});
 
+// Guard against late `ethereum#initialized` callbacks firing after the
+// component has been torn down — without this, the once-listener can re-attach
+// a `chainChanged` handler that cleanup has already run past.
+let unmounted = false;
+// Capture the provider reference at attachment time so cleanup removes the
+// listener from the same object (matters across HMR / provider replacement).
+let providerAtAttach: any = null;
+
 function readEthereumChainId(): Promise<void> {
   if (typeof window === 'undefined' || !window.ethereum?.request) {
     return Promise.resolve();
@@ -212,16 +220,19 @@ function refreshHasWallet() {
 }
 
 function onEthereumInitialized() {
+  if (unmounted) return;
   refreshHasWallet();
   void readEthereumChainId();
-  window.ethereum?.on?.('chainChanged', onChainChanged);
+  providerAtAttach = window.ethereum ?? null;
+  providerAtAttach?.on?.('chainChanged', onChainChanged);
 }
 
 onMounted(() => {
   refreshHasWallet();
   if (hasWallet.value) {
     void readEthereumChainId();
-    window.ethereum?.on?.('chainChanged', onChainChanged);
+    providerAtAttach = window.ethereum ?? null;
+    providerAtAttach?.on?.('chainChanged', onChainChanged);
   } else if (typeof window !== 'undefined') {
     // Some wallet extensions inject `window.ethereum` after the page load.
     // EIP-6963 / EIP-1193 implementations dispatch this event when they are
@@ -233,8 +244,10 @@ onMounted(() => {
 });
 
 onBeforeUnmount(() => {
+  unmounted = true;
   if (typeof window === 'undefined') return;
-  window.ethereum?.removeListener?.('chainChanged', onChainChanged);
+  providerAtAttach?.removeListener?.('chainChanged', onChainChanged);
+  providerAtAttach = null;
   window.removeEventListener('ethereum#initialized', onEthereumInitialized);
 });
 
@@ -318,16 +331,27 @@ async function addToWallet(chain: Chain) {
         statuses[chain.id] = 'idle';
         await readEthereumChainId();
       } catch (addErr: any) {
-        if (addErr?.code === 4001) {
+        if (addErr?.code === 4001 || addErr?.code === 'ACTION_REJECTED') {
           statuses[chain.id] = 'rejected';
+        } else if (addErr?.code === -32002) {
+          statuses[chain.id] = 'error';
+          errors[chain.id] =
+            'A wallet request is already pending. Please open your wallet.';
         } else {
           statuses[chain.id] = 'error';
           errors[chain.id] =
             addErr?.shortMessage || addErr?.message || 'Unknown error';
         }
       }
-    } else if (switchErr?.code === 4001) {
+    } else if (
+      switchErr?.code === 4001 ||
+      switchErr?.code === 'ACTION_REJECTED'
+    ) {
       statuses[chain.id] = 'rejected';
+    } else if (switchErr?.code === -32002) {
+      statuses[chain.id] = 'error';
+      errors[chain.id] =
+        'A wallet request is already pending. Please open your wallet.';
     } else {
       statuses[chain.id] = 'error';
       errors[chain.id] =
