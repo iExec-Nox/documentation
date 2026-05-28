@@ -108,13 +108,6 @@
           You rejected the request in your wallet. Click again to retry.
         </p>
         <p
-          v-else-if="statusFor(chain.id) === 'unknown'"
-          class="network-card__hint network-card__hint--warn"
-        >
-          Your wallet did not recognize this chain. Try clicking again to add
-          it.
-        </p>
-        <p
           v-else-if="statusFor(chain.id) === 'error'"
           class="network-card__hint network-card__hint--warn"
         >
@@ -126,9 +119,10 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, computed, onMounted, ref } from 'vue';
+import { reactive, onMounted, ref } from 'vue';
 import { getSupportedChains, type Chain } from '@/utils/chain.utils';
 import { useChainSwitch } from '@/hooks/useChainSwitch';
+import { useAccount } from '@wagmi/vue';
 
 declare global {
   interface Window {
@@ -136,13 +130,7 @@ declare global {
   }
 }
 
-type AddStatus =
-  | 'idle'
-  | 'pending'
-  | 'added'
-  | 'rejected'
-  | 'unknown'
-  | 'error';
+type AddStatus = 'idle' | 'pending' | 'added' | 'rejected' | 'error';
 
 interface FaucetLink {
   label: string;
@@ -183,6 +171,7 @@ const FAUCETS: Record<number, FaucetLink[]> = {
 
 const chains: Chain[] = getSupportedChains();
 const { requestChainChange } = useChainSwitch();
+const { isConnected } = useAccount();
 
 const hasWallet = ref(false);
 const statuses = reactive<Record<number, AddStatus>>({});
@@ -212,8 +201,6 @@ function buttonLabel(chainId: number): string {
       return 'Added / switched ✓';
     case 'rejected':
       return 'Retry: add to wallet';
-    case 'unknown':
-      return 'Retry: add to wallet';
     case 'error':
       return 'Retry: add to wallet';
     default:
@@ -231,14 +218,25 @@ async function addToWallet(chain: Chain) {
 
   const chainIdHex = `0x${chain.id.toString(16)}`;
 
+  // Sync the doc-side store after a successful wallet operation. When the
+  // wallet is connected through wagmi, wagmi itself listens for `chainChanged`
+  // and updates its state, so calling `requestChainChange` (which delegates to
+  // wagmi's `switchChain`) would dispatch a redundant EIP-1193 prompt. Only
+  // call it on the disconnected path, where it writes the chain to the Pinia
+  // store without touching the wallet.
+  async function syncStoreAfterWallet(chainId: number) {
+    if (!isConnected.value) {
+      await requestChainChange(chainId);
+    }
+  }
+
   try {
     // Try a plain switch first — works if the wallet already knows the chain.
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: chainIdHex }],
     });
-    // Keep our store / wagmi in sync.
-    await requestChainChange(chain.id);
+    await syncStoreAfterWallet(chain.id);
     statuses[chain.id] = 'added';
   } catch (switchErr: any) {
     // EIP-1193 4902: chain not added yet — add then switch.
@@ -256,7 +254,7 @@ async function addToWallet(chain: Chain) {
             },
           ],
         });
-        await requestChainChange(chain.id);
+        await syncStoreAfterWallet(chain.id);
         statuses[chain.id] = 'added';
       } catch (addErr: any) {
         if (addErr?.code === 4001) {
@@ -269,8 +267,6 @@ async function addToWallet(chain: Chain) {
       }
     } else if (switchErr?.code === 4001) {
       statuses[chain.id] = 'rejected';
-    } else if (switchErr?.code === 4902) {
-      statuses[chain.id] = 'unknown';
     } else {
       statuses[chain.id] = 'error';
       errors[chain.id] =
@@ -278,11 +274,6 @@ async function addToWallet(chain: Chain) {
     }
   }
 }
-
-// Exposed for templates that compute derived values (unused here but kept
-// for parity with other components).
-const _allStatuses = computed(() => ({ ...statuses }));
-void _allStatuses;
 </script>
 
 <style scoped>
