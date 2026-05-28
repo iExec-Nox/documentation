@@ -3,6 +3,7 @@ import type { DefaultTheme } from 'vitepress';
 function getStartedItems(_active: boolean): DefaultTheme.SidebarItem[] {
   return [
     { text: 'Welcome', link: '/getting-started/welcome' },
+    { text: 'Networks', link: '/getting-started/networks' },
     { text: 'Hello World', link: '/getting-started/hello-world' },
     { text: 'Use Cases', link: '/getting-started/use-cases' },
     { text: 'Use AI to build on NOX', link: '/getting-started/use-ai' },
