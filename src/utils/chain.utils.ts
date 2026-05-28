@@ -30,6 +30,12 @@ export interface Chain {
     };
   };
   chainName: string;
+  /**
+   * Identifier of the chain in `viem/chains` (e.g. `arbitrumSepolia`,
+   * `sepolia`). Used by the Shiki `dynamic-nox-address` transformer to
+   * rewrite hardcoded viem chain references in docs code blocks.
+   */
+  viemChain: string;
   noxComputeAddress: string;
   gatewayUrl: string;
   subgraphUrl: string;
@@ -45,6 +51,7 @@ export function getSupportedChains(): Chain[] {
       rpcUrls: arbitrumSepolia.rpcUrls,
       blockExplorers: arbitrumSepolia.blockExplorers,
       chainName: 'arbitrum-sepolia-testnet',
+      viemChain: 'arbitrumSepolia',
       noxComputeAddress: '0xd464B198f06756a1d00be223634b85E0a731c229',
       gatewayUrl:
         'https://2e1800fc0dddeeadc189283ed1dce13c1ae28d48-3000.apps.ovh-tdx-dev.noxprotocol.dev',
@@ -59,6 +66,7 @@ export function getSupportedChains(): Chain[] {
       rpcUrls: sepolia.rpcUrls,
       blockExplorers: sepolia.blockExplorers,
       chainName: 'ethereum-sepolia-testnet',
+      viemChain: 'sepolia',
       // ⚠️ TODO Ethereum Sepolia — replace before shipping (see file header).
       noxComputeAddress: 'TODO_ETH_SEPOLIA_NOX_COMPUTE_ADDRESS',
       gatewayUrl: 'TODO_ETH_SEPOLIA_GATEWAY_URL',

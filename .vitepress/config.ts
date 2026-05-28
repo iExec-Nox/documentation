@@ -62,12 +62,19 @@ export default withMermaid(
     markdown: {
       codeTransformers: [
         transformerTwoslash(),
-        // Swap any hardcoded per-chain NOX compute address inside fenced code
-        // blocks with the Vue interpolation `{{ chainData?.noxComputeAddress }}`,
-        // so the rendered snippet tracks the chain picked in the ChainSelector.
-        // Addresses are parsed from chain.utils.ts at config-load time (we
+        // Swap any hardcoded per-chain reference inside fenced code blocks
+        // with a Vue interpolation, so the rendered snippet tracks the chain
+        // picked in the ChainSelector. Two patterns are rewritten:
+        //   - the NOX compute address (e.g. `0xd464…`)
+        //     → `{{ chainData?.noxComputeAddress }}`
+        //   - the viem chain identifier (e.g. `arbitrumSepolia`)
+        //     → `{{ chainData?.viemChain }}` (only in blocks that ALSO
+        //       contain a NOX address, to keep the swap scoped to pages
+        //       that expose `chainData`).
+        //
+        // Values are parsed from chain.utils.ts at config-load time — we
         // can't import it directly: it pulls SVG assets that only Vite can
-        // resolve). Pages that rely on this MUST expose `chainData` via
+        // resolve. Pages that rely on this MUST expose `chainData` via a
         // <script setup>.
         (() => {
           const chainUtilsSrc = readFileSync(
@@ -80,18 +87,33 @@ export default withMermaid(
             ),
             (m) => m[1]
           );
+          const viemChains = Array.from(
+            chainUtilsSrc.matchAll(/viemChain:\s*['"]([A-Za-z0-9_]+)['"]/g),
+            (m) => m[1]
+          );
           return {
             name: 'dynamic-nox-address',
             postprocess(html: string) {
               let out = html;
+              let swappedAddress = false;
               for (const addr of noxAddresses) {
+                if (!out.includes(addr)) continue;
                 out = out
                   .split(addr)
                   .join('{{ chainData?.noxComputeAddress }}');
+                swappedAddress = true;
+              }
+              if (swappedAddress) {
+                for (const viem of viemChains) {
+                  out = out.split(viem).join('{{ chainData?.viemChain }}');
+                }
               }
               return out;
             },
-          };
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          } as any; // vitepress and @shikijs/vitepress-twoslash resolve to
+          // distinct copies of @shikijs/types whose ShikiTransformer types
+          // are structurally identical but nominally different.
         })(),
       ],
       config(md) {
