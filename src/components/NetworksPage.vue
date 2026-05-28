@@ -327,6 +327,13 @@ async function addToWallet(chain: Chain) {
             },
           ],
         });
+        // MetaMask doesn't always switch the active chain after a successful
+        // add; explicitly re-issue the switch so the "Current network ✓"
+        // affordance reflects reality (mirror PiggyBankDemo).
+        await window.ethereum.request({
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: chainIdHex }],
+        });
         await syncStoreAfterWallet(chain.id);
         statuses[chain.id] = 'idle';
         await readEthereumChainId();
