@@ -2,11 +2,8 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 
 // Mock the wagmi boundary so the hook does not touch a real connection.
-// NOTE: the real @wagmi/vue exposes `isConnected` as a Vue Ref<boolean>, but
-// the current hook reads it as a plain boolean (`if (isConnected)` rather
-// than `if (isConnected.value)`). We mirror what the hook actually consumes
-// here so the test exercises the *implemented* truthiness check; see the
-// orchestrator note in the report about the latent bug this surfaces.
+// `@wagmi/vue`'s `useAccount()` returns `isConnected` as a `Ref<boolean>`, so
+// the mock exposes it as a `{ value: boolean }` getter that mirrors that shape.
 const switchChainMock = vi.fn();
 let isConnectedValue: boolean = false;
 
@@ -16,8 +13,10 @@ vi.mock('@wagmi/core', () => ({
 
 vi.mock('@wagmi/vue', () => ({
   useAccount: () => ({
-    get isConnected() {
-      return isConnectedValue;
+    isConnected: {
+      get value() {
+        return isConnectedValue;
+      },
     },
   }),
 }));
