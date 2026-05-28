@@ -92,7 +92,11 @@
       <footer class="network-card__footer">
         <button
           class="network-card__add-btn"
-          :disabled="!hasWallet || statusFor(chain.id) === 'pending'"
+          :disabled="
+            !hasWallet ||
+            statusFor(chain.id) === 'pending' ||
+            isCurrentChain(chain.id)
+          "
           @click="addToWallet(chain)"
         >
           {{ buttonLabel(chain.id) }}
@@ -119,7 +123,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, onMounted, ref } from 'vue';
+import { reactive, onMounted, onBeforeUnmount, ref } from 'vue';
 import { getSupportedChains, type Chain } from '@/utils/chain.utils';
 import { useChainSwitch } from '@/hooks/useChainSwitch';
 import { useAccount } from '@wagmi/vue';
@@ -130,7 +134,10 @@ declare global {
   }
 }
 
-type AddStatus = 'idle' | 'pending' | 'added' | 'rejected' | 'error';
+// `'added'` is intentionally absent — the "currently on this chain" affordance
+// is derived from `currentWalletChainId`, so it self-corrects when the user
+// moves to a different card.
+type AddStatus = 'idle' | 'pending' | 'rejected' | 'error';
 
 interface FaucetLink {
   label: string;
@@ -174,12 +181,66 @@ const { requestChainChange } = useChainSwitch();
 const { isConnected } = useAccount();
 
 const hasWallet = ref(false);
+const currentWalletChainId = ref<number | undefined>(undefined);
 const statuses = reactive<Record<number, AddStatus>>({});
 const errors = reactive<Record<number, string>>({});
 
-onMounted(() => {
+function readEthereumChainId(): Promise<void> {
+  if (typeof window === 'undefined' || !window.ethereum?.request) {
+    return Promise.resolve();
+  }
+  return window.ethereum
+    .request({ method: 'eth_chainId' })
+    .then((hex: unknown) => {
+      if (typeof hex === 'string') {
+        currentWalletChainId.value = parseInt(hex, 16);
+      }
+    })
+    .catch(() => {
+      /* wallet not ready or rejected — ignore */
+    });
+}
+
+function onChainChanged(hex: unknown) {
+  if (typeof hex === 'string') {
+    currentWalletChainId.value = parseInt(hex, 16);
+  }
+}
+
+function refreshHasWallet() {
   hasWallet.value = typeof window !== 'undefined' && Boolean(window.ethereum);
+}
+
+function onEthereumInitialized() {
+  refreshHasWallet();
+  void readEthereumChainId();
+  window.ethereum?.on?.('chainChanged', onChainChanged);
+}
+
+onMounted(() => {
+  refreshHasWallet();
+  if (hasWallet.value) {
+    void readEthereumChainId();
+    window.ethereum?.on?.('chainChanged', onChainChanged);
+  } else if (typeof window !== 'undefined') {
+    // Some wallet extensions inject `window.ethereum` after the page load.
+    // EIP-6963 / EIP-1193 implementations dispatch this event when they are
+    // ready — listen once so late providers don't leave the buttons stuck.
+    window.addEventListener('ethereum#initialized', onEthereumInitialized, {
+      once: true,
+    });
+  }
 });
+
+onBeforeUnmount(() => {
+  if (typeof window === 'undefined') return;
+  window.ethereum?.removeListener?.('chainChanged', onChainChanged);
+  window.removeEventListener('ethereum#initialized', onEthereumInitialized);
+});
+
+function isCurrentChain(chainId: number): boolean {
+  return currentWalletChainId.value === chainId;
+}
 
 function faucetsFor(chainId: number): FaucetLink[] {
   return FAUCETS[chainId] ?? [];
@@ -194,11 +255,9 @@ function errorFor(chainId: number): string {
 }
 
 function buttonLabel(chainId: number): string {
+  if (statusFor(chainId) === 'pending') return 'Waiting for wallet…';
+  if (isCurrentChain(chainId)) return 'Current network ✓';
   switch (statusFor(chainId)) {
-    case 'pending':
-      return 'Waiting for wallet…';
-    case 'added':
-      return 'Added / switched ✓';
     case 'rejected':
       return 'Retry: add to wallet';
     case 'error':
@@ -255,7 +314,8 @@ async function addToWallet(chain: Chain) {
           ],
         });
         await syncStoreAfterWallet(chain.id);
-        statuses[chain.id] = 'added';
+        statuses[chain.id] = 'idle';
+        await readEthereumChainId();
       } catch (addErr: any) {
         if (addErr?.code === 4001) {
           statuses[chain.id] = 'rejected';
