@@ -15,7 +15,7 @@ export function useChainSwitch() {
    */
   async function requestChainChange(chainId: number) {
     if (isConnected.value) {
-      switchChain(wagmiAdapter.wagmiConfig, { chainId });
+      return await switchChain(wagmiAdapter.wagmiConfig, { chainId });
     } else {
       setChainId(chainId);
     }

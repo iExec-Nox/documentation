@@ -1,9 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { createPinia, setActivePinia } from 'pinia';
 
-// Mock the wagmi boundary so the hook does not touch a real connection.
-// `@wagmi/vue`'s `useAccount()` returns `isConnected` as a `Ref<boolean>`, so
-// the mock exposes it as a `{ value: boolean }` getter that mirrors that shape.
+// Mirror wagmi's Ref<boolean> shape for isConnected.
 const switchChainMock = vi.fn();
 let isConnectedValue: boolean = false;
 
@@ -51,6 +49,15 @@ describe('useChainSwitch', () => {
     );
     // store untouched when delegating to wagmi
     expect(store.chainId).toBe(initialChainId);
+  });
+
+  it('propagates rejection from wagmi switchChain when connected', async () => {
+    isConnectedValue = true;
+    switchChainMock.mockRejectedValueOnce(new Error('User rejected'));
+
+    const { requestChainChange } = useChainSwitch();
+
+    await expect(requestChainChange(421614)).rejects.toThrow('User rejected');
   });
 
   it('writes to the store only and does not call switchChain when disconnected', async () => {
