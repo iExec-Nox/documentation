@@ -96,10 +96,8 @@ const provider: AbstractProvider = new BrowserProvider(
 
 const handle = '0xHandle';
 
-/**
+/*
  * Nox protocol contract address, depending on the network.
- *
- * See deployment page for more details.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
   '0xd464B198f06756a1d00be223634b85E0a731c229';
@@ -149,10 +147,8 @@ const publicClient = createPublicClient({
   transport: http(),
 });
 
-/**
+/*
  * Nox protocol contract address, depending on the network.
- *
- * See deployment page for more details.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
   '0xd464B198f06756a1d00be223634b85E0a731c229';
@@ -249,10 +245,8 @@ const signer: BrowserProvider | AbstractSigner<Provider> = new BrowserProvider(
 
 const handle = '0xHandle';
 
-/**
+/*
  * Nox protocol contract address, depending on the network.
- *
- * See deployment page for more details.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
   '0xd464B198f06756a1d00be223634b85E0a731c229';
@@ -307,10 +301,8 @@ const walletClient: WalletClient = createWalletClient({
   chain: CHAIN,
 });
 
-/**
+/*
  * Nox protocol contract address, depending on the network.
- *
- * See deployment page for more details.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
   '0xd464B198f06756a1d00be223634b85E0a731c229';
