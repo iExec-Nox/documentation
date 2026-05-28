@@ -236,13 +236,17 @@ selected chain is stored in the Pinia store `src/stores/useUser.store.ts` and
 exposed through `getCurrentChainId()`.
 
 Because of this, any content that differs from one chain to another must adapt
-to the reader's selection instead of hard-coding a single chain. There are two
+to the reader's selection instead of hard-coding a single chain. There are three
 patterns for this:
 
 - **Pattern A — value injection**: for chain-specific _values_ in prose (chain
   name, chain id, contract address, RPC URL, native currency symbol).
 - **Pattern B — template fork**: for chain-divergent _code blocks_ (imports,
   twoslash type-checked snippets).
+- **Pattern C — auto-swap inside code blocks**: for chain-specific _values
+  embedded inside an otherwise identical code block_ (currently the NoxCompute
+  contract address). A Shiki post-processor swaps the value in the rendered HTML
+  without forking the snippet, so twoslash keeps type-checking the real address.
 
 ### Adding a new chain
 
@@ -406,6 +410,66 @@ Notes:
 - When wrapping forked blocks that Prettier reflows incorrectly, use
   `<!-- prettier-ignore-start -->` / `<!-- prettier-ignore-end -->` around them,
   as `encryptInput.md` does.
+
+### Pattern C — auto-swap inside code blocks
+
+Some snippets are structurally identical across chains except for a single
+hard-coded value, typically the NoxCompute contract address. Pattern B (forking
+the whole block) would duplicate large amounts of code for one value. Pattern A
+(an interpolation in prose) does not work inside a fenced code block — twoslash
+would see `{{ chainData?.noxComputeAddress }}` as invalid TypeScript and fail to
+type-check.
+
+Pattern C solves this with a **Shiki post-processor** registered in
+`.vitepress/config.ts` (`dynamic-nox-address`). At config-load time it parses
+every `noxComputeAddress` from `src/utils/chain.utils.ts`; at render time, it
+scans the HTML output of each fenced code block and replaces any of those
+addresses with the Vue interpolation `{{ chainData?.noxComputeAddress }}`. The
+result: twoslash still type-checks the snippet against the canonical hard-coded
+address, but the address the reader _sees_ tracks the chain they selected.
+
+To use Pattern C in a page, expose `chainData` from a `<script setup>` block on
+the page (the manage-handle-access guides do this — see
+`src/guides/manage-handle-access/admins.md`):
+
+```vue
+<script setup>
+import { computed } from 'vue';
+import useUserStore from '@/stores/useUser.store';
+import { getChainById } from '@/utils/chain.utils';
+
+const userStore = useUserStore();
+const selectedChain = computed(() => userStore.getCurrentChainId());
+const chainData = computed(() => getChainById(selectedChain.value));
+</script>
+```
+
+Then write your code block with the canonical (Arbitrum Sepolia) NoxCompute
+address hard-coded — no special syntax needed:
+
+````md
+```ts twoslash
+import { createViemHandleClient } from '@iexec-nox/handle';
+// …
+const NOX_CONTRACT_ADDRESS = '0xC81e1c46eED3a32a0E0e25d8FD0bd6D8b9aa3BB7';
+```
+````
+
+The post-processor will swap that exact address for the selected chain's value
+at render time. If the page lacks the `chainData` binding the interpolation
+falls back to nothing — make sure every page that relies on Pattern C also
+exposes it.
+
+Notes:
+
+- Only `noxComputeAddress` is auto-swapped today. To extend Pattern C to another
+  `Chain` field, update the `dynamic-nox-address` transformer in
+  `.vitepress/config.ts`.
+- Pattern C does not interact with the Pinia store directly — it relies on the
+  page's `chainData` computed, which reads the store like Pattern A does.
+- When adding a new chain (see "Adding a new chain" above), Pattern C picks up
+  the new `noxComputeAddress` automatically; no code block needs to be edited
+  for the address swap to work.
 
 ## 📚 Project Structure
 
