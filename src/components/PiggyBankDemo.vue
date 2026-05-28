@@ -290,11 +290,17 @@ const chainNotReady = computed(() => {
   };
 });
 
-function switchToLiveChain() {
+async function switchToLiveChain() {
   const fallback = chainNotReady.value?.liveChain;
-  if (fallback) {
-    userStore.setSelectedChain(fallback);
-  }
+  if (!fallback) return;
+  // Mirror what the navbar ChainSelector does on a user pick: write to the
+  // store AND ask the wallet to switch via requestChainChange. The selector's
+  // display reads `chainId.value (wallet) || userStore.chainId`, so when a
+  // wallet is connected through wagmi, updating the store alone isn't enough
+  // — the wallet's chain wins. requestChainChange triggers a real
+  // wallet_switchEthereumChain (or just writes the store when disconnected).
+  userStore.setSelectedChain(fallback);
+  await requestChainChange(fallback.id);
 }
 
 // Clear transient state when the doc-selector chain changes — otherwise an
