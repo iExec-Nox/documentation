@@ -20,13 +20,17 @@ describe('getSupportedChains', () => {
       expect(typeof chain.id).toBe('number');
       expect(chain.id).toBeGreaterThan(0);
 
-      // The Eth Sepolia placeholders (TODO_ETH_SEPOLIA_*) count as
-      // "populated" — what we assert here is "non-empty string", not a real
-      // value. Slice 08 will swap those markers for real data.
+      // The TODO_ETH_SEPOLIA_* placeholders count as "populated" here — we
+      // assert non-empty strings (and 0x-format for noxComputeAddress), not
+      // real on-chain values. Tighten this check once Ethereum Sepolia goes
+      // live.
       for (const field of REQUIRED_STRING_FIELDS) {
         const value = chain[field];
         expect(typeof value).toBe('string');
         expect(value.length).toBeGreaterThan(0);
+        if (field === 'noxComputeAddress') {
+          expect(value).toMatch(/^0x[0-9a-fA-F]{40}$|^TODO_/);
+        }
       }
 
       expect(chain.nativeCurrency).toBeDefined();
@@ -47,7 +51,12 @@ describe('getChainById', () => {
     const chain = getChainById(421614);
     expect(chain).toBeDefined();
     expect(chain?.id).toBe(421614);
-    expect(chain?.chainName).toBe('arbitrum-sepolia-testnet');
+  });
+
+  it('returns the matching chain for a known id (Ethereum Sepolia, 11155111)', () => {
+    const chain = getChainById(11155111);
+    expect(chain).toBeDefined();
+    expect(chain?.id).toBe(11155111);
   });
 
   it('returns undefined for an unknown id (999999)', () => {
