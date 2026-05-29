@@ -134,7 +134,7 @@
     },
     {
       "term": "Interoperability",
-      "definition": "One of Nox's pillars: compatibility with existing blockchains, notably Arbitrum.",
+      "definition": "One of Nox's pillars: compatibility with existing blockchains, notably Arbitrum and Ethereum.",
       "category": "General"
     },
     {
@@ -194,7 +194,7 @@
     },
     {
       "term": "preHandle",
-      "definition": "Hash calculated via keccak256(operator, operands, NoxCompte, msg.sender, block.timestamp, outputIndex) before being truncated to form the final handle.",
+      "definition": "Hash calculated via keccak256(operator, operands, NoxCompute, msg.sender, block.timestamp, outputIndex) before being truncated to form the final handle.",
       "category": "EVM"
     },
     {
