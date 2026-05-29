@@ -16,6 +16,10 @@ When helping a developer build on NOX, always start from the handle lifecycle an
 
 <!--
   The root path is redirected to /getting-started/welcome server-side via
-  vercel.json (307). This page is only a static fallback if that redirect
-  is ever bypassed.
+  vercel.json (308). The visible content below is only a fallback rendered
+  if that redirect is ever bypassed.
 -->
+
+# Nox Documentation
+
+Continue to [Get Started → Welcome](/getting-started/welcome).

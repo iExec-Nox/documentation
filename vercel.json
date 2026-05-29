@@ -4,7 +4,7 @@
     {
       "source": "/",
       "destination": "/getting-started/welcome",
-      "statusCode": 307
+      "statusCode": 308
     },
     {
       "source": "/nox-protocol/:path*",
