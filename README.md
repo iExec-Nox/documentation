@@ -15,6 +15,23 @@ Install the project dependencies:
 npm install
 ```
 
+### Environment variables
+
+The chain switcher integrates [Reown AppKit](https://cloud.reown.com)
+(WalletConnect). Set `VITE_REOWN_PROJECT_ID` to enable WalletConnect (the QR
+modal). It is optional: without it, `npm run dev` and `npm run build` still
+work, and so do doc-view chain switching and the injected-wallet (MetaMask) path
+— the WalletConnect QR modal will still appear but won't connect.
+
+To enable WalletConnect, create a `.env.local` file at the project root (it is
+git-ignored):
+
+```bash
+VITE_REOWN_PROJECT_ID=your_project_id_here
+```
+
+Get a free project id from the [Reown dashboard](https://cloud.reown.com).
+
 ### Development Server
 
 Start the development server:

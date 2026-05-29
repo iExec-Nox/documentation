@@ -55,7 +55,7 @@ effectively participate in the development and improvement of the documentation.
 
    ```bash
    git add .
-   git commit -m "Add: description of your changes"
+   git commit -m "docs: describe your changes"
    ```
 
 5. **Push to your fork**:
@@ -227,6 +227,255 @@ Create your `.env` file based on `.env.example`.
 ::: tip Success! Your installation is now complete! :::
 ````
 
+## 🔗 Multi-chain Content
+
+The list of supported networks lives in `src/utils/chain.utils.ts`
+(`getSupportedChains()` and `getChainById()`). The reader picks the active chain
+with the `ChainSelector` in the navbar; the selection is stored in the Pinia
+store at `src/stores/useUser.store.ts` and exposed through
+`getCurrentChainId()`.
+
+Any content that varies across chains must adapt to that selection rather than
+hard-code a single chain. Three patterns cover the cases that come up. Pattern A
+injects chain-specific values into prose (a chain name, a contract address, an
+RPC URL) through `{{ … }}` interpolations backed by a `<script setup>` block
+that reads the store. Pattern B forks an entire code block into per-chain
+`<template>` branches when the chain itself is structural, like the
+`viem/chains` import or the `chain:` argument to viem. Pattern C handles the
+in-between case: a code block that is identical across chains except for one
+hard-coded value (currently the NoxCompute contract address). A Shiki
+post-processor rewrites the address in the rendered HTML, so twoslash keeps
+type-checking against the canonical Arbitrum Sepolia value while the reader sees
+the address for the selected chain.
+
+### Adding a new chain
+
+When Nox is deployed to a new network, add it in one place and the rest of the
+docs follow.
+
+1. **Add one entry to `getSupportedChains()`** in `src/utils/chain.utils.ts`
+   with all required fields from the `Chain` interface:
+
+   ```ts
+   {
+     id: myChain.id,
+     name: 'My Chain',
+     icon: myChainLogo, // imported from @/assets/icons/…
+     nativeCurrency: myChain.nativeCurrency,
+     rpcUrls: myChain.rpcUrls,
+     blockExplorers: myChain.blockExplorers,
+     chainName: 'my-chain-testnet',
+     viemChain: 'myChain', // the viem/chains identifier, as a string
+     noxComputeAddress: '0x…', // the NoxCompute contract on this chain
+     gatewayUrl: 'https://…', // the Handle Gateway URL
+     subgraphUrl: 'https://…', // the subgraph endpoint
+   }
+   ```
+
+   The `id`, `nativeCurrency`, `rpcUrls`, and `blockExplorers` fields are reused
+   from viem's well-known chains (`import { myChain } from 'viem/chains'`) so
+   they stay correct, and `viemChain` is that import's identifier as a string
+   (used by the `dynamic-nox-address` transformer — see Pattern C). The
+   `noxComputeAddress`, `gatewayUrl`, and `subgraphUrl` are Nox-specific and
+   must be the real deployed values.
+
+2. **Verify the wallet "add chain" payload (EIP-3085).** The demo components
+   build the `wallet_addEthereumChain` request from the `Chain` entry, so the
+   fields must be coherent:
+
+   ```ts
+   {
+     chainId: `0x${chain.id.toString(16)}`,
+     chainName: chain.name,
+     nativeCurrency: chain.nativeCurrency,
+     rpcUrls: [...chain.rpcUrls.default.http],
+     blockExplorerUrls: [chain.blockExplorers.default.url],
+   }
+   ```
+
+   If any of these are wrong, "add to wallet" will fail for the new chain.
+
+3. **Add a row to the "Supported Networks" table** in
+   `src/references/js-sdk/advanced-configuration.md`:
+
+   ```markdown
+   | Network          | Chain ID   |
+   | ---------------- | ---------- |
+   | Arbitrum Sepolia | `421614`   |
+   | Ethereum Sepolia | `11155111` |
+   | My Chain         | `<id>`     |
+   ```
+
+4. **Fill the per-chain branch of every existing `<template v-if>` snippet.**
+   Pattern B blocks branch on the chain id (see below). Adding a chain means
+   adding the matching `<template v-else-if="selectedChain === <id>">` branch to
+   each forked code block so the new chain is not left blank.
+
+### Pattern A — value injection
+
+Use this when prose mentions a chain-specific value (chain name, chain id,
+contract address, RPC URL, native currency symbol). Reference the value with a
+`{{ … }}` interpolation and expose it from a `<script setup>` block that reads
+the store.
+
+In the prose, write the chain-dependent value as an interpolation:
+
+```markdown
+Make sure your wallet is connected to **{{ chainName }}** (use the chain
+switcher in the top bar) before hitting **Deploy**.
+```
+
+Then add a `<script setup>` block (`src/getting-started/hello-world.md` does
+exactly this) that derives the value from the selected chain:
+
+```vue
+<script setup>
+import { computed } from 'vue';
+import useUserStore from '@/stores/useUser.store';
+import { getChainById } from '@/utils/chain.utils';
+
+const userStore = useUserStore();
+const selectedChain = computed(() => userStore.getCurrentChainId());
+const chainData = computed(() => getChainById(selectedChain.value));
+const chainName = computed(() => chainData.value?.name);
+</script>
+```
+
+Expose whichever fields the page needs (for example
+`const chainId = computed(() => chainData.value?.id)` or
+`const noxComputeAddress = computed(() => chainData.value?.noxComputeAddress)`)
+and reference them as `{{ chainId }}`, `{{ noxComputeAddress }}`, and so on.
+Always pull values from `getChainById()` so they stay correct when chains
+change.
+
+### Pattern B — template fork
+
+Use this when a code block has chain-divergent structural content: a different
+`viem/chains` import, a different chain object passed to viem, or twoslash
+type-checked code that has to compile against chain-specific imports. Fork the
+whole block into per-chain `<template>` branches keyed by chain id, as the JS
+SDK method pages do (see `src/references/js-sdk/methods/encryptInput.md`):
+
+````md
+<template v-if="selectedChain === 421614">
+
+```ts twoslash
+import { createViemHandleClient } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+import { arbitrumSepolia } from 'viem/chains';
+
+const walletClient = createWalletClient({
+  chain: arbitrumSepolia,
+  transport: custom(window.ethereum),
+});
+
+const handleClient = await createViemHandleClient(walletClient);
+```
+
+</template>
+<template v-else-if="selectedChain === 11155111">
+
+```ts twoslash
+import { createViemHandleClient } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+import { sepolia } from 'viem/chains';
+
+const walletClient = createWalletClient({
+  chain: sepolia,
+  transport: custom(window.ethereum),
+});
+
+const handleClient = await createViemHandleClient(walletClient);
+```
+
+</template>
+````
+
+The `selectedChain` variable comes from the same `<script setup>` block as
+Pattern A:
+
+```vue
+<script setup>
+import { computed } from 'vue';
+import useUserStore from '@/stores/useUser.store';
+
+const userStore = useUserStore();
+const selectedChain = computed(() => userStore.getCurrentChainId());
+</script>
+```
+
+Notes:
+
+- Branch on the numeric chain id (`421614`, `11155111`, …), matching the `id`
+  field in `getSupportedChains()`.
+- Keep each branch's code identical except for the lines that actually differ
+  (here, the `viem/chains` import and the `chain:` value) so the branches stay
+  easy to diff and maintain.
+- When wrapping forked blocks that Prettier reflows incorrectly, use
+  `<!-- prettier-ignore-start -->` / `<!-- prettier-ignore-end -->` around them,
+  as `encryptInput.md` does.
+
+### Pattern C — auto-swap inside code blocks
+
+Some snippets are structurally identical across chains except for a single
+hard-coded value, typically the NoxCompute contract address. Pattern B (forking
+the whole block) would duplicate large amounts of code for one value. Pattern A
+(a prose interpolation) does not work inside a fenced code block: twoslash would
+see `{{ chainData?.noxComputeAddress }}` as invalid TypeScript and fail to
+type-check.
+
+Pattern C uses a Shiki post-processor registered in `.vitepress/config.ts`
+(`dynamic-nox-address`). At config-load time it parses every `noxComputeAddress`
+from `src/utils/chain.utils.ts`; at render time it scans the HTML output of each
+fenced code block and replaces any of those addresses with the Vue interpolation
+`{{ chainData?.noxComputeAddress }}`. Twoslash still type-checks the snippet
+against the canonical hard-coded address, but the address the reader sees tracks
+the selected chain.
+
+To use Pattern C in a page, expose `chainData` from a `<script setup>` block.
+The manage-handle-access guides do this; see
+`src/guides/manage-handle-access/admins.md`:
+
+```vue
+<script setup>
+import { computed } from 'vue';
+import useUserStore from '@/stores/useUser.store';
+import { getChainById } from '@/utils/chain.utils';
+
+const userStore = useUserStore();
+const selectedChain = computed(() => userStore.getCurrentChainId());
+const chainData = computed(() => getChainById(selectedChain.value));
+</script>
+```
+
+Then write your code block with the canonical (Arbitrum Sepolia) NoxCompute
+address hard-coded; no special syntax is needed:
+
+````md
+```ts twoslash
+import { createViemHandleClient } from '@iexec-nox/handle';
+// …
+const NOX_CONTRACT_ADDRESS = '0xd464B198f06756a1d00be223634b85E0a731c229';
+```
+````
+
+The post-processor will swap that exact address for the selected chain's value
+at render time. If the page lacks the `chainData` binding the interpolation
+falls back to nothing, so make sure every page that relies on Pattern C exposes
+it.
+
+Notes:
+
+- `noxComputeAddress` and the `viemChain` identifier are auto-swapped today (the
+  `viemChain` swap only fires in code blocks that also contain a NoxCompute
+  address). To extend Pattern C to another `Chain` field, update the
+  `dynamic-nox-address` transformer in `.vitepress/config.ts`.
+- Pattern C does not interact with the Pinia store directly; it relies on the
+  page's `chainData` computed, which reads the store like Pattern A does.
+- When adding a new chain (see "Adding a new chain" above), Pattern C picks up
+  the new `noxComputeAddress` automatically; no code block needs to be edited
+  for the address swap to work.
+
 ## 📚 Project Structure
 
 ### File Organization
@@ -234,7 +483,7 @@ Create your `.env` file based on `.env.example`.
 ```
 src/
 ├── components/          # Reusable Vue components
-├── get-started/         # Getting started guides
+├── getting-started/     # Getting started guides
 ├── guides/              # Detailed guides
 ├── protocol/            # Protocol documentation
 ├── references/          # API references
@@ -249,20 +498,18 @@ To maintain consistency, use these parameter names:
 
 ### Commit Message Conventions
 
-Follow these patterns for commit messages:
-
-- `Add: new feature or content`
-- `Update: modify existing content`
-- `Fix: correct errors or issues`
-- `Remove: delete obsolete content`
-- `Docs: documentation-only changes`
+This repository follows
+[Conventional Commits](https://www.conventionalcommits.org/): a
+`type(scope): description` summary, where `type` is one of `feat`, `fix`,
+`docs`, `chore`, `style`, `refactor`, or `test`.
 
 Examples:
 
 ```
-Add: CardWithBorder component usage guide
-Update: VitePress container recommendations
-Fix: broken links in getting started guide
+feat(docs): add CardWithBorder component usage guide
+docs(getting-started): clarify VitePress container recommendations
+fix(docs): repair broken links in the getting started guide
+chore(deps): bump viem to 2.47.5
 ```
 
 ## 🐛 Testing and Validation
@@ -273,8 +520,11 @@ Fix: broken links in getting started guide
 # Build the project
 npm run build
 
-# Check syntax
-npm run lint
+# Check formatting
+npm run check-format
+
+# Run the unit tests
+npm test
 ```
 
 ### Before Submitting
