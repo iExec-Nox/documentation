@@ -5,7 +5,7 @@
       <span class="header-title">Nox SDK Playground</span>
       <button
         v-if="!account"
-        :disabled="loading"
+        :disabled="loading || !!chainNotReady"
         class="btn-brand btn-sm"
         @click="connect"
       >
@@ -15,6 +15,36 @@
         <span class="wallet-dot" />
         <code>{{ shortAddress(account) }}</code>
       </div>
+    </div>
+
+    <div v-if="chainNotReady" class="chain-not-ready">
+      <p>
+        <strong>{{ chainNotReady.chainName }}</strong> is not yet live on Nox —
+        the gateway, contract, and subgraph URLs for this network are still
+        placeholders, so the demo will fail.
+      </p>
+      <p v-if="chainNotReady.liveChain">
+        Switch the selector back to
+        <strong>{{ chainNotReady.liveChain.name }}</strong> to continue.
+        <button
+          type="button"
+          class="chain-not-ready__btn"
+          @click="switchToLiveChain"
+        >
+          Switch to {{ chainNotReady.liveChain.name }}
+        </button>
+      </p>
+    </div>
+
+    <!-- Chain mismatch warning -->
+    <div v-if="chainMismatch" class="chain-mismatch">
+      Your wallet is on <strong>{{ chainMismatch.walletChainName }}</strong> but
+      the doc is set to <strong>{{ chainMismatch.selectedChainName }}</strong
+      >. Switch your wallet to
+      <strong>{{ chainMismatch.selectedChainName }}</strong
+      >, or change the selector to
+      <strong>{{ chainMismatch.walletChainName }}</strong>
+      to match.
     </div>
 
     <!-- Encrypt section -->
@@ -146,7 +176,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue';
+import { useAccount } from '@wagmi/vue';
+import useUserStore from '@/stores/useUser.store';
+import { getChainById, getSupportedChains } from '@/utils/chain.utils';
+import { useChainSwitch } from '@/hooks/useChainSwitch';
 
 declare global {
   interface Window {
@@ -154,7 +188,42 @@ declare global {
   }
 }
 
-const ARBITRUM_SEPOLIA_HEX = '0x66eee';
+const userStore = useUserStore();
+const { requestChainChange } = useChainSwitch();
+const { chainId: walletChainId, isConnected } = useAccount();
+
+// The widget connects via `eth_requestAccounts` directly, not through wagmi,
+// so wagmi's `isConnected` / `chainId` stay falsy on that path. Track the
+// wallet's chain id from the injected provider as well, so the mismatch
+// warning works regardless of which connect path the user used.
+// TODO remove localWalletChainId once the widget connects through wagmi.
+const localWalletChainId = ref<number | undefined>(undefined);
+const onChainChanged = (hex: unknown) => {
+  if (typeof hex === 'string') {
+    localWalletChainId.value = parseInt(hex, 16);
+  }
+};
+// Capture the provider reference at mount so cleanup targets the same object,
+// even if `window.ethereum` is later replaced (EIP-6963 multi-wallet, HMR).
+let ethereumAtMount: any = null;
+onMounted(async () => {
+  if (typeof window === 'undefined' || !window.ethereum) return;
+  ethereumAtMount = window.ethereum;
+  ethereumAtMount.on?.('chainChanged', onChainChanged);
+  // Read the wallet's current chain id once at mount; if the wallet is
+  // already injected we have a value before any `chainChanged` fires.
+  try {
+    const hex = await ethereumAtMount.request({ method: 'eth_chainId' });
+    onChainChanged(hex);
+  } catch {
+    // Wallet may not be ready / may reject; ignore.
+  }
+});
+onBeforeUnmount(() => {
+  if (ethereumAtMount?.removeListener) {
+    ethereumAtMount.removeListener('chainChanged', onChainChanged);
+  }
+});
 
 const contractAddress = ref('');
 const plainValue = ref('');
@@ -174,11 +243,18 @@ const shortAddress = (addr: string) =>
   `${addr.slice(0, 6)}...${addr.slice(-4)}`;
 
 async function copy(text: string, key = 'handle') {
-  await navigator.clipboard.writeText(text);
-  copied.value = key;
-  setTimeout(() => {
-    copied.value = '';
-  }, 1500);
+  try {
+    await navigator.clipboard.writeText(text);
+    copied.value = key;
+    setTimeout(() => {
+      copied.value = '';
+    }, 1500);
+  } catch {
+    error.value = 'Failed to copy to clipboard.';
+    setTimeout(() => {
+      error.value = '';
+    }, 1500);
+  }
 }
 
 const isValidAddress = computed(() =>
@@ -187,12 +263,99 @@ const isValidAddress = computed(() =>
 
 const canEncrypt = computed(
   () =>
-    account.value && isValidAddress.value && plainValue.value && !loading.value
+    account.value &&
+    isValidAddress.value &&
+    plainValue.value &&
+    !loading.value &&
+    !chainNotReady.value
 );
 
 const canDecrypt = computed(
-  () => account.value && handleToDecrypt.value && !loading.value
+  () =>
+    account.value &&
+    handleToDecrypt.value &&
+    !loading.value &&
+    !chainNotReady.value
 );
+
+// Detect a selected chain that still ships with `TODO_*` placeholders in
+// chain.utils.ts (Nox not deployed on that chain yet). When true, the gateway
+// / contract calls will fail; surface a clear notice + an action to switch
+// back to a live chain rather than letting the user hit an opaque error.
+function hasPlaceholderFields(chain: { [key: string]: unknown }): boolean {
+  for (const k of ['noxComputeAddress', 'gatewayUrl', 'subgraphUrl']) {
+    const v = chain[k];
+    if (typeof v === 'string' && v.startsWith('TODO_')) return true;
+  }
+  return false;
+}
+
+const chainNotReady = computed(() => {
+  const selected = userStore.getCurrentChainId();
+  const chain = selected ? getChainById(selected) : undefined;
+  if (!chain || !hasPlaceholderFields(chain)) return null;
+  const liveChain = getSupportedChains().find((c) => !hasPlaceholderFields(c));
+  return {
+    chainName: chain.name,
+    liveChain, // may be undefined if every chain is placeholder
+  };
+});
+
+async function switchToLiveChain() {
+  const fallback = chainNotReady.value?.liveChain;
+  if (!fallback) return;
+  // When wagmi is connected, the wallet's chain is the source of truth and
+  // beats the store, so updating the store alone won't move the selector.
+  // requestChainChange triggers a real wallet_switchEthereumChain when
+  // connected (and wagmi's chainChanged listener syncs the store), or writes
+  // the store's numeric chain id directly when disconnected — in that
+  // disconnected branch we still need an explicit setSelectedChain to keep
+  // the selector's `selectedChain` object accurate.
+  try {
+    if (!isConnected.value) {
+      userStore.setSelectedChain(fallback);
+    }
+    await requestChainChange(fallback.id);
+  } catch (e: any) {
+    error.value = e.shortMessage || e.message || 'Unknown error';
+  }
+}
+
+// Clear transient state when the doc-selector chain changes — otherwise an
+// error from a previous chain's failed connect remains visible after the
+// user switches with the selector, and a leftover handle / decryption from
+// the previous chain is no longer meaningful.
+watch(
+  () => userStore.getCurrentChainId(),
+  () => {
+    error.value = '';
+    status.value = '';
+    handle.value = '';
+    handleProof.value = '';
+    decryptedValue.value = null;
+  }
+);
+
+const chainMismatch = computed(() => {
+  // Gate on the local connect state (`account.value`) — the widget connects
+  // via `eth_requestAccounts`, not wagmi, so `walletChainId` from wagmi may
+  // be undefined even after a successful connect. Fall back to the chain id
+  // tracked from the injected provider (`localWalletChainId`).
+  if (!account.value) return null;
+  const wallet = walletChainId.value ?? localWalletChainId.value;
+  const selected = userStore.getCurrentChainId();
+  if (!wallet || !selected || wallet === selected) return null;
+  const selectedChain = getChainById(selected);
+  if (!selectedChain) return null;
+  const walletChain = getChainById(wallet);
+  const walletChainName = walletChain
+    ? walletChain.name
+    : `chain 0x${wallet.toString(16)}`;
+  return {
+    walletChainName,
+    selectedChainName: selectedChain.name,
+  };
+});
 
 async function connect() {
   error.value = '';
@@ -203,49 +366,91 @@ async function connect() {
       throw new Error('MetaMask not found. Please install it.');
     }
 
+    const chainId = userStore.getCurrentChainId();
+    const chain = chainId ? getChainById(chainId) : undefined;
+    if (!chain) {
+      throw new Error(
+        'No chain selected. Use the chain switcher in the top bar.'
+      );
+    }
+
     const { createWalletClient, custom } = await import('viem');
-    const { arbitrumSepolia } = await import('viem/chains');
     const { createViemHandleClient } = await import('@iexec-nox/handle');
 
     const accounts: string[] = await window.ethereum.request({
       method: 'eth_requestAccounts',
     });
+    if (!accounts.length) {
+      throw new Error('No account authorized. Approve the connection request.');
+    }
     account.value = accounts[0];
 
-    try {
-      await window.ethereum.request({
-        method: 'wallet_switchEthereumChain',
-        params: [{ chainId: ARBITRUM_SEPOLIA_HEX }],
-      });
-    } catch (e: any) {
-      if (e.code === 4902) {
+    // Keep the global selection (and any wagmi-connected wallet) in sync.
+    await requestChainChange(chain.id);
+
+    // Make sure the injected wallet itself targets the selected chain. When
+    // wagmi is connected, `requestChainChange` above already prompted
+    // wallet_switchEthereumChain, so skip this branch to avoid a duplicate
+    // prompt. We still need the wallet_addEthereumChain fallback for
+    // first-time users whose wallet doesn't know the chain yet.
+    if (!isConnected.value) {
+      const chainIdHex = `0x${chain.id.toString(16)}`;
+      try {
         await window.ethereum.request({
-          method: 'wallet_addEthereumChain',
-          params: [
-            {
-              chainId: ARBITRUM_SEPOLIA_HEX,
-              chainName: 'Arbitrum Sepolia',
-              nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
-              rpcUrls: ['https://sepolia-rollup.arbitrum.io/rpc'],
-              blockExplorerUrls: ['https://sepolia.arbiscan.io'],
-            },
-          ],
+          method: 'wallet_switchEthereumChain',
+          params: [{ chainId: chainIdHex }],
         });
-      } else {
-        throw e;
+      } catch (e: any) {
+        if (e.code === 4902) {
+          try {
+            await window.ethereum.request({
+              method: 'wallet_addEthereumChain',
+              params: [
+                {
+                  chainId: chainIdHex,
+                  chainName: chain.name,
+                  nativeCurrency: chain.nativeCurrency,
+                  rpcUrls: [...chain.rpcUrls.default.http],
+                  blockExplorerUrls: [chain.blockExplorers.default.url],
+                },
+              ],
+            });
+          } catch (addErr: any) {
+            if (addErr.code === 4001) {
+              error.value =
+                'You rejected the request in your wallet. Click Connect to retry.';
+              status.value = '';
+              return;
+            }
+            throw addErr;
+          }
+          // MetaMask doesn't always switch the active chain after a
+          // successful add; explicitly re-issue the switch.
+          await window.ethereum.request({
+            method: 'wallet_switchEthereumChain',
+            params: [{ chainId: chainIdHex }],
+          });
+        } else {
+          throw e;
+        }
       }
     }
 
     const walletClient = createWalletClient({
       account: accounts[0] as `0x${string}`,
-      chain: arbitrumSepolia,
+      chain: {
+        id: chain.id,
+        name: chain.name,
+        nativeCurrency: chain.nativeCurrency,
+        rpcUrls: chain.rpcUrls,
+      } as any,
       transport: custom(window.ethereum),
     });
 
     handleClient = await createViemHandleClient(walletClient);
     status.value = '';
   } catch (e: any) {
-    error.value = e.shortMessage || e.message;
+    error.value = e.shortMessage || e.message || 'Unknown error';
     status.value = '';
   } finally {
     loading.value = false;
@@ -268,7 +473,7 @@ async function doEncrypt() {
     handleProof.value = result.handleProof;
     status.value = '';
   } catch (e: any) {
-    error.value = e.shortMessage || e.message;
+    error.value = e.shortMessage || e.message || 'Unknown error';
     status.value = '';
   } finally {
     loading.value = false;
@@ -285,7 +490,7 @@ async function doDecrypt() {
     decryptedValue.value = value.toString();
     status.value = '';
   } catch (e: any) {
-    error.value = e.shortMessage || e.message;
+    error.value = e.shortMessage || e.message || 'Unknown error';
     status.value = '';
   } finally {
     loading.value = false;
@@ -343,6 +548,60 @@ async function doDecrypt() {
   height: 6px;
   border-radius: 50%;
   background: var(--vp-c-green-1);
+}
+
+/* Chain mismatch warning */
+.chain-mismatch {
+  padding: 0.625rem 1.25rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--vp-c-warning-1);
+  background: var(--vp-c-warning-soft);
+  border-bottom: 1px solid var(--vp-c-warning-2);
+}
+
+.chain-mismatch strong {
+  font-weight: 600;
+  color: var(--vp-c-warning-1);
+}
+
+/* Chain-not-ready notice (placeholder values) */
+.chain-not-ready {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  color: var(--vp-c-danger-1);
+  background: var(--vp-c-danger-soft);
+  border-bottom: 1px solid var(--vp-c-danger-2);
+}
+
+.chain-not-ready p {
+  margin: 0;
+}
+
+.chain-not-ready p + p {
+  margin-top: 0.5rem;
+}
+
+.chain-not-ready strong {
+  font-weight: 600;
+  color: var(--vp-c-danger-1);
+}
+
+.chain-not-ready__btn {
+  margin-left: 0.5rem;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--vp-c-bg);
+  background: var(--vp-c-danger-1);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.chain-not-ready__btn:hover {
+  background: var(--vp-c-danger-2);
 }
 
 /* Sections */
