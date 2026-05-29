@@ -1,11 +1,15 @@
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
-import type { Chain } from '@/utils/chain.utils';
+import { computed, ref } from 'vue';
+import { getChainById, type Chain } from '@/utils/chain.utils';
 
 const useUserStore = defineStore('user', () => {
-  // State
+  // State — chainId is the single source of truth.
   const chainId = ref<number | undefined>(undefined);
-  const selectedChain = ref<Chain | undefined>(undefined);
+
+  // Derived: selectedChain always follows chainId, so the two can never drift.
+  const selectedChain = computed<Chain | undefined>(() =>
+    chainId.value ? getChainById(chainId.value) : undefined
+  );
 
   // Actions
   function setChainId(newChainId: number) {
@@ -13,7 +17,6 @@ const useUserStore = defineStore('user', () => {
   }
 
   function setSelectedChain(chain: Chain) {
-    selectedChain.value = chain;
     chainId.value = chain.id;
   }
 

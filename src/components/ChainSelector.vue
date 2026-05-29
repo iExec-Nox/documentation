@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue';
+import { computed, onMounted, watch } from 'vue';
 import { useAccount } from '@wagmi/vue';
 import { useChainSwitch } from '@/hooks/useChainSwitch';
 import { getSupportedChains, getChainById } from '@/utils/chain.utils';
@@ -68,22 +68,26 @@ const userStore = useUserStore();
 // Data
 const supportedChains = getSupportedChains();
 
-// Default initialization: check first if wallet is connected
-if (!userStore.chainId) {
-  if (chainId.value) {
-    // If wallet is connected, use its chain
-    const walletChain = getChainById(chainId.value);
-    if (walletChain) {
-      userStore.setSelectedChain(walletChain);
-    }
-  } else {
-    // Otherwise, use Arbitrum Sepolia as default
-    const defaultChain = getChainById(421614); // Arbitrum Sepolia
-    if (defaultChain) {
-      userStore.setSelectedChain(defaultChain);
+// Default initialization: check first if wallet is connected.
+// Runs client-side only (onMounted) so we never mutate the Pinia store during
+// SSR, which would risk cross-request state leakage / hydration mismatches.
+onMounted(() => {
+  if (!userStore.chainId) {
+    if (chainId.value) {
+      // If wallet is connected, use its chain
+      const walletChain = getChainById(chainId.value);
+      if (walletChain) {
+        userStore.setSelectedChain(walletChain);
+      }
+    } else {
+      // Otherwise, use Arbitrum Sepolia as default
+      const defaultChain = getChainById(421614); // Arbitrum Sepolia
+      if (defaultChain) {
+        userStore.setSelectedChain(defaultChain);
+      }
     }
   }
-}
+});
 
 // Computed
 const selectedChain = computed(() => {

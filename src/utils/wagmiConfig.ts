@@ -1,10 +1,7 @@
 import { createAppKit } from '@reown/appkit/vue';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
-import { http, CreateConnectorFn } from '@wagmi/vue';
-import { injected } from '@wagmi/vue/connectors';
+import { http } from '@wagmi/vue';
 import wagmiNetworks from '@/utils/wagmiNetworks';
-import { InjectedWalletProvider } from '@/utils/injected-wallet-provider/injected-wallet-provider';
-import { EIP6963ProviderDetail } from '@/utils/injected-wallet-provider/types';
 import { AppKitNetwork } from '@reown/appkit/networks';
 
 // VITE_REOWN_PROJECT_ID is optional: set it to enable WalletConnect (QR modal).
@@ -13,52 +10,6 @@ import { AppKitNetwork } from '@reown/appkit/networks';
 export const projectId =
   (import.meta.env.VITE_REOWN_PROJECT_ID as string) || 'nox-docs-fallback';
 
-// Connectors initialization
-const connectors: CreateConnectorFn[] = [];
-
-// Injected wallet provider management
-const injectedWalletProvider = new InjectedWalletProvider();
-let availableProviderDetails: EIP6963ProviderDetail[] = [];
-
-// Injected wallet provider details update
-injectedWalletProvider.on('providerDetailsUpdated', () => {
-  availableProviderDetails = injectedWalletProvider.providerDetails;
-});
-injectedWalletProvider.subscribe();
-injectedWalletProvider.requestProviders();
-
-// Preserved wallet providers IDs
-const preservedId = [
-  'io.metamask', // Metamask
-  'io.metamask.flask', // Metamask Flask
-  'com.coinbase.wallet', // Coinbase Wallet
-  'com.brave.wallet', // Brave Wallet
-  'walletConnect', // WalletConnect
-  'io.zerion.wallet', // Zerion
-];
-
-// Filtering available providers
-const preservedAvailableProviderDetails = availableProviderDetails.filter(
-  (providerDetails) => preservedId.includes(providerDetails.info.rdns)
-);
-
-// Adding injected providers to connectors
-preservedAvailableProviderDetails.forEach((providerDetails) => {
-  connectors.push(
-    injected({
-      target: (() => {
-        return {
-          id: providerDetails.info.rdns,
-          name: providerDetails.info.name,
-          icon: providerDetails.info.icon,
-          provider: providerDetails.provider,
-        };
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      }) as unknown as () => any,
-    })
-  );
-});
-
 const networks = Object.values(wagmiNetworks) as [
   AppKitNetwork,
   ...AppKitNetwork[],
@@ -66,12 +17,15 @@ const networks = Object.values(wagmiNetworks) as [
 
 export const wagmiAdapter = new WagmiAdapter({
   networks: networks,
-  multiInjectedProviderDiscovery: false,
+  // Let AppKit/wagmi own EIP-6963 injected-wallet discovery. Discovery is an
+  // async, event-driven handshake (requestProvider → announceProvider on a
+  // later tick), so it cannot be done in a one-shot synchronous block at
+  // module load — delegating to AppKit avoids that race entirely.
+  multiInjectedProviderDiscovery: true,
   transports: Object.fromEntries(
     Object.values(wagmiNetworks).map((network) => [network.id, http()])
   ),
   projectId,
-  connectors,
 });
 
 // Force some wallets to be displayed even if not detected in user's browser
