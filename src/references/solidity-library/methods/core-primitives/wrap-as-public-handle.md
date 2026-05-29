@@ -1,9 +1,9 @@
 ---
-title: Plaintext to Encrypted
+title: Wrap as Public Handle
 description: Convert plaintext values to encrypted handles
 ---
 
-# Plaintext to Encrypted
+# Wrap as Public Handle
 
 Convert plaintext values to encrypted handles. The contract emits an event, and
 the [Runner](/protocol/runner) encrypts the value off-chain inside a TEE. The

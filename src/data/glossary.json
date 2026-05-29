@@ -59,7 +59,7 @@
     },
     {
       "term": "Core Primitives (alias: Primitives)",
-      "definition": "Basic protocol operations: add(), sub(), div(), PlaintextToEncrypted(), select(). First category of computation primitives.",
+      "definition": "Basic protocol operations: add(), sub(), div(), wrapAsPublicHandle(), select(). First category of computation primitives.",
       "category": "EVM"
     },
     {
@@ -193,11 +193,6 @@
       "category": "TEE"
     },
     {
-      "term": "PlaintextToEncrypted",
-      "definition": "Primitive that creates a handle for a public plaintext value, useful for initializing counters to zero.",
-      "category": "EVM"
-    },
-    {
       "term": "preHandle",
       "definition": "Hash calculated via keccak256(operator, operands, NoxCompte, msg.sender, block.timestamp, outputIndex) before being truncated to form the final handle.",
       "category": "EVM"
@@ -295,6 +290,11 @@
     {
       "term": "Wrap/Unwrap",
       "definition": "Conversion operations between public ERC-20 tokens and their confidential versions. Reversible at any time.",
+      "category": "EVM"
+    },
+    {
+      "term": "WrapAsPublicHandle",
+      "definition": "Primitive that creates a handle for a public plaintext value, useful for initializing counters to zero.",
       "category": "EVM"
     },
     {

@@ -63,7 +63,7 @@ sequenceDiagram
 7. **Acknowledge** the event in NATS (removes it from the queue) and pull the
    next one.
 
-### PlaintextToEncrypted (Special Case)
+### WrapAsPublicHandle (Special Case)
 
 This operation has no input handles and does not need to call the Handle Gateway
 to fetch operands. The plaintext value and target type of the data to encrypt
@@ -88,16 +88,16 @@ sequenceDiagram
 
 Each operation defines its input/output handles:
 
-| Operation            | Inputs | Outputs | Description                        |
-| -------------------- | ------ | ------- | ---------------------------------- |
-| PlaintextToEncrypted | 0      | 1       | Encrypt a plaintext value          |
-| Arithmetic (add…)    | 2      | 1       | Two operands → one result          |
-| Safe arithmetic      | 2      | 2       | Two operands → (success, result)   |
-| Comparisons          | 2      | 1       | Two operands → bool result         |
-| Select               | 3      | 1       | (condition, ifTrue, ifFalse) → one |
-| Transfer             | 3      | 3       | (amount, balFrom, balTo) → 3       |
-| Mint                 | 3      | 3       | (amount, balTo, supply) → 3        |
-| Burn                 | 3      | 3       | (amount, balFrom, supply) → 3      |
+| Operation          | Inputs | Outputs | Description                        |
+| ------------------ | ------ | ------- | ---------------------------------- |
+| WrapAsPublicHandle | 0      | 1       | Encrypt a plaintext value          |
+| Arithmetic (add…)  | 2      | 1       | Two operands → one result          |
+| Safe arithmetic    | 2      | 2       | Two operands → (success, result)   |
+| Comparisons        | 2      | 1       | Two operands → bool result         |
+| Select             | 3      | 1       | (condition, ifTrue, ifFalse) → one |
+| Transfer           | 3      | 3       | (amount, balFrom, balTo) → 3       |
+| Mint               | 3      | 3       | (amount, balTo, supply) → 3        |
+| Burn               | 3      | 3       | (amount, balFrom, supply) → 3      |
 
 **Validation rules:**
 

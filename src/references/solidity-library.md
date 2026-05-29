@@ -50,7 +50,7 @@ The foundational building blocks for confidential computation. These low-level
 operations let you perform arithmetic, comparisons, and conditional logic
 directly on encrypted values.
 
-- [Plaintext to Encrypted](/references/solidity-library/methods/core-primitives/plaintext-to-encrypted):
+- [Wrap as Public Handle](/references/solidity-library/methods/core-primitives/wrap-as-public-handle):
   convert plaintext values to encrypted handles
 - [fromExternal](/references/solidity-library/methods/core-primitives/fromExternal):
   validate user-submitted handles with EIP-712 proofs

@@ -13,8 +13,7 @@ This is the entry point for all user-provided encrypted inputs. The user
 encrypts a value with the [JS SDK](/references/js-sdk/methods/encryptInput), and
 the contract validates the proof on-chain before using the handle.
 
-**Supported types:** `ebool`, `eaddress`, `euint16`, `euint256`, `eint16`,
-`eint256`
+**Supported types:** `ebool`, `euint16`, `euint256`, `eint16`, `eint256`
 
 ::: tip
 
@@ -22,7 +21,7 @@ The `external*` types enforce at the Solidity type level that unvalidated
 handles cannot be used in computations. You must call `fromExternal` first.
 
 For constants and state initialization (not user data), see
-[Plaintext to Encrypted](/references/solidity-library/methods/core-primitives/plaintext-to-encrypted).
+[Wrap as Public Handle](/references/solidity-library/methods/core-primitives/wrap-as-public-handle).
 
 :::
 

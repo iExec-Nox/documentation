@@ -129,8 +129,8 @@ function referencesItems(active: boolean): DefaultTheme.SidebarItem[] {
           collapsed: true,
           items: [
             {
-              text: 'Plaintext to Encrypted',
-              link: '/references/solidity-library/methods/core-primitives/plaintext-to-encrypted',
+              text: 'Wrap as Public Handle',
+              link: '/references/solidity-library/methods/core-primitives/wrap-as-public-handle',
             },
             {
               text: 'fromExternal',

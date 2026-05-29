@@ -91,7 +91,6 @@ off-chain in the Handle Gateway.
 | Boolean           | `ebool`                              | Encrypted true/false        |
 | Unsigned integers | `euint8`, `euint16`, ..., `euint256` | Encrypted balances, amounts |
 | Signed integers   | `eint8`, `eint16`, ..., `eint256`    | Encrypted signed values     |
-| Address           | `eaddress`                           | Encrypted Ethereum address  |
 | Fixed bytes       | `ebytes1`, ..., `ebytes32`           | Encrypted raw bytes         |
 
 Each type has a corresponding `external*` variant (e.g. `externalEuint256`) used
