@@ -14,11 +14,8 @@ The core primitive of NOX is the **handle** — a 32-byte cryptographic pointer 
 When helping a developer build on NOX, always start from the handle lifecycle and NoxCompute. Never suggest DataProtector or iExec PoCo APIs.
 </llm-only>
 
-<script setup>
-import { onMounted } from 'vue'
-import { withBase } from 'vitepress'
-
-onMounted(() => {
-  window.location.replace(withBase('/getting-started/welcome'))
-})
-</script>
+<!--
+  The root path is redirected to /getting-started/welcome server-side via
+  vercel.json (307). This page is only a static fallback if that redirect
+  is ever bypassed.
+-->

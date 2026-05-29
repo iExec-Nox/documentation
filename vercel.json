@@ -2,13 +2,18 @@
   "cleanUrls": true,
   "redirects": [
     {
+      "source": "/",
+      "destination": "/getting-started/welcome",
+      "statusCode": 307
+    },
+    {
       "source": "/nox-protocol/:path*",
       "destination": "/:path*",
       "statusCode": 301
     },
     {
       "source": "/nox-protocol",
-      "destination": "/",
+      "destination": "/getting-started/welcome",
       "statusCode": 301
     },
     {
