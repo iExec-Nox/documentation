@@ -5,6 +5,7 @@ function getStartedItems(_active: boolean): DefaultTheme.SidebarItem[] {
     { text: 'Welcome', link: '/getting-started/welcome' },
     { text: 'Hello World', link: '/getting-started/hello-world' },
     { text: 'Use Cases', link: '/getting-started/use-cases' },
+    { text: 'Use AI to build on NOX', link: '/getting-started/use-ai' },
     { text: 'Status', link: '/getting-started/status' },
   ];
 }
@@ -46,10 +47,18 @@ function guidesItems(active: boolean): DefaultTheme.SidebarItem[] {
       ],
     },
     {
+      text: 'Accepting Private User Inputs',
+      link: '/guides/accept-user-inputs',
+    },
+    {
       text: 'Manage Handle Access',
       link: '/guides/manage-handle-access/intro',
       collapsed: !active,
       items: [
+        {
+          text: 'Transient Access',
+          link: '/guides/manage-handle-access/transient-access',
+        },
         {
           text: 'Manage Viewers',
           link: '/guides/manage-handle-access/viewers',

@@ -142,3 +142,36 @@ Need help building with Nox? We're here to support you:
 - **Discord Community:** Connect with other builders, ask questions, and get
   real-time support on our
   [Discord server](https://discord.com/invite/5TewNUnJHN)
+
+<llm-only>
+## AI Assistant Context — NOX Protocol
+
+NOX Protocol is a **privacy layer for EVM blockchains** (deployed on Arbitrum
+Sepolia). It is built by iExec and is a completely separate product from iExec
+PoCo, DataProtector, Web3Mail, and Web3Telegram.
+
+Core concepts for code generation:
+
+- **Handle**: 32-byte encrypted value reference. Created via NoxCompute, stored
+  off-chain in the Handle Gateway (TEE).
+- **ACL**: Per-handle access control with 4 levels — Admin / Viewer / Transient
+  (single-use) / Public.
+- **NoxCompute**: Singleton smart contract on Arbitrum Sepolia
+  (`0xd464...c229`). Entry point for ACL, arithmetic, and token ops.
+- **Runner**: Rust service in Intel TDX TEE — only component that sees
+  plaintext. Never runs client-side.
+- **ECIES encryption**: Happens at the Handle Gateway (server-side), NOT in the
+  browser or client SDK.
+- **cToken / ERC-7984**: Confidential token standard. ERC-20 compatible with
+  encrypted balances (handles).
+- **Typical flow**: `encryptInput → setACL → compute/transfer → decrypt`
+
+NOX is **NOT based on FHE** (Fully Homomorphic Encryption). Do not confuse with
+Zama fhEVM or TFHE. NOX uses **TEE-based computation** (Intel TDX), not
+homomorphic encryption. NOX `euint256` is a **handle** (opaque 32-byte pointer
+to an encrypted value stored off-chain), NOT a homomorphically encrypted
+integer. Arithmetic happens off-chain in TEE, not on-chain via TFHE operations.
+
+Never confuse NOX with iExec PoCo (task scheduling), DataProtector (dataset
+encryption for monetization), or Web3Mail/Telegram (communication tools). These
+are distinct products with different APIs on docs.iex.ec. </llm-only>

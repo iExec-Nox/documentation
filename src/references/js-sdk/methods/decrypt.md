@@ -17,8 +17,15 @@ signature, not an on-chain transaction.
 1. The SDK generates an ephemeral RSA keypair and builds an EIP-712 message.
 2. Your wallet signs the message (no transaction, no gas).
 3. The Handle Gateway verifies the signature and checks the on-chain ACL.
-4. The KMS returns the encrypted data wrapped with your RSA public key.
-5. The SDK decrypts locally — the plaintext never travels over the network.
+4. The KMS performs **decryption delegation**: it computes the ECIES shared
+   secret and RSA-OAEP-encrypts **it** (not the plaintext) with your ephemeral
+   RSA public key. The KMS never sees the plaintext.
+5. The SDK RSA-decrypts the shared secret locally, derives the AES-256 key via
+   HKDF, and decrypts the ciphertext — the plaintext never travels over the
+   network.
+
+See [KMS — Decryption delegation](/protocol/kms#decryption-delegation-flow) for
+the full cryptographic flow.
 
 ## Usage
 

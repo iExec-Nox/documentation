@@ -9,6 +9,7 @@ import {
 } from 'vitepress-plugin-group-icons';
 import { withMermaid } from 'vitepress-plugin-mermaid';
 import markdownSteps from 'markdown-it-steps';
+import llmstxt from 'vitepress-plugin-llms';
 
 // https://vitepress.dev/reference/site-config
 export default withMermaid(
@@ -16,11 +17,11 @@ export default withMermaid(
     title: 'Nox documentation',
     description:
       'Build decentralized applications that combine ownership, privacy, and monetization.',
-    base: '/nox-protocol/',
+    base: '/',
     cleanUrls: true,
     lastUpdated: true,
     vite: {
-      plugins: [tailwindcss(), groupIconVitePlugin()],
+      plugins: [tailwindcss(), groupIconVitePlugin(), llmstxt()],
       resolve: {
         alias: {
           '@': fileURLToPath(new URL('../src', import.meta.url)),
@@ -47,7 +48,7 @@ export default withMermaid(
   'https://metrics.iex.ec/bs7fgjd8lvy4l31.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-P7KSD4T');`,
       ],
-      ['link', { rel: 'icon', href: '/nox-protocol/Logo-RLC-Yellow.png' }],
+      ['link', { rel: 'icon', href: '/Logo-RLC-Yellow.png' }],
       [
         'link',
         {
@@ -134,7 +135,7 @@ export default withMermaid(
       },
 
       socialLinks: [
-        { icon: 'github', link: 'https://github.com/iExecBlockchainComputing' },
+        { icon: 'github', link: 'https://github.com/iExec-Nox' },
         { icon: 'x', link: 'https://x.com/iEx_ec' },
         { icon: 'discord', link: 'https://discord.com/invite/5TewNUnJHN' },
       ],

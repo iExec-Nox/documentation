@@ -20,6 +20,9 @@ the contract validates the proof on-chain before using the handle.
 The `external*` types enforce at the Solidity type level that unvalidated
 handles cannot be used in computations. You must call `fromExternal` first.
 
+For constants and state initialization (not user data), see
+[Plaintext to Encrypted](/references/solidity-library/methods/core-primitives/plaintext-to-encrypted).
+
 :::
 
 ### Usage

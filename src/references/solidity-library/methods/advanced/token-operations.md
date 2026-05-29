@@ -64,13 +64,16 @@ else:
     newBalanceTo   = balanceTo + amount
 ```
 
+<div style="overflow-x: auto">
+
 | balanceFrom | balanceTo | amount | success | newBalanceFrom | newBalanceTo | Reason                                |
 | ----------- | --------- | ------ | ------- | -------------- | ------------ | ------------------------------------- |
 | 1000        | 500       | 300    | `true`  | 700            | 800          | Normal transfer                       |
 | 1000        | 500       | 1000   | `true`  | 0              | 1500         | Full balance transferred              |
 | 1000        | 500       | 2000   | `false` | 1000           | 500          | Amount > balance, nothing transferred |
-| 0           | 500       | 100    | `false` | 0              | 500          | Insufficient balance                  |
 | 100         | 500       | 0      | `true`  | 100            | 500          | Zero amount, no-op                    |
+
+</div>
 
 ## mint
 
@@ -98,11 +101,15 @@ else:
     newTotalSupply = totalSupply + amount
 ```
 
+<div style="overflow-x: auto">
+
 | balanceTo | amount | totalSupply | success | newBalanceTo | newTotalSupply | Reason            |
 | --------- | ------ | ----------- | ------- | ------------ | -------------- | ----------------- |
 | 500       | 300    | 10000       | `true`  | 800          | 10300          | Normal mint       |
 | 0         | 1000   | 0           | `true`  | 1000         | 1000           | Mint on empty     |
 | 500       | 0      | 10000       | `true`  | 500          | 10000          | Zero amount no-op |
+
+</div>
 
 ## burn
 
@@ -130,10 +137,13 @@ else:
     newTotalSupply = totalSupply - amount
 ```
 
+<div style="overflow-x: auto">
+
 | balanceFrom | amount | totalSupply | success | newBalanceFrom | newTotalSupply | Reason                           |
 | ----------- | ------ | ----------- | ------- | -------------- | -------------- | -------------------------------- |
 | 100         | 50     | 1000        | `true`  | 50             | 950            | Normal burn                      |
 | 1000        | 1000   | 10000       | `true`  | 0              | 9000           | Full balance burned              |
 | 60          | 100    | 1000        | `false` | 60             | 1000           | Amount > balance, nothing burned |
-| 0           | 100    | 1000        | `false` | 0              | 1000           | Insufficient balance             |
 | 100         | 0      | 1000        | `true`  | 100            | 1000           | Zero amount, no-op               |
+
+</div>

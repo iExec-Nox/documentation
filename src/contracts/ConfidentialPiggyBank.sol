@@ -18,7 +18,6 @@ contract ConfidentialPiggyBank {
         Nox.allow(balance, owner);
     }
 
-    /// @notice Deposit an encrypted amount
     function deposit(externalEuint256 inputHandle, bytes calldata inputProof) external {
         euint256 amount = Nox.fromExternal(inputHandle, inputProof);
         balance = Nox.add(balance, amount);
@@ -26,7 +25,6 @@ contract ConfidentialPiggyBank {
         Nox.allow(balance, owner);
     }
 
-    /// @notice Withdraw an encrypted amount (owner only)
     function withdraw(externalEuint256 inputHandle, bytes calldata inputProof) external {
         require(msg.sender == owner);
         euint256 amount = Nox.fromExternal(inputHandle, inputProof);
