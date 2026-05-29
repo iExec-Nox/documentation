@@ -147,6 +147,12 @@ export default withMermaid(
 
       siteTitle: false,
 
+      // The home page (/) only redirects to /getting-started/welcome server-side
+      // (vercel.json). Clicking the logo is an in-app SPA navigation that never
+      // hits the server, so point it straight at Welcome to avoid landing on the
+      // bare fallback page.
+      logoLink: '/getting-started/welcome',
+
       logo: {
         light: '/Logo-RLC-Yellow.png',
         dark: '/Logo-RLC-Yellow.png',
