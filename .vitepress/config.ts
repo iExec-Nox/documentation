@@ -1,7 +1,35 @@
 import { transformerTwoslash } from '@shikijs/vitepress-twoslash';
 import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vitepress';
+import { loadEnv, createLogger } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
+
+// `vitepress build` does not inject .env.local into the SSR bundle's
+// import.meta.env, so the chain switcher's wagmi config would throw at build
+// time. Load the VITE_* vars (notably VITE_REOWN_PROJECT_ID) into process.env
+// here so they are available to both `dev` and `build`.
+Object.assign(
+  process.env,
+  loadEnv(process.env.NODE_ENV || '', process.cwd(), 'VITE_')
+);
+
+// Silence a harmless dev-only Vite warning: `ox` (a viem dependency) ships an
+// experimental `tempo` module that does a Node-only
+// `import("node:worker_threads")`, which Vite cannot statically analyze. That
+// code path never runs in the browser and does not affect the build.
+const viteLogger = createLogger();
+const isOxTempoNoise = (msg: string) =>
+  typeof msg === 'string' && msg.includes('node:worker_threads');
+const originalWarn = viteLogger.warn.bind(viteLogger);
+viteLogger.warn = (msg, options) => {
+  if (isOxTempoNoise(msg)) return;
+  originalWarn(msg, options);
+};
+const originalWarnOnce = viteLogger.warnOnce.bind(viteLogger);
+viteLogger.warnOnce = (msg, options) => {
+  if (isOxTempoNoise(msg)) return;
+  originalWarnOnce(msg, options);
+};
 import { getSidebar } from './sidebar';
 import {
   groupIconMdPlugin,
@@ -21,6 +49,7 @@ export default withMermaid(
     cleanUrls: true,
     lastUpdated: true,
     vite: {
+      customLogger: viteLogger,
       plugins: [tailwindcss(), groupIconVitePlugin(), llmstxt()],
       resolve: {
         alias: {
@@ -119,6 +148,10 @@ export default withMermaid(
           text: 'Protocol',
           link: '/protocol/global-architecture-overview',
           activeMatch: '^/(protocol|references)/',
+        },
+        {
+          component: 'ChainSelector',
+          props: { className: 'w-48' },
         },
       ],
       outline: {
