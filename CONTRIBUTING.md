@@ -55,7 +55,7 @@ effectively participate in the development and improvement of the documentation.
 
    ```bash
    git add .
-   git commit -m "Add: description of your changes"
+   git commit -m "docs: describe your changes"
    ```
 
 5. **Push to your fork**:
@@ -265,6 +265,7 @@ docs follow.
      rpcUrls: myChain.rpcUrls,
      blockExplorers: myChain.blockExplorers,
      chainName: 'my-chain-testnet',
+     viemChain: 'myChain', // the viem/chains identifier, as a string
      noxComputeAddress: '0x…', // the NoxCompute contract on this chain
      gatewayUrl: 'https://…', // the Handle Gateway URL
      subgraphUrl: 'https://…', // the subgraph endpoint
@@ -273,8 +274,10 @@ docs follow.
 
    The `id`, `nativeCurrency`, `rpcUrls`, and `blockExplorers` fields are reused
    from viem's well-known chains (`import { myChain } from 'viem/chains'`) so
-   they stay correct. The `noxComputeAddress`, `gatewayUrl`, and `subgraphUrl`
-   are Nox-specific and must be the real deployed values.
+   they stay correct, and `viemChain` is that import's identifier as a string
+   (used by the `dynamic-nox-address` transformer — see Pattern C). The
+   `noxComputeAddress`, `gatewayUrl`, and `subgraphUrl` are Nox-specific and
+   must be the real deployed values.
 
 2. **Verify the wallet "add chain" payload (EIP-3085).** The demo components
    build the `wallet_addEthereumChain` request from the `Chain` entry, so the
@@ -452,7 +455,7 @@ address hard-coded; no special syntax is needed:
 ```ts twoslash
 import { createViemHandleClient } from '@iexec-nox/handle';
 // …
-const NOX_CONTRACT_ADDRESS = '0xC81e1c46eED3a32a0E0e25d8FD0bd6D8b9aa3BB7';
+const NOX_CONTRACT_ADDRESS = '0xd464B198f06756a1d00be223634b85E0a731c229';
 ```
 ````
 
@@ -463,9 +466,10 @@ it.
 
 Notes:
 
-- Only `noxComputeAddress` is auto-swapped today. To extend Pattern C to another
-  `Chain` field, update the `dynamic-nox-address` transformer in
-  `.vitepress/config.ts`.
+- `noxComputeAddress` and the `viemChain` identifier are auto-swapped today (the
+  `viemChain` swap only fires in code blocks that also contain a NoxCompute
+  address). To extend Pattern C to another `Chain` field, update the
+  `dynamic-nox-address` transformer in `.vitepress/config.ts`.
 - Pattern C does not interact with the Pinia store directly; it relies on the
   page's `chainData` computed, which reads the store like Pattern A does.
 - When adding a new chain (see "Adding a new chain" above), Pattern C picks up
@@ -479,7 +483,7 @@ Notes:
 ```
 src/
 ├── components/          # Reusable Vue components
-├── get-started/         # Getting started guides
+├── getting-started/     # Getting started guides
 ├── guides/              # Detailed guides
 ├── protocol/            # Protocol documentation
 ├── references/          # API references
@@ -494,20 +498,18 @@ To maintain consistency, use these parameter names:
 
 ### Commit Message Conventions
 
-Follow these patterns for commit messages:
-
-- `Add: new feature or content`
-- `Update: modify existing content`
-- `Fix: correct errors or issues`
-- `Remove: delete obsolete content`
-- `Docs: documentation-only changes`
+This repository follows
+[Conventional Commits](https://www.conventionalcommits.org/): a
+`type(scope): description` summary, where `type` is one of `feat`, `fix`,
+`docs`, `chore`, `style`, `refactor`, or `test`.
 
 Examples:
 
 ```
-Add: CardWithBorder component usage guide
-Update: VitePress container recommendations
-Fix: broken links in getting started guide
+feat(docs): add CardWithBorder component usage guide
+docs(getting-started): clarify VitePress container recommendations
+fix(docs): repair broken links in the getting started guide
+chore(deps): bump viem to 2.47.5
 ```
 
 ## 🐛 Testing and Validation
@@ -518,8 +520,11 @@ Fix: broken links in getting started guide
 # Build the project
 npm run build
 
-# Check syntax
-npm run lint
+# Check formatting
+npm run check-format
+
+# Run the unit tests
+npm test
 ```
 
 ### Before Submitting

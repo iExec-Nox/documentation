@@ -380,6 +380,9 @@ async function connect() {
     const accounts: string[] = await window.ethereum.request({
       method: 'eth_requestAccounts',
     });
+    if (!accounts.length) {
+      throw new Error('No account authorized. Approve the connection request.');
+    }
     account.value = accounts[0];
 
     // Keep the global selection (and any wagmi-connected wallet) in sync.

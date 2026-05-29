@@ -60,6 +60,8 @@ export function getSupportedChains(): Chain[] {
     },
     {
       id: sepolia.id,
+      // Literal label on purpose: viem's `sepolia.name` is just "Sepolia",
+      // which would render ambiguously in the chain switcher and `{{ chainName }}`.
       name: 'Ethereum Sepolia',
       icon: ethereumLogo,
       nativeCurrency: sepolia.nativeCurrency,

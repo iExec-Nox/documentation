@@ -93,6 +93,15 @@ export default withMermaid(
             chainUtilsSrc.matchAll(/viemChain:\s*['"]([A-Za-z0-9_]+)['"]/g),
             (m) => m[1]
           );
+          // Fail loudly if the address format in chain.utils.ts ever drifts:
+          // an empty match list would silently turn this transformer into a
+          // no-op and ship hardcoded per-chain addresses to every reader.
+          if (noxAddresses.length === 0) {
+            throw new Error(
+              'dynamic-nox-address: no noxComputeAddress matched in chain.utils.ts — ' +
+                'the chain-aware code-block swap would silently no-op.'
+            );
+          }
           return {
             name: 'dynamic-nox-address',
             postprocess(html: string) {

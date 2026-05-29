@@ -4,6 +4,7 @@ import { getChainById, getSupportedChains } from './chain.utils';
 const REQUIRED_STRING_FIELDS = [
   'name',
   'chainName',
+  'viemChain',
   'noxComputeAddress',
   'gatewayUrl',
   'subgraphUrl',
@@ -51,12 +52,22 @@ describe('getChainById', () => {
     const chain = getChainById(421614);
     expect(chain).toBeDefined();
     expect(chain?.id).toBe(421614);
+    expect(chain?.viemChain).toBe('arbitrumSepolia');
+    // Arbitrum Sepolia is live: its NoxCompute address must stay a real
+    // 0x-address, never a TODO_ placeholder (guards against a regression).
+    expect(chain?.noxComputeAddress).toMatch(/^0x[0-9a-fA-F]{40}$/);
+    expect(chain?.noxComputeAddress).toBe(
+      '0xd464B198f06756a1d00be223634b85E0a731c229'
+    );
   });
 
   it('returns the matching chain for a known id (Ethereum Sepolia, 11155111)', () => {
     const chain = getChainById(11155111);
     expect(chain).toBeDefined();
     expect(chain?.id).toBe(11155111);
+    expect(chain?.viemChain).toBe('sepolia');
+    // Once Ethereum Sepolia is live, tighten this to assert a real 0x address
+    // (today it still ships the TODO_ placeholder — see chain.utils.ts header).
   });
 
   it('returns undefined for an unknown id (999999)', () => {

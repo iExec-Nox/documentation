@@ -2,7 +2,7 @@
   <div class="flex items-center">
     <Select v-model="selectedChainId" :class="className">
       <SelectTrigger>
-        <SelectValue :placeholder="selectedChain?.name || 'Select chain'">
+        <SelectValue :placeholder="selectedChain?.name || 'Select Chain'">
           <div v-if="selectedChain" class="flex items-center gap-2">
             <img
               v-if="selectedChain.icon"
@@ -99,7 +99,7 @@ const selectedChainId = computed({
   },
   set: async (value: string) => {
     const numericValue = Number(value);
-    if (numericValue && numericValue !== -1) {
+    if (numericValue) {
       const chain = getChainById(numericValue);
       if (chain) {
         userStore.setSelectedChain(chain);

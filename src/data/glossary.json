@@ -199,7 +199,7 @@
     },
     {
       "term": "preHandle",
-      "definition": "Hash calculated via keccak256(operator, operands, NoxCompte, msg.sender, block.timestamp, outputIndex) before being truncated to form the final handle.",
+      "definition": "Hash calculated via keccak256(operator, operands, NoxCompute, msg.sender, block.timestamp, outputIndex) before being truncated to form the final handle.",
       "category": "EVM"
     },
     {

@@ -17,6 +17,12 @@ export class InjectedWalletProvider extends EventEmitter {
 
   // This method processes the provider details announced and adds them to the providerDetails array
   private providerReceived(providerDetail: EIP6963ProviderDetail): void {
+    // De-duplicate by RDNS: a wallet may announce both spontaneously and in
+    // response to our request event, which would otherwise list it twice.
+    const rdns = providerDetail.info.rdns;
+    if (this.providerDetails.some((detail) => detail.info.rdns === rdns)) {
+      return;
+    }
     this.providerDetails.push(providerDetail);
     this.emit('providerDetailsUpdated');
   }
