@@ -3,6 +3,16 @@ title: Managing Public Decryption
 description: Managing public decryption of handles with Nox
 ---
 
+<script setup>
+import { computed } from 'vue';
+import useUserStore from '@/stores/useUser.store';
+import { getChainById } from '@/utils/chain.utils';
+
+const userStore = useUserStore();
+const selectedChain = computed(() => userStore.getCurrentChainId());
+const chainData = computed(() => getChainById(selectedChain.value));
+</script>
+
 # Public Decryption
 
 A handle can be made publicly decryptable, allowing anyone to decrypt its value
@@ -53,22 +63,6 @@ function isPubliclyDecryptable(bytes32 handle) external view returns (bool);
 ::: code-group
 
 ```ts twoslash [ethers]
-import { BrowserProvider, Contract, type AbstractProvider } from 'ethers';
-
-const provider: AbstractProvider = new BrowserProvider(
-  (window as any).ethereum
-) as AbstractProvider;
-
-const handle = '0xHandle';
-
-/**
- * Nox protocol contract address, depending on the network.
- *
- * See deployment page for more details.
- */
-const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
-
 /**
  * `isPubliclyDecryptable` ABI fragment
  */
@@ -94,16 +88,55 @@ const NOX_CONTRACT_ABI = [
   },
 ] as const;
 // ---cut---
+import { BrowserProvider, Contract, type AbstractProvider } from 'ethers';
+
+const provider: AbstractProvider = new BrowserProvider(
+  (window as any).ethereum
+) as AbstractProvider;
+
+const handle = '0xHandle';
+
+/*
+ * Nox protocol contract address, depending on the network.
+ */
+const NOX_CONTRACT_ADDRESS: `0x${string}` =
+  '0xd464B198f06756a1d00be223634b85E0a731c229';
+
 const noxContract = new Contract(
   NOX_CONTRACT_ADDRESS,
   NOX_CONTRACT_ABI,
   provider
 );
-const isPubliclyDecryptable: boolean =
-  await noxContract.isPubliclyDecryptable(handle);
+const isPubliclyDecryptable: boolean = // [!code focus]
+  await noxContract.isPubliclyDecryptable(handle); // [!code focus]
 ```
 
 ```ts twoslash [viem]
+/**
+ * `isPubliclyDecryptable` ABI fragment
+ */
+const NOX_CONTRACT_ABI = [
+  {
+    inputs: [
+      {
+        internalType: 'bytes32',
+        name: 'handle',
+        type: 'bytes32',
+      },
+    ],
+    name: 'isPubliclyDecryptable',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const;
+// ---cut---
 import { createPublicClient, http } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
 
@@ -114,45 +147,19 @@ const publicClient = createPublicClient({
   transport: http(),
 });
 
-/**
+/*
  * Nox protocol contract address, depending on the network.
- *
- * See deployment page for more details.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
+  '0xd464B198f06756a1d00be223634b85E0a731c229';
 
-/**
- * `isPubliclyDecryptable` ABI fragment
- */
-const NOX_CONTRACT_ABI = [
-  {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'handle',
-        type: 'bytes32',
-      },
-    ],
-    name: 'isPubliclyDecryptable',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-] as const;
-// ---cut---
 const isPubliclyDecryptable = await publicClient.readContract({
-  address: NOX_CONTRACT_ADDRESS,
-  abi: NOX_CONTRACT_ABI,
-  functionName: 'isPubliclyDecryptable',
-  args: [handle],
-});
+  // [!code focus]
+  address: NOX_CONTRACT_ADDRESS, // [!code focus]
+  abi: NOX_CONTRACT_ABI, // [!code focus]
+  functionName: 'isPubliclyDecryptable', // [!code focus]
+  args: [handle], // [!code focus]
+}); // [!code focus]
 ```
 
 :::
@@ -206,27 +213,6 @@ function allowPublicDecryption(bytes32 handle) external;
 ::: code-group
 
 ```ts twoslash [ethers]
-import {
-  BrowserProvider,
-  Contract,
-  type AbstractSigner,
-  type Provider,
-} from 'ethers';
-
-const signer: BrowserProvider | AbstractSigner<Provider> = new BrowserProvider(
-  (window as any).ethereum
-);
-
-const handle = '0xHandle';
-
-/**
- * Nox protocol contract address, depending on the network.
- *
- * See deployment page for more details.
- */
-const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
-
 /**
  * `allowPublicDecryption` ABI fragment
  */
@@ -246,16 +232,54 @@ const NOX_CONTRACT_ABI = [
   },
 ] as const;
 // ---cut---
+import {
+  BrowserProvider,
+  Contract,
+  type AbstractSigner,
+  type Provider,
+} from 'ethers';
+
+const signer: BrowserProvider | AbstractSigner<Provider> = new BrowserProvider(
+  (window as any).ethereum
+);
+
+const handle = '0xHandle';
+
+/*
+ * Nox protocol contract address, depending on the network.
+ */
+const NOX_CONTRACT_ADDRESS: `0x${string}` =
+  '0xd464B198f06756a1d00be223634b85E0a731c229';
+
 const noxContract = new Contract(
   NOX_CONTRACT_ADDRESS,
   NOX_CONTRACT_ABI,
   signer
 );
-const tx = await noxContract.allowPublicDecryption(handle);
-await tx.wait();
+const tx = await noxContract.allowPublicDecryption(handle); // [!code focus]
+await tx.wait(); // [!code focus]
 ```
 
 ```ts twoslash [viem]
+/**
+ * `allowPublicDecryption` ABI fragment
+ */
+const NOX_CONTRACT_ABI = [
+  {
+    inputs: [
+      {
+        internalType: 'bytes32',
+        name: 'handle',
+        type: 'bytes32',
+      },
+    ],
+    name: 'allowPublicDecryption',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+] as const;
+// ---cut---
 import {
   createWalletClient,
   http,
@@ -277,43 +301,23 @@ const walletClient: WalletClient = createWalletClient({
   chain: CHAIN,
 });
 
-/**
+/*
  * Nox protocol contract address, depending on the network.
- *
- * See deployment page for more details.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
+  '0xd464B198f06756a1d00be223634b85E0a731c229';
 
-/**
- * `allowPublicDecryption` ABI fragment
- */
-const NOX_CONTRACT_ABI = [
-  {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'handle',
-        type: 'bytes32',
-      },
-    ],
-    name: 'allowPublicDecryption',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-] as const;
-// ---cut---
 const [userAddress] = await walletClient.getAddresses();
 
 await walletClient.writeContract({
-  account: userAddress,
-  chain: CHAIN,
-  address: NOX_CONTRACT_ADDRESS,
-  abi: NOX_CONTRACT_ABI,
-  functionName: 'allowPublicDecryption',
-  args: [handle],
-});
+  // [!code focus]
+  account: userAddress, // [!code focus]
+  chain: CHAIN, // [!code focus]
+  address: NOX_CONTRACT_ADDRESS, // [!code focus]
+  abi: NOX_CONTRACT_ABI, // [!code focus]
+  functionName: 'allowPublicDecryption', // [!code focus]
+  args: [handle], // [!code focus]
+}); // [!code focus]
 ```
 
 :::

@@ -3,6 +3,16 @@ title: Managing Viewers
 description: Managing handles viewers with Nox
 ---
 
+<script setup>
+import { computed } from 'vue';
+import useUserStore from '@/stores/useUser.store';
+import { getChainById } from '@/utils/chain.utils';
+
+const userStore = useUserStore();
+const selectedChain = computed(() => userStore.getCurrentChainId());
+const chainData = computed(() => getChainById(selectedChain.value));
+</script>
+
 # Viewers
 
 Viewers are addresses that have permission to decrypt the data associated with a
@@ -60,23 +70,6 @@ function isViewer(bytes32 handle, address account) external view returns (bool);
 ::: code-group
 
 ```ts twoslash [ethers]
-import { BrowserProvider, Contract, type AbstractProvider } from 'ethers';
-
-const provider: AbstractProvider = new BrowserProvider(
-  (window as any).ethereum
-) as AbstractProvider;
-
-const handle = '0xHandle';
-const account = '0xAccountAddress';
-
-/**
- * Nox protocol contract address, depending on the network.
- *
- * See deployment page for more details.
- */
-const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
-
 /**
  * `isViewer` ABI fragment
  */
@@ -107,15 +100,60 @@ const NOX_CONTRACT_ABI = [
   },
 ] as const;
 // ---cut---
+import { BrowserProvider, Contract, type AbstractProvider } from 'ethers';
+
+const provider: AbstractProvider = new BrowserProvider(
+  (window as any).ethereum
+) as AbstractProvider;
+
+const handle = '0xHandle';
+const account = '0xAccountAddress';
+
+/*
+ * Nox protocol contract address, depending on the network.
+ */
+const NOX_CONTRACT_ADDRESS: `0x${string}` =
+  '0xd464B198f06756a1d00be223634b85E0a731c229';
+
 const noxContract = new Contract(
   NOX_CONTRACT_ADDRESS,
   NOX_CONTRACT_ABI,
   provider
 );
-const isViewer: boolean = await noxContract.isViewer(handle, account);
+const isViewer: boolean = await noxContract.isViewer(handle, account); // [!code focus]
 ```
 
 ```ts twoslash [viem]
+/**
+ * `isViewer` ABI fragment
+ */
+const NOX_CONTRACT_ABI = [
+  {
+    inputs: [
+      {
+        internalType: 'bytes32',
+        name: 'handle',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'address',
+        name: 'viewer',
+        type: 'address',
+      },
+    ],
+    name: 'isViewer',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const;
+// ---cut---
 import { createPublicClient, http } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
 
@@ -127,50 +165,19 @@ const publicClient = createPublicClient({
   transport: http(),
 });
 
-/**
+/*
  * Nox protocol contract address, depending on the network.
- *
- * See deployment page for more details.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
+  '0xd464B198f06756a1d00be223634b85E0a731c229';
 
-/**
- * `isViewer` ABI fragment
- */
-const NOX_CONTRACT_ABI = [
-  {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'handle',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'address',
-        name: 'viewer',
-        type: 'address',
-      },
-    ],
-    name: 'isViewer',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-] as const;
-// ---cut---
 const isViewer = await publicClient.readContract({
-  address: NOX_CONTRACT_ADDRESS,
-  abi: NOX_CONTRACT_ABI,
-  functionName: 'isViewer',
-  args: [handle, viewerAddress],
-});
+  // [!code focus]
+  address: NOX_CONTRACT_ADDRESS, // [!code focus]
+  abi: NOX_CONTRACT_ABI, // [!code focus]
+  functionName: 'isViewer', // [!code focus]
+  args: [handle, viewerAddress], // [!code focus]
+}); // [!code focus]
 ```
 
 :::
@@ -231,28 +238,6 @@ function addViewer(bytes32 handle, address account) external;
 ::: code-group
 
 ```ts twoslash [ethers]
-import {
-  BrowserProvider,
-  Contract,
-  type AbstractSigner,
-  type Provider,
-} from 'ethers';
-
-const signer: BrowserProvider | AbstractSigner<Provider> = new BrowserProvider(
-  (window as any).ethereum
-);
-
-const handle = '0xHandle';
-const viewerAddress = '0xViewerAddress';
-
-/**
- * Nox protocol contract address, depending on the network.
- *
- * See deployment page for more details.
- */
-const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
-
 /**
  * `addViewer` ABI fragment
  */
@@ -277,16 +262,60 @@ const NOX_CONTRACT_ABI = [
   },
 ] as const;
 // ---cut---
+import {
+  BrowserProvider,
+  Contract,
+  type AbstractSigner,
+  type Provider,
+} from 'ethers';
+
+const signer: BrowserProvider | AbstractSigner<Provider> = new BrowserProvider(
+  (window as any).ethereum
+);
+
+const handle = '0xHandle';
+const viewerAddress = '0xViewerAddress';
+
+/*
+ * Nox protocol contract address, depending on the network.
+ */
+const NOX_CONTRACT_ADDRESS: `0x${string}` =
+  '0xd464B198f06756a1d00be223634b85E0a731c229';
+
 const noxContract = new Contract(
   NOX_CONTRACT_ADDRESS,
   NOX_CONTRACT_ABI,
   signer
 );
-const tx = await noxContract.addViewer(handle, viewerAddress);
-await tx.wait();
+const tx = await noxContract.addViewer(handle, viewerAddress); // [!code focus]
+await tx.wait(); // [!code focus]
 ```
 
 ```ts twoslash [viem]
+/**
+ * `addViewer` ABI fragment
+ */
+const NOX_CONTRACT_ABI = [
+  {
+    inputs: [
+      {
+        internalType: 'bytes32',
+        name: 'handle',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'address',
+        name: 'viewer',
+        type: 'address',
+      },
+    ],
+    name: 'addViewer',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+] as const;
+// ---cut---
 import {
   createWalletClient,
   http,
@@ -309,48 +338,23 @@ const walletClient: WalletClient = createWalletClient({
   chain: CHAIN,
 });
 
-/**
+/*
  * Nox protocol contract address, depending on the network.
- *
- * See deployment page for more details.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
+  '0xd464B198f06756a1d00be223634b85E0a731c229';
 
-/**
- * `addViewer` ABI fragment
- */
-const NOX_CONTRACT_ABI = [
-  {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'handle',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'address',
-        name: 'viewer',
-        type: 'address',
-      },
-    ],
-    name: 'addViewer',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-] as const;
-// ---cut---
 const [userAddress] = await walletClient.getAddresses();
 
 await walletClient.writeContract({
-  account: userAddress,
-  chain: CHAIN,
-  address: NOX_CONTRACT_ADDRESS,
-  abi: NOX_CONTRACT_ABI,
-  functionName: 'addViewer',
-  args: [handle, viewerAddress],
-});
+  // [!code focus]
+  account: userAddress, // [!code focus]
+  chain: CHAIN, // [!code focus]
+  address: NOX_CONTRACT_ADDRESS, // [!code focus]
+  abi: NOX_CONTRACT_ABI, // [!code focus]
+  functionName: 'addViewer', // [!code focus]
+  args: [handle, viewerAddress], // [!code focus]
+}); // [!code focus]
 ```
 
 :::

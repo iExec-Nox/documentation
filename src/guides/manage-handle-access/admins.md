@@ -3,6 +3,16 @@ title: Managing Admins
 description: Managing handles admins with Nox
 ---
 
+<script setup>
+import { computed } from 'vue';
+import useUserStore from '@/stores/useUser.store';
+import { getChainById } from '@/utils/chain.utils';
+
+const userStore = useUserStore();
+const selectedChain = computed(() => userStore.getCurrentChainId());
+const chainData = computed(() => getChainById(selectedChain.value));
+</script>
+
 # Admins
 
 Admins are addresses that have the most permissions on a handle. Admins can:
@@ -63,23 +73,6 @@ function isAllowed(bytes32 handle, address account) external view returns (bool)
 ::: code-group
 
 ```ts twoslash [ethers]
-import { BrowserProvider, Contract, type AbstractProvider } from 'ethers';
-
-const provider: AbstractProvider = new BrowserProvider(
-  (window as any).ethereum
-) as AbstractProvider;
-
-const handle = '0xHandle';
-const account = '0xAccountAddress';
-
-/**
- * Nox protocol contract address, depending on the network.
- *
- * See deployment page for more details.
- */
-const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
-
 /**
  * `isAllowed` ABI fragment
  */
@@ -110,15 +103,60 @@ const NOX_CONTRACT_ABI = [
   },
 ] as const;
 // ---cut---
+import { BrowserProvider, Contract, type AbstractProvider } from 'ethers';
+
+const provider: AbstractProvider = new BrowserProvider(
+  (window as any).ethereum
+) as AbstractProvider;
+
+const handle = '0xHandle';
+const account = '0xAccountAddress';
+
+/*
+ * Nox protocol contract address, depending on the network.
+ */
+const NOX_CONTRACT_ADDRESS: `0x${string}` =
+  '0xd464B198f06756a1d00be223634b85E0a731c229';
+
 const noxContract = new Contract(
   NOX_CONTRACT_ADDRESS,
   NOX_CONTRACT_ABI,
   provider
 );
-const isAllowed: boolean = await noxContract.isAllowed(handle, account);
+const isAllowed: boolean = await noxContract.isAllowed(handle, account); // [!code focus]
 ```
 
 ```ts twoslash [viem]
+/**
+ * `isAllowed` ABI fragment
+ */
+const NOX_CONTRACT_ABI = [
+  {
+    inputs: [
+      {
+        internalType: 'bytes32',
+        name: 'handle',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'address',
+        name: 'account',
+        type: 'address',
+      },
+    ],
+    name: 'isAllowed',
+    outputs: [
+      {
+        internalType: 'bool',
+        name: '',
+        type: 'bool',
+      },
+    ],
+    stateMutability: 'view',
+    type: 'function',
+  },
+] as const;
+// ---cut---
 import { createPublicClient, http } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
 
@@ -130,50 +168,19 @@ const publicClient = createPublicClient({
   transport: http(),
 });
 
-/**
+/*
  * Nox protocol contract address, depending on the network.
- *
- * See deployment page for more details.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
+  '0xd464B198f06756a1d00be223634b85E0a731c229';
 
-/**
- * `isAllowed` ABI fragment
- */
-const NOX_CONTRACT_ABI = [
-  {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'handle',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-    ],
-    name: 'isAllowed',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-] as const;
-// ---cut---
 const isAllowed = await publicClient.readContract({
-  address: NOX_CONTRACT_ADDRESS,
-  abi: NOX_CONTRACT_ABI,
-  functionName: 'isAllowed',
-  args: [handle, account],
-});
+  // [!code focus]
+  address: NOX_CONTRACT_ADDRESS, // [!code focus]
+  abi: NOX_CONTRACT_ABI, // [!code focus]
+  functionName: 'isAllowed', // [!code focus]
+  args: [handle, account], // [!code focus]
+}); // [!code focus]
 ```
 
 :::
@@ -232,28 +239,6 @@ function allow(bytes32 handle, address account) external;
 ::: code-group
 
 ```ts twoslash [ethers]
-import {
-  BrowserProvider,
-  Contract,
-  type AbstractSigner,
-  type Provider,
-} from 'ethers';
-
-const signer: BrowserProvider | AbstractSigner<Provider> = new BrowserProvider(
-  (window as any).ethereum
-);
-
-const handle = '0xHandle';
-const accountToAllow = '0xAccountAddress';
-
-/**
- * Nox protocol contract address, depending on the network.
- *
- * See deployment page for more details.
- */
-const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
-
 /**
  * `allow` ABI fragment
  */
@@ -278,16 +263,60 @@ const NOX_CONTRACT_ABI = [
   },
 ] as const;
 // ---cut---
+import {
+  BrowserProvider,
+  Contract,
+  type AbstractSigner,
+  type Provider,
+} from 'ethers';
+
+const signer: BrowserProvider | AbstractSigner<Provider> = new BrowserProvider(
+  (window as any).ethereum
+);
+
+const handle = '0xHandle';
+const accountToAllow = '0xAccountAddress';
+
+/*
+ * Nox protocol contract address, depending on the network.
+ */
+const NOX_CONTRACT_ADDRESS: `0x${string}` =
+  '0xd464B198f06756a1d00be223634b85E0a731c229';
+
 const noxContract = new Contract(
   NOX_CONTRACT_ADDRESS,
   NOX_CONTRACT_ABI,
   signer
 );
-const tx = await noxContract.allow(handle, accountToAllow);
-await tx.wait();
+const tx = await noxContract.allow(handle, accountToAllow); // [!code focus]
+await tx.wait(); // [!code focus]
 ```
 
 ```ts twoslash [viem]
+/**
+ * `allow` ABI fragment
+ */
+const NOX_CONTRACT_ABI = [
+  {
+    inputs: [
+      {
+        internalType: 'bytes32',
+        name: 'handle',
+        type: 'bytes32',
+      },
+      {
+        internalType: 'address',
+        name: 'account',
+        type: 'address',
+      },
+    ],
+    name: 'allow',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+] as const;
+// ---cut---
 import {
   createWalletClient,
   http,
@@ -310,48 +339,23 @@ const walletClient: WalletClient = createWalletClient({
   chain: CHAIN,
 });
 
-/**
+/*
  * Nox protocol contract address, depending on the network.
- *
- * See deployment page for more details.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
+  '0xd464B198f06756a1d00be223634b85E0a731c229';
 
-/**
- * `allow` ABI fragment
- */
-const NOX_CONTRACT_ABI = [
-  {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'handle',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-    ],
-    name: 'allow',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-] as const;
-// ---cut---
 const [userAddress] = await walletClient.getAddresses();
 
 await walletClient.writeContract({
-  account: userAddress,
-  chain: CHAIN,
-  address: NOX_CONTRACT_ADDRESS,
-  abi: NOX_CONTRACT_ABI,
-  functionName: 'allow',
-  args: [handle, accountToAllow],
-});
+  // [!code focus]
+  account: userAddress, // [!code focus]
+  chain: CHAIN, // [!code focus]
+  address: NOX_CONTRACT_ADDRESS, // [!code focus]
+  abi: NOX_CONTRACT_ABI, // [!code focus]
+  functionName: 'allow', // [!code focus]
+  args: [handle, accountToAllow], // [!code focus]
+}); // [!code focus]
 ```
 
 :::

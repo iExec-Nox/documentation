@@ -14,6 +14,8 @@ is fast and does not require gas.
 
 ## Usage
 
+<template v-if="selectedChain === 421614">
+
 ```ts twoslash
 declare global {
   interface Window {
@@ -37,6 +39,34 @@ const handleClient = await createViemHandleClient(walletClient);
 const { isPublic, admins, viewers } = await handleClient.viewACL(handle);
 ```
 
+</template>
+<template v-else-if="selectedChain === 11155111">
+
+```ts twoslash
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+import type { Handle } from '@iexec-nox/handle';
+declare const handle: Handle<'uint256'>;
+// ---cut---
+import { createViemHandleClient } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+import { sepolia } from 'viem/chains';
+
+const walletClient = createWalletClient({
+  chain: sepolia,
+  transport: custom(window.ethereum),
+});
+
+const handleClient = await createViemHandleClient(walletClient);
+
+const { isPublic, admins, viewers } = await handleClient.viewACL(handle);
+```
+
+</template>
+
 ## Parameters
 
 ### handle <Required />
@@ -45,14 +75,18 @@ const { isPublic, admins, viewers } = await handleClient.viewACL(handle);
 
 The handle whose ACL you want to inspect.
 
+<template v-if="selectedChain === 421614">
+
 ```ts twoslash
 declare global {
   interface Window {
     ethereum: any;
   }
 }
-import { createViemHandleClient } from '@iexec-nox/handle';
 import type { Handle } from '@iexec-nox/handle';
+declare const handle: Handle<'uint256'>;
+// ---cut---
+import { createViemHandleClient } from '@iexec-nox/handle';
 import { createWalletClient, custom } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
 
@@ -62,10 +96,35 @@ const walletClient = createWalletClient({
 });
 
 const handleClient = await createViemHandleClient(walletClient);
-declare const handle: Handle<'uint256'>;
-// ---cut---
 const acl = await handleClient.viewACL(handle); // [!code focus]
 ```
+
+</template>
+<template v-else-if="selectedChain === 11155111">
+
+```ts twoslash
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+import type { Handle } from '@iexec-nox/handle';
+declare const handle: Handle<'uint256'>;
+// ---cut---
+import { createViemHandleClient } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+import { sepolia } from 'viem/chains';
+
+const walletClient = createWalletClient({
+  chain: sepolia,
+  transport: custom(window.ethereum),
+});
+
+const handleClient = await createViemHandleClient(walletClient);
+const acl = await handleClient.viewACL(handle); // [!code focus]
+```
+
+</template>
 
 ## Return Value
 
@@ -104,14 +163,18 @@ List of Ethereum addresses that have **viewer** permissions on this handle.
 Viewers can call [`decrypt`](/references/js-sdk/methods/decrypt) to retrieve the
 plaintext value.
 
+<template v-if="selectedChain === 421614">
+
 ```ts twoslash
 declare global {
   interface Window {
     ethereum: any;
   }
 }
-import { createViemHandleClient } from '@iexec-nox/handle';
 import type { Handle, SolidityType } from '@iexec-nox/handle';
+declare const handle: Handle<SolidityType>;
+// ---cut---
+import { createViemHandleClient } from '@iexec-nox/handle';
 import { createWalletClient, custom } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
 
@@ -121,8 +184,6 @@ const walletClient = createWalletClient({
 });
 
 const handleClient = await createViemHandleClient(walletClient);
-declare const handle: Handle<SolidityType>;
-// ---cut---
 const { isPublic, admins, viewers } = await handleClient.viewACL(handle);
 
 if (isPublic) {
@@ -132,3 +193,45 @@ if (isPublic) {
   console.log('Viewers:', viewers);
 }
 ```
+
+</template>
+<template v-else-if="selectedChain === 11155111">
+
+```ts twoslash
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+import type { Handle, SolidityType } from '@iexec-nox/handle';
+declare const handle: Handle<SolidityType>;
+// ---cut---
+import { createViemHandleClient } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+import { sepolia } from 'viem/chains';
+
+const walletClient = createWalletClient({
+  chain: sepolia,
+  transport: custom(window.ethereum),
+});
+
+const handleClient = await createViemHandleClient(walletClient);
+const { isPublic, admins, viewers } = await handleClient.viewACL(handle);
+
+if (isPublic) {
+  console.log('Handle is publicly decryptable');
+} else {
+  console.log('Admins:', admins);
+  console.log('Viewers:', viewers);
+}
+```
+
+</template>
+
+<script setup>
+import { computed } from 'vue';
+import useUserStore from '@/stores/useUser.store';
+
+const userStore = useUserStore();
+const selectedChain = computed(() => userStore.getCurrentChainId());
+</script>

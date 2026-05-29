@@ -27,6 +27,8 @@ involve EIP-712 signatures from the caller.
 
 ## Usage
 
+<template v-if="selectedChain === 421614">
+
 ```ts twoslash
 declare global {
   interface Window {
@@ -51,6 +53,35 @@ const { value, solidityType, decryptionProof } =
   await handleClient.publicDecrypt(handle);
 ```
 
+</template>
+<template v-else-if="selectedChain === 11155111">
+
+```ts twoslash
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+import type { Handle } from '@iexec-nox/handle';
+declare const handle: Handle<'uint256'>;
+// ---cut---
+import { createViemHandleClient } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+import { sepolia } from 'viem/chains';
+
+const walletClient = createWalletClient({
+  chain: sepolia,
+  transport: custom(window.ethereum),
+});
+
+const handleClient = await createViemHandleClient(walletClient);
+
+const { value, solidityType, decryptionProof } =
+  await handleClient.publicDecrypt(handle);
+```
+
+</template>
+
 ## Parameters
 
 ### handle <Required />
@@ -60,14 +91,18 @@ const { value, solidityType, decryptionProof } =
 The handle to decrypt. It must be marked as publicly decryptable on-chain and
 created on the **same chain** as the one the client is connected to.
 
+<template v-if="selectedChain === 421614">
+
 ```ts twoslash
 declare global {
   interface Window {
     ethereum: any;
   }
 }
-import { createViemHandleClient } from '@iexec-nox/handle';
 import type { Handle } from '@iexec-nox/handle';
+declare const handle: Handle<'uint256'>;
+// ---cut---
+import { createViemHandleClient } from '@iexec-nox/handle';
 import { createWalletClient, custom } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
 
@@ -77,11 +112,37 @@ const walletClient = createWalletClient({
 });
 
 const handleClient = await createViemHandleClient(walletClient);
-declare const handle: Handle<'uint256'>;
-// ---cut---
 const { value, solidityType, decryptionProof } =
   await handleClient.publicDecrypt(handle); // [!code focus]
 ```
+
+</template>
+<template v-else-if="selectedChain === 11155111">
+
+```ts twoslash
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+import type { Handle } from '@iexec-nox/handle';
+declare const handle: Handle<'uint256'>;
+// ---cut---
+import { createViemHandleClient } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+import { sepolia } from 'viem/chains';
+
+const walletClient = createWalletClient({
+  chain: sepolia,
+  transport: custom(window.ethereum),
+});
+
+const handleClient = await createViemHandleClient(walletClient);
+const { value, solidityType, decryptionProof } =
+  await handleClient.publicDecrypt(handle); // [!code focus]
+```
+
+</template>
 
 ::: warning
 
@@ -131,14 +192,18 @@ signature (65 bytes) concatenated with the ABI-encoded decrypted value. This
 proof can be passed to a smart contract to verify the decryption and use the
 plaintext value on-chain.
 
+<template v-if="selectedChain === 421614">
+
 ```ts twoslash
 declare global {
   interface Window {
     ethereum: any;
   }
 }
-import { createViemHandleClient } from '@iexec-nox/handle';
 import type { Handle, SolidityType } from '@iexec-nox/handle';
+declare const handle: Handle<SolidityType>;
+// ---cut---
+import { createViemHandleClient } from '@iexec-nox/handle';
 import { createWalletClient, custom } from 'viem';
 import { arbitrumSepolia } from 'viem/chains';
 
@@ -148,8 +213,6 @@ const walletClient = createWalletClient({
 });
 
 const handleClient = await createViemHandleClient(walletClient);
-declare const handle: Handle<SolidityType>;
-// ---cut---
 const { value, solidityType, decryptionProof } =
   await handleClient.publicDecrypt(handle);
 
@@ -157,3 +220,43 @@ const { value, solidityType, decryptionProof } =
 console.log(`${solidityType}:`, value);
 console.log('proof:', decryptionProof);
 ```
+
+</template>
+<template v-else-if="selectedChain === 11155111">
+
+```ts twoslash
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+import type { Handle, SolidityType } from '@iexec-nox/handle';
+declare const handle: Handle<SolidityType>;
+// ---cut---
+import { createViemHandleClient } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+import { sepolia } from 'viem/chains';
+
+const walletClient = createWalletClient({
+  chain: sepolia,
+  transport: custom(window.ethereum),
+});
+
+const handleClient = await createViemHandleClient(walletClient);
+const { value, solidityType, decryptionProof } =
+  await handleClient.publicDecrypt(handle);
+
+// Pass decryptionProof to a smart contract for on-chain verification
+console.log(`${solidityType}:`, value);
+console.log('proof:', decryptionProof);
+```
+
+</template>
+
+<script setup>
+import { computed } from 'vue';
+import useUserStore from '@/stores/useUser.store';
+
+const userStore = useUserStore();
+const selectedChain = computed(() => userStore.getCurrentChainId());
+</script>
