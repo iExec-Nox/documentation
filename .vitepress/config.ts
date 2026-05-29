@@ -78,7 +78,9 @@ export default withMermaid(
         // <script setup>.
         (() => {
           const chainUtilsSrc = readFileSync(
-            fileURLToPath(new URL('../src/utils/chain.utils.ts', import.meta.url)),
+            fileURLToPath(
+              new URL('../src/utils/chain.utils.ts', import.meta.url)
+            ),
             'utf-8'
           );
           const noxAddresses = Array.from(
