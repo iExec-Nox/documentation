@@ -17,7 +17,7 @@ export default withMermaid(
     title: 'Nox documentation',
     description:
       'Build decentralized applications that combine ownership, privacy, and monetization.',
-    base: '/nox-protocol/',
+    base: '/',
     cleanUrls: true,
     lastUpdated: true,
     vite: {
@@ -48,7 +48,7 @@ export default withMermaid(
   'https://metrics.iex.ec/bs7fgjd8lvy4l31.js?id='+i+dl;f.parentNode.insertBefore(j,f);
   })(window,document,'script','dataLayer','GTM-P7KSD4T');`,
       ],
-      ['link', { rel: 'icon', href: '/nox-protocol/Logo-RLC-Yellow.png' }],
+      ['link', { rel: 'icon', href: '/Logo-RLC-Yellow.png' }],
       [
         'link',
         {
