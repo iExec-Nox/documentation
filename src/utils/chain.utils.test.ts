@@ -26,12 +26,16 @@ describe('getSupportedChains', () => {
       expect(typeof chain.id).toBe('number');
       expect(chain.id).toBeGreaterThan(0);
 
+      // The TODO_ETH_SEPOLIA_* placeholders count as "populated" here — we
+      // assert non-empty strings (and 0x-format for noxComputeAddress), not
+      // real on-chain values. Tighten this check once Ethereum Sepolia goes
+      // live.
       for (const field of REQUIRED_STRING_FIELDS) {
         const value = chain[field];
         expect(typeof value).toBe('string');
         expect(value.length).toBeGreaterThan(0);
         if (field === 'noxComputeAddress') {
-          expect(value).toMatch(/^0x[0-9a-fA-F]{40}$/);
+          expect(value).toMatch(/^0x[0-9a-fA-F]{40}$|^TODO_/);
         }
       }
 
@@ -55,11 +59,20 @@ describe('getChainById', () => {
     expect(chain?.id).toBe(421614);
     expect(chain?.viemChain).toBe('arbitrumSepolia');
     // Arbitrum Sepolia is live: its NoxCompute address must stay a real
-    // 0x-address (guards against a regression).
+    // 0x-address, never a TODO_ placeholder (guards against a regression).
     expect(chain?.noxComputeAddress).toMatch(/^0x[0-9a-fA-F]{40}$/);
     expect(chain?.noxComputeAddress).toBe(
       '0xd464B198f06756a1d00be223634b85E0a731c229'
     );
+  });
+
+  it('returns the matching chain for a known id (Ethereum Sepolia, 11155111)', () => {
+    const chain = getChainById(11155111);
+    expect(chain).toBeDefined();
+    expect(chain?.id).toBe(11155111);
+    expect(chain?.viemChain).toBe('sepolia');
+    // Once Ethereum Sepolia is live, tighten this to assert a real 0x address
+    // (today it still ships the TODO_ placeholder — see chain.utils.ts header).
   });
 
   it('returns undefined for an unknown id (999999)', () => {

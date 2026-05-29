@@ -1,5 +1,13 @@
-import { arbitrumSepolia } from 'viem/chains';
+// ⚠️ TODO Ethereum Sepolia: Nox is not deployed on Ethereum Sepolia yet.
+// The Ethereum Sepolia entry below ships with placeholder values that MUST be
+// replaced with the real ones before this chain is announced:
+//   - noxComputeAddress: 'TODO_ETH_SEPOLIA_NOX_COMPUTE_ADDRESS'
+//   - gatewayUrl:        'TODO_ETH_SEPOLIA_GATEWAY_URL'
+//   - subgraphUrl:       'TODO_ETH_SEPOLIA_SUBGRAPH_URL'
+// (rpcUrls / blockExplorers come from viem's well-known `sepolia` chain.)
+import { arbitrumSepolia, sepolia } from 'viem/chains';
 import arbitrumLogo from '@/assets/icons/arbitrum.svg';
+import ethereumLogo from '@/assets/icons/ethereum.svg';
 
 export interface Chain {
   id: number;
@@ -23,9 +31,9 @@ export interface Chain {
   };
   chainName: string;
   /**
-   * Identifier of the chain in `viem/chains` (e.g. `arbitrumSepolia`). Reserved
-   * for an upcoming Shiki transformer that will rewrite viem chain references in
-   * docs code blocks (not yet wired up).
+   * Identifier of the chain in `viem/chains` (e.g. `arbitrumSepolia`,
+   * `sepolia`). Reserved for an upcoming Shiki transformer that will rewrite
+   * viem chain references in docs code blocks (not yet wired up).
    */
   viemChain: string;
   noxComputeAddress: string;
@@ -49,6 +57,22 @@ export function getSupportedChains(): Chain[] {
         'https://2e1800fc0dddeeadc189283ed1dce13c1ae28d48-3000.apps.ovh-tdx-dev.noxprotocol.dev',
       subgraphUrl:
         'https://thegraph.arbitrum-sepolia-testnet.noxprotocol.io/api/subgraphs/id/BjQAX2HpmsSAzURJimKDhjZZnkSJtaczA8RPumggrStb',
+    },
+    {
+      id: sepolia.id,
+      // Literal label on purpose: viem's `sepolia.name` is just "Sepolia",
+      // which would render ambiguously in the chain switcher and `{{ chainName }}`.
+      name: 'Ethereum Sepolia',
+      icon: ethereumLogo,
+      nativeCurrency: sepolia.nativeCurrency,
+      rpcUrls: sepolia.rpcUrls,
+      blockExplorers: sepolia.blockExplorers,
+      chainName: 'ethereum-sepolia-testnet',
+      viemChain: 'sepolia',
+      // ⚠️ TODO Ethereum Sepolia — replace before shipping (see file header).
+      noxComputeAddress: 'TODO_ETH_SEPOLIA_NOX_COMPUTE_ADDRESS',
+      gatewayUrl: 'TODO_ETH_SEPOLIA_GATEWAY_URL',
+      subgraphUrl: 'TODO_ETH_SEPOLIA_SUBGRAPH_URL',
     },
   ];
 }
