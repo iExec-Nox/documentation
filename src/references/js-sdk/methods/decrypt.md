@@ -12,6 +12,25 @@ only handle owners or explicitly allowed addresses can decrypt.
 Decryption is **gasless**: the SDK authenticates the request with an EIP-712
 signature, not an on-chain transaction.
 
+::: warning `decrypt` returns an object, not the bare value
+
+`decrypt` resolves to a **`{ value, solidityType }` object** — never the scalar
+directly. Always destructure it. Using the result as-is (for example in a
+template string) silently produces `[object Object]`, with no error to point you
+at the cause:
+
+```ts
+// ❌ Wrong — `balance` is the { value, solidityType } wrapper
+const balance = await handleClient.decrypt(handle);
+console.log(`Balance: ${balance}`); // "Balance: [object Object]"
+
+// ✅ Correct — destructure to read the value
+const { value } = await handleClient.decrypt(handle);
+console.log(`Balance: ${value}`); // "Balance: 1000"
+```
+
+:::
+
 ### What happens under the hood
 
 1. The SDK generates an ephemeral RSA keypair and builds an EIP-712 message.
