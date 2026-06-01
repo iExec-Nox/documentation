@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { getChainById, getSupportedChains } from './chain.utils';
+import {
+  getChainById,
+  getLiveChains,
+  getSupportedChains,
+  isChainLive,
+} from './chain.utils';
 
 const REQUIRED_STRING_FIELDS = [
   'name',
@@ -59,5 +64,31 @@ describe('getChainById', () => {
 
   it('returns undefined for an unknown id (999999)', () => {
     expect(getChainById(999999)).toBeUndefined();
+  });
+});
+
+describe('isChainLive / getLiveChains', () => {
+  it('treats a chain with TODO_ placeholder endpoints as not live', () => {
+    const [arbitrum] = getSupportedChains();
+    expect(isChainLive(arbitrum)).toBe(true);
+
+    expect(
+      isChainLive({
+        ...arbitrum,
+        noxComputeAddress: 'TODO_ETH_SEPOLIA_NOX_COMPUTE_ADDRESS',
+      })
+    ).toBe(false);
+    expect(isChainLive({ ...arbitrum, gatewayUrl: 'TODO_X' })).toBe(false);
+    expect(isChainLive({ ...arbitrum, subgraphUrl: 'TODO_X' })).toBe(false);
+  });
+
+  it('only returns fully-deployed chains', () => {
+    const live = getLiveChains();
+    expect(live.length).toBeGreaterThan(0);
+    for (const chain of live) {
+      expect(chain.noxComputeAddress.startsWith('TODO_')).toBe(false);
+      expect(chain.gatewayUrl.startsWith('TODO_')).toBe(false);
+      expect(chain.subgraphUrl.startsWith('TODO_')).toBe(false);
+    }
   });
 });

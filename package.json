@@ -9,7 +9,8 @@
     "preview": "vitepress preview",
     "check-format": "prettier --ignore-path .gitignore --check .",
     "format": "prettier --ignore-path .gitignore --write .",
-    "test": "vitest"
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@iexec-nox/handle": "^0.1.0-beta.10",

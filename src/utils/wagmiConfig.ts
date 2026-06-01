@@ -37,16 +37,23 @@ const featuredWalletIds = [
   'ecc4036f814562b41a5268adc86270fba1365471402006302e70169465b7ac18', // Zerion
 ];
 
-createAppKit({
-  adapters: [wagmiAdapter],
-  networks: networks,
-  projectId,
-  featuredWalletIds,
-  features: {
-    socials: false,
-    email: false,
-  },
-  allWallets: 'HIDE',
-  allowUnsupportedChain: false,
-  enableWalletGuide: false,
-});
+// Initialise the Reown modal on the client only. `createAppKit` runs
+// `AppKit.initialize()`, which fires live network calls to api.web3modal.org.
+// Under `vitepress build` (SSR) this module is evaluated server-side, so an
+// unguarded call would hit that endpoint on every build (slow, network-bound,
+// and pointless — the modal is browser-only).
+if (typeof window !== 'undefined') {
+  createAppKit({
+    adapters: [wagmiAdapter],
+    networks: networks,
+    projectId,
+    featuredWalletIds,
+    features: {
+      socials: false,
+      email: false,
+    },
+    allWallets: 'HIDE',
+    allowUnsupportedChain: false,
+    enableWalletGuide: false,
+  });
+}

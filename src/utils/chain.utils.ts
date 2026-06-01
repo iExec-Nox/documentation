@@ -56,3 +56,23 @@ export function getSupportedChains(): Chain[] {
 export function getChainById(chainId: number): Chain | undefined {
   return getSupportedChains().find((chain) => chain.id === chainId);
 }
+
+/**
+ * True when a chain is fully deployed, i.e. none of its protocol endpoints are
+ * still `TODO_` placeholders. Used to keep not-yet-deployed chains (registered
+ * ahead of their deployment) out of user-facing surfaces — the chain switcher
+ * and the `/networks` page — so readers never see a `TODO_…` address or a
+ * broken explorer link. A chain auto-appears once its real values land.
+ */
+export function isChainLive(chain: Chain): boolean {
+  return (
+    !chain.noxComputeAddress.startsWith('TODO_') &&
+    !chain.gatewayUrl.startsWith('TODO_') &&
+    !chain.subgraphUrl.startsWith('TODO_')
+  );
+}
+
+/** Supported chains that are fully deployed (see {@link isChainLive}). */
+export function getLiveChains(): Chain[] {
+  return getSupportedChains().filter(isChainLive);
+}

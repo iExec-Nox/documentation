@@ -43,7 +43,7 @@
 import { computed, onMounted, watch } from 'vue';
 import { useAccount } from '@wagmi/vue';
 import { useChainSwitch } from '@/hooks/useChainSwitch';
-import { getSupportedChains, getChainById } from '@/utils/chain.utils';
+import { getLiveChains, getChainById } from '@/utils/chain.utils';
 import useUserStore from '@/stores/useUser.store';
 import {
   Select,
@@ -65,8 +65,9 @@ const { chainId } = useAccount();
 const { requestChainChange } = useChainSwitch();
 const userStore = useUserStore();
 
-// Data
-const supportedChains = getSupportedChains();
+// Data — only offer fully-deployed chains; a not-yet-deployed chain (TODO_
+// placeholders) is hidden until its real values land.
+const supportedChains = getLiveChains();
 
 // Default initialization: check first if wallet is connected.
 // Runs client-side only (onMounted) so we never mutate the Pinia store during
@@ -103,12 +104,18 @@ const selectedChainId = computed({
   },
   set: async (value: string) => {
     const numericValue = Number(value);
-    if (numericValue) {
-      const chain = getChainById(numericValue);
-      if (chain) {
-        userStore.setSelectedChain(chain);
-        await requestChainChange(numericValue);
-      }
+    if (!numericValue) return;
+    const chain = getChainById(numericValue);
+    if (!chain) return;
+    try {
+      // Switch first; a connected wallet can reject the prompt.
+      await requestChainChange(numericValue);
+      // Commit the selection only once the switch actually succeeded, so the
+      // store never points at a chain the wallet isn't on (the `watch(chainId)`
+      // below keeps things in sync when the wallet's chain really changes).
+      userStore.setSelectedChain(chain);
+    } catch {
+      // User rejected the switch (or it failed) — keep the previous selection.
     }
   },
 });
