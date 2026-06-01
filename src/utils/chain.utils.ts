@@ -23,9 +23,9 @@ export interface Chain {
   };
   chainName: string;
   /**
-   * Identifier of the chain in `viem/chains` (e.g. `arbitrumSepolia`). Used by
-   * the Shiki `dynamic-nox-address` transformer to rewrite hardcoded viem chain
-   * references in docs code blocks.
+   * Identifier of the chain in `viem/chains` (e.g. `arbitrumSepolia`). Reserved
+   * for an upcoming Shiki transformer that will rewrite viem chain references in
+   * docs code blocks (not yet wired up).
    */
   viemChain: string;
   noxComputeAddress: string;

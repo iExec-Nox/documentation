@@ -13,13 +13,17 @@ Object.assign(
   loadEnv(process.env.NODE_ENV || '', process.cwd(), 'VITE_')
 );
 
-// Silence a harmless dev-only Vite warning: `ox` (a viem dependency) ships an
-// experimental `tempo` module that does a Node-only
-// `import("node:worker_threads")`, which Vite cannot statically analyze. That
-// code path never runs in the browser and does not affect the build.
+// Silence a harmless Vite warning (dev + build): `ox` (a viem dep) ships an
+// experimental `tempo` module doing a Node-only `import("node:worker_threads")`
+// that Vite can't statically analyze; it never runs in the browser. Kept narrow
+// so it can't swallow an unrelated worker_threads warning (revisit on viem/ox bump).
 const viteLogger = createLogger();
 const isOxTempoNoise = (msg: string) =>
-  typeof msg === 'string' && msg.includes('node:worker_threads');
+  typeof msg === 'string' &&
+  msg.includes('node:worker_threads') &&
+  /\box\b|tempo|externalized|cannot be (bundled|statically analyzed)/i.test(
+    msg
+  );
 const originalWarn = viteLogger.warn.bind(viteLogger);
 viteLogger.warn = (msg, options) => {
   if (isOxTempoNoise(msg)) return;

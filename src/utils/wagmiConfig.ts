@@ -2,7 +2,7 @@ import { createAppKit } from '@reown/appkit/vue';
 import { WagmiAdapter } from '@reown/appkit-adapter-wagmi';
 import { http } from '@wagmi/vue';
 import wagmiNetworks from '@/utils/wagmiNetworks';
-import { AppKitNetwork } from '@reown/appkit/networks';
+import type { AppKitNetwork } from '@reown/appkit/networks';
 
 // VITE_REOWN_PROJECT_ID is optional: set it to enable WalletConnect (QR modal).
 // Without it, doc-view chain switching and the injected-wallet (MetaMask) path

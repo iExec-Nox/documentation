@@ -1,4 +1,5 @@
-import { AppKitNetwork, arbitrumSepolia } from '@reown/appkit/networks';
+import type { AppKitNetwork } from '@reown/appkit/networks';
+import { arbitrumSepolia } from '@reown/appkit/networks';
 
 const wagmiNetworks = {
   arbitrumSepolia,

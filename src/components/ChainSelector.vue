@@ -22,17 +22,17 @@
           :key="chain.id"
           :value="chain.id.toString()"
         >
-          <SelectItemText>
-            <div class="flex items-center gap-2">
-              <img
-                v-if="chain.icon"
-                :src="chain.icon"
-                :alt="chain.name"
-                class="h-4 w-4 rounded-full"
-              />
-              <span>{{ chain.name }}</span>
-            </div>
-          </SelectItemText>
+          <!-- SelectItem already wraps its slot in <SelectItemText>; nesting a
+               second one duplicates the option's DOM id and registers it twice. -->
+          <div class="flex items-center gap-2">
+            <img
+              v-if="chain.icon"
+              :src="chain.icon"
+              :alt="chain.name"
+              class="h-4 w-4 rounded-full"
+            />
+            <span>{{ chain.name }}</span>
+          </div>
         </SelectItem>
       </SelectContent>
     </Select>
@@ -49,7 +49,6 @@ import {
   Select,
   SelectContent,
   SelectItem,
-  SelectItemText,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
@@ -73,20 +72,14 @@ const supportedChains = getLiveChains();
 // Runs client-side only (onMounted) so we never mutate the Pinia store during
 // SSR, which would risk cross-request state leakage / hydration mismatches.
 onMounted(() => {
-  if (!userStore.chainId) {
-    if (chainId.value) {
-      // If wallet is connected, use its chain
-      const walletChain = getChainById(chainId.value);
-      if (walletChain) {
-        userStore.setSelectedChain(walletChain);
-      }
-    } else {
-      // Otherwise, use Arbitrum Sepolia as default
-      const defaultChain = getChainById(421614); // Arbitrum Sepolia
-      if (defaultChain) {
-        userStore.setSelectedChain(defaultChain);
-      }
-    }
+  if (userStore.chainId) return;
+  // Prefer the wallet's chain if supported, else the first live chain.
+  const walletChain = chainId.value ? getChainById(chainId.value) : undefined;
+  const defaultChain = walletChain ?? supportedChains[0];
+  if (defaultChain) {
+    userStore.setSelectedChain(defaultChain);
+  } else {
+    console.error('[ChainSelector] no live chain available to initialize');
   }
 });
 
@@ -114,8 +107,11 @@ const selectedChainId = computed({
       // store never points at a chain the wallet isn't on (the `watch(chainId)`
       // below keeps things in sync when the wallet's chain really changes).
       userStore.setSelectedChain(chain);
-    } catch {
-      // User rejected the switch (or it failed) — keep the previous selection.
+    } catch (err) {
+      // Wallet rejection is expected; surface anything else (RPC, chain not added).
+      // The store wasn't written optimistically, so the v-model reverts on its own.
+      const rejected = err instanceof Error && /reject/i.test(err.message);
+      if (!rejected) console.error('[ChainSelector] chain switch failed', err);
     }
   },
 });

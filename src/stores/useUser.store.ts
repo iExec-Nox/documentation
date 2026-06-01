@@ -3,7 +3,8 @@ import { computed, ref } from 'vue';
 import { getChainById, type Chain } from '@/utils/chain.utils';
 
 const useUserStore = defineStore('user', () => {
-  // State — chainId is the single source of truth.
+  // Within this store, chainId is canonical and selectedChain is derived from
+  // it. (In the UI layer the connected wallet's chain takes precedence.)
   const chainId = ref<number | undefined>(undefined);
 
   // Derived: selectedChain always follows chainId, so the two can never drift.
@@ -20,10 +21,6 @@ const useUserStore = defineStore('user', () => {
     chainId.value = chain.id;
   }
 
-  // Getters
-  const getCurrentChainId = () => chainId.value;
-  const getCurrentChain = () => selectedChain.value;
-
   return {
     // State
     chainId,
@@ -31,9 +28,6 @@ const useUserStore = defineStore('user', () => {
     // Actions
     setChainId,
     setSelectedChain,
-    // Getters
-    getCurrentChainId,
-    getCurrentChain,
   };
 });
 

@@ -37,7 +37,8 @@ describe('useChainSwitch', () => {
   it('delegates to wagmi switchChain when a wallet is connected', async () => {
     isConnectedValue = true;
     const store = useUserStore();
-    const initialChainId = store.chainId;
+    // Seed a real value so "store untouched" is a meaningful assertion.
+    store.setChainId(1);
 
     const { requestChainChange } = useChainSwitch();
     await requestChainChange(421614);
@@ -48,7 +49,7 @@ describe('useChainSwitch', () => {
       { chainId: 421614 }
     );
     // store untouched when delegating to wagmi
-    expect(store.chainId).toBe(initialChainId);
+    expect(store.chainId).toBe(1);
   });
 
   it('propagates rejection from wagmi switchChain when connected', async () => {
