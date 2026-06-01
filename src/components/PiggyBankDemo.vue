@@ -454,6 +454,13 @@ async function connect() {
     status.value = '';
   } finally {
     loading.value = false;
+    // If we bailed out before the handle client was created (rejected switch,
+    // add-chain failure, RPC error...), don't leave a half-connected state:
+    // `account` set but `handleClient` null makes Encrypt/Decrypt available and
+    // then throws a null deref. Reset so the user falls back to "Connect".
+    if (!handleClient) {
+      account.value = null;
+    }
   }
 }
 

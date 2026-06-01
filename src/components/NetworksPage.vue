@@ -176,7 +176,18 @@ const FAUCETS: Record<number, FaucetLink[]> = {
   ],
 };
 
-const chains: Chain[] = getSupportedChains();
+// Only list fully-deployed chains. A chain registered ahead of its deployment
+// carries `TODO_` placeholder endpoints; showing it here would render a
+// `TODO_…` contract address and a broken explorer link to readers. It appears
+// automatically once its real values land.
+// (Mirrors getLiveChains() from chain.utils; can be deduped once this branch is
+// rebased onto the updated chain-switcher infra.)
+const chains: Chain[] = getSupportedChains().filter(
+  (c) =>
+    !c.noxComputeAddress.startsWith('TODO_') &&
+    !c.gatewayUrl.startsWith('TODO_') &&
+    !c.subgraphUrl.startsWith('TODO_')
+);
 const { requestChainChange } = useChainSwitch();
 const { isConnected } = useAccount();
 
