@@ -11,8 +11,8 @@ Nox brings confidentiality to EVM smart contracts: encrypted balances, amounts,
 and positions, processed inside Intel TDX TEEs without ever exposing plaintext
 on-chain.
 
-Below are live demos and reference projects built with Nox, followed by the
-broader space of applications you can build on top of the protocol.
+Below are live demos and reference projects, followed by the wider set of
+applications you can build on the protocol.
 
 ## Demos & reference projects
 
@@ -20,7 +20,7 @@ broader space of applications you can build on top of the protocol.
 
 <UseCaseCard
   title="Confidential Vault"
-  description="A yield vault that encrypts LP positions and balances at the protocol level, while letting the operator grant scoped read access on demand. Privacy where it matters, transparency where it's required."
+  description="A yield vault that encrypts LP positions and balances at the protocol level. The operator grants scoped read access on demand, so strategy stays private while the vault remains verifiable on-chain."
   icon="ph:vault"
   :features="['ERC-7540', 'Yield', 'TEE']"
   to="/getting-started/use-cases/confidential-vault"
@@ -28,7 +28,7 @@ broader space of applications you can build on top of the protocol.
 
 <UseCaseCard
   title="Confidential Tokens (cToken)"
-  description="Wrap public ERC-20s into their confidential equivalents (cUSDC, cRLC), transfer with encrypted amounts, and grant selective disclosure to auditors — all from your browser on Arbitrum Sepolia."
+  description="Wrap public ERC-20s into their confidential equivalents (cUSDC, cRLC), transfer with encrypted amounts, and grant auditors selective disclosure, all from your browser on Arbitrum Sepolia."
   icon="ph:coins"
   :features="['ERC-7984', 'Wrap', 'Selective Disclosure']"
   to="/guides/build-confidential-tokens/demo"
@@ -46,7 +46,7 @@ broader space of applications you can build on top of the protocol.
 
 <UseCaseCard
   title="RWA Issuance & Distribution"
-  description="Tokenize funds, private credit, or real estate with hidden investor allocations and confidential distributions — layering privacy on top of ERC-3643 compliance without breaking transfer rules."
+  description="Tokenize funds, private credit, or real estate with hidden investor allocations and confidential distributions, layering privacy on top of ERC-3643 compliance without breaking transfer rules."
   icon="ph:buildings"
   :features="['ERC-3643', 'Compliance', 'Tokenization']"
   to="/getting-started/use-cases/rwa"
@@ -56,8 +56,8 @@ broader space of applications you can build on top of the protocol.
 
 ## What you can build with Nox
 
-Confidential balances, amounts, and positions unlock a wide design space across
-DeFi and beyond. A few of the categories Nox is built for:
+The same primitives apply well beyond these demos. Some of the categories Nox is
+built for:
 
 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 my-8">
   <div class="flex items-center gap-2.5 rounded-lg border border-border bg-soft-bg px-3 py-2.5">

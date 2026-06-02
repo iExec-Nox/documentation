@@ -1,8 +1,8 @@
 ---
 title: RWA Issuance & Distribution
 description:
-  Privacy-first tokenized securities — hidden allocations and confidential
-  distributions layered on ERC-3643 compliance.
+  Privacy-first tokenized securities with hidden allocations and confidential
+  distributions, layered on ERC-3643 compliance.
 ---
 
 # RWA Issuance & Distribution
@@ -15,8 +15,8 @@ real estate, or structured products face a hard constraint: investor
 confidentiality is standard practice in traditional finance and expected by
 institutional investors.
 
-On public blockchains, every token balance and transfer is a matter of public
-record. This makes many RWA products institutionally unviable:
+On a public blockchain, every token balance and transfer is a matter of public
+record, which makes many RWA products institutionally unviable:
 
 - Investor allocations are publicly visible → competitive intelligence leak
 - Redemption flows are trackable → distress signals
@@ -24,20 +24,14 @@ record. This makes many RWA products institutionally unviable:
 
 ## The Nox solution
 
-Nox enables privacy-first tokenized securities that mirror traditional finance
-confidentiality while preserving blockchain's operational benefits.
+Nox brings traditional-finance confidentiality to tokenized securities while
+preserving the operational benefits of a public chain. Investor balances stay
+encrypted, so no one can see who holds how much of a fund or credit instrument.
+Dividend payments, interest accruals, and redemptions settle without
+broadcasting amounts. And the issuer can grant read access to regulators,
+auditors, or compliance partners without making that data public.
 
-**Four properties Nox brings to RWA:**
-
-1. **Hidden Allocations** — Investor balances remain encrypted. No one can see
-   who holds how much of a tokenized fund or credit instrument.
-2. **Confidential Distributions** — Dividend payments, interest accruals, and
-   redemptions occur without publicly broadcasting amounts.
-3. **Selective Regulatory Disclosure** — The issuer can grant read access to
-   regulators, auditors, or compliance partners without making that data
-   globally public.
-
-**Reference stack for a confidential private credit fund:**
+A confidential private credit fund stacks these layers:
 
 ```
 Application Layer       →  Fund Manager UI
@@ -51,26 +45,20 @@ Confidentiality Layer   →  Nox (handles, TEE compute, ACL, selective disclosur
 
 [ERC-3643](https://erc3643.org/) is the leading standard for compliant security
 tokens, with over $32B in assets tokenized on it. It embeds KYC/AML checks and
-transfer restrictions directly into smart contracts via the ONCHAINID identity
-layer.
+transfer restrictions directly into smart contracts through the ONCHAINID
+identity layer.
 
-ERC-3643 solves **who** can hold tokens. It does not solve the visibility
-problem: all balances and amounts remain public. For institutional investors in
-tokenized securities — private equity, venture funds, structured credit — this
-creates the same privacy deficit as standard ERC-20 tokens.
+ERC-3643 solves _who_ can hold tokens. It does not solve the visibility problem:
+all balances and amounts remain public. For institutional investors in tokenized
+securities (private equity, venture funds, structured credit), that is the same
+privacy deficit as a standard ERC-20 token.
 
-**How Nox fills the gap:**
-
-Nox layers privacy on top of ERC-3643's compliance framework. ERC-3643 identity
-and transfer validation rules remain fully enforced. The compliance layer sees
-what it needs (identity verification, transfer eligibility). Financial data
-stays private.
-
-- **Confidential Balances with Compliant Transfers** — ERC-3643 compliance logic
-  runs as normal; balances and transaction amounts are encrypted.
-- **Selective Disclosure for Regulators** — Issuers can grant auditors or
-  regulators decryption access to specific data fields without making that
-  information globally public.
+Nox layers privacy on top of that compliance framework without weakening it. The
+identity and transfer-validation rules stay fully enforced, so the compliance
+layer still sees identity verification and transfer eligibility while balances
+and transaction amounts are encrypted. Issuers can also grant auditors or
+regulators decryption access to specific fields without making that information
+public.
 
 ## Further reading
 
