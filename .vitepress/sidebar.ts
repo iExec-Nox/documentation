@@ -1,10 +1,28 @@
 import type { DefaultTheme } from 'vitepress';
 
-function getStartedItems(_active: boolean): DefaultTheme.SidebarItem[] {
+function getStartedItems(active: boolean): DefaultTheme.SidebarItem[] {
   return [
     { text: 'Welcome', link: '/getting-started/welcome' },
     { text: 'Hello World', link: '/getting-started/hello-world' },
-    { text: 'Use Cases', link: '/getting-started/use-cases' },
+    {
+      text: 'Use Cases',
+      link: '/getting-started/use-cases',
+      collapsed: !active,
+      items: [
+        {
+          text: 'Confidential Vault',
+          link: '/getting-started/use-cases/confidential-vault',
+        },
+        {
+          text: 'DeFi Capital Allocator',
+          link: '/getting-started/use-cases/defi-allocator',
+        },
+        {
+          text: 'RWA Issuance & Distribution',
+          link: '/getting-started/use-cases/rwa',
+        },
+      ],
+    },
     { text: 'Use AI to build on NOX', link: '/getting-started/use-ai' },
     { text: 'Status', link: '/getting-started/status' },
   ];
