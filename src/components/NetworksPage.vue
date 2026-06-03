@@ -125,8 +125,6 @@
 <script setup lang="ts">
 import { reactive, onMounted, onBeforeUnmount, ref } from 'vue';
 import { getSupportedChains, type Chain } from '@/utils/chain.utils';
-import { useChainSwitch } from '@/hooks/useChainSwitch';
-import { useAccount } from '@wagmi/vue';
 
 declare global {
   interface Window {
@@ -177,8 +175,6 @@ const FAUCETS: Record<number, FaucetLink[]> = {
 };
 
 const chains: Chain[] = getSupportedChains();
-const { requestChainChange } = useChainSwitch();
-const { isConnected } = useAccount();
 
 const hasWallet = ref(false);
 const currentWalletChainId = ref<number | undefined>(undefined);
@@ -290,25 +286,12 @@ async function addToWallet(chain: Chain) {
 
   const chainIdHex = `0x${chain.id.toString(16)}`;
 
-  // Sync the doc-side store after a successful wallet operation. When the
-  // wallet is connected through wagmi, wagmi itself listens for `chainChanged`
-  // and updates its state, so calling `requestChainChange` (which delegates to
-  // wagmi's `switchChain`) would dispatch a redundant EIP-1193 prompt. Only
-  // call it on the disconnected path, where it writes the chain to the Pinia
-  // store without touching the wallet.
-  async function syncStoreAfterWallet(chainId: number) {
-    if (!isConnected.value) {
-      await requestChainChange(chainId);
-    }
-  }
-
   try {
     // Try a plain switch first — works if the wallet already knows the chain.
     await window.ethereum.request({
       method: 'wallet_switchEthereumChain',
       params: [{ chainId: chainIdHex }],
     });
-    await syncStoreAfterWallet(chain.id);
     statuses[chain.id] = 'idle';
     await readEthereumChainId();
   } catch (switchErr: any) {
@@ -334,7 +317,6 @@ async function addToWallet(chain: Chain) {
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: chainIdHex }],
         });
-        await syncStoreAfterWallet(chain.id);
         statuses[chain.id] = 'idle';
         await readEthereumChainId();
       } catch (addErr: any) {
