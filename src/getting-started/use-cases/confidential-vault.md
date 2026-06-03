@@ -7,7 +7,10 @@ description:
 
 # Confidential Vault
 
-<!-- TODO: add cVault v1 / v2 live demo links once URLs are confirmed -->
+Try the live demo at
+[cvault.demo.noxprotocol.io](http://cvault.demo.noxprotocol.io), or read the
+source in
+[iExec-Nox/nox-product-poc](https://github.com/iExec-Nox/nox-product-poc).
 
 ## The problem: public vaults leak alpha by design
 

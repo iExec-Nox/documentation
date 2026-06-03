@@ -24,6 +24,8 @@ applications you can build on the protocol.
   icon="ph:vault"
   :features="['ERC-7540', 'Yield', 'TEE']"
   to="/getting-started/use-cases/confidential-vault"
+  demoUrl="http://cvault.demo.noxprotocol.io"
+  githubUrl="https://github.com/iExec-Nox/nox-product-poc"
 />
 
 <UseCaseCard
@@ -34,6 +36,7 @@ applications you can build on the protocol.
   to="/guides/build-confidential-tokens/demo"
   toLabel="Read the guide"
   demoUrl="https://cdefi.iex.ec"
+  githubUrl="https://github.com/iExec-Nox/nox-confidential-contracts"
 />
 
 <UseCaseCard
