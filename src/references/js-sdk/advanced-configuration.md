@@ -128,9 +128,18 @@ If not provided, the default subgraph URL for the detected network will be used.
 The SDK automatically resolves configuration for supported networks based on the
 chain ID detected from your provider:
 
-| Network          | Chain ID |
-| ---------------- | -------- |
-| Arbitrum Sepolia | 421614   |
+| Network          | Chain ID   |
+| ---------------- | ---------- |
+| Ethereum Sepolia | `11155111` |
+| Arbitrum Sepolia | `421614`   |
+
+::: info Ethereum Sepolia
+
+Code samples in these docs default to **Ethereum Sepolia** (`11155111`). Full
+SDK support for it ships with an upcoming `@iexec-nox/handle` release — until
+then the SDK auto-resolves configuration for **Arbitrum Sepolia** (`421614`).
+
+:::
 
 To use an unsupported chain, you must provide all three settings: `gatewayUrl`,
 `smartContractAddress`, and `subgraphUrl`. Two is not enough for a working

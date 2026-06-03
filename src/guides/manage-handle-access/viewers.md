@@ -75,7 +75,7 @@ const account = '0xAccountAddress';
  * See deployment page for more details.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
+  '0x24ef36ec5b626d7dcd09a98f3083c2758f0f77bf';
 
 /**
  * `isViewer` ABI fragment
@@ -117,13 +117,13 @@ const isViewer: boolean = await noxContract.isViewer(handle, account);
 
 ```ts twoslash [viem]
 import { createPublicClient, http } from 'viem';
-import { arbitrumSepolia } from 'viem/chains';
+import { sepolia } from 'viem/chains'; // or arbitrumSepolia
 
 const handle = '0xHandle';
 const viewerAddress = '0xViewerAddress';
 
 const publicClient = createPublicClient({
-  chain: arbitrumSepolia,
+  chain: sepolia, // or arbitrumSepolia
   transport: http(),
 });
 
@@ -133,7 +133,7 @@ const publicClient = createPublicClient({
  * See deployment page for more details.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
+  '0x24ef36ec5b626d7dcd09a98f3083c2758f0f77bf';
 
 /**
  * `isViewer` ABI fragment
@@ -251,7 +251,7 @@ const viewerAddress = '0xViewerAddress';
  * See deployment page for more details.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
+  '0x24ef36ec5b626d7dcd09a98f3083c2758f0f77bf';
 
 /**
  * `addViewer` ABI fragment
@@ -294,12 +294,12 @@ import {
   type WalletClient,
   type Chain,
 } from 'viem';
-import { arbitrumSepolia } from 'viem/chains';
+import { sepolia } from 'viem/chains'; // or arbitrumSepolia
 
 /**
  * Current network.
  */
-const CHAIN: Chain = arbitrumSepolia as Chain;
+const CHAIN: Chain = sepolia as Chain; // or arbitrumSepolia
 
 const handle = '0xHandle';
 const viewerAddress = '0xViewerAddress';
@@ -315,7 +315,7 @@ const walletClient: WalletClient = createWalletClient({
  * See deployment page for more details.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
+  '0x24ef36ec5b626d7dcd09a98f3083c2758f0f77bf';
 
 /**
  * `addViewer` ABI fragment
