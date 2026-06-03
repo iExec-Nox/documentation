@@ -154,6 +154,7 @@ declare global {
   }
 }
 
+// TODO: migrate to Ethereum Sepolia (sepolia) once @iexec-nox/handle supports chain 11155111.
 const ARBITRUM_SEPOLIA_HEX = '0x66eee';
 
 const contractAddress = ref('');

@@ -200,6 +200,8 @@ it, then compile with Solidity `0.8.27+`. To deploy, select **WalletConnect** or
 **Browser Extension** in the Remix **Deploy** panel and make sure your wallet is
 connected to **Arbitrum Sepolia** before hitting **Deploy**.
 
+<!-- TODO: migrate this tutorial + the PiggyBank demo to Ethereum Sepolia once @iexec-nox/handle supports chain 11155111. -->
+
 <!-- prettier-ignore -->
 ::: warning Gas estimation on Arbitrum Sepolia
 Remix sometimes underestimates `maxFeePerGas` on Arbitrum Sepolia, causing
