@@ -1,13 +1,13 @@
 import type { DefaultTheme } from 'vitepress';
 
-function getStartedItems(active: boolean): DefaultTheme.SidebarItem[] {
+function getStartedItems(_active: boolean): DefaultTheme.SidebarItem[] {
   return [
     { text: 'Welcome', link: '/getting-started/welcome' },
     { text: 'Hello World', link: '/getting-started/hello-world' },
     {
       text: 'Use Cases',
       link: '/getting-started/use-cases',
-      collapsed: !active,
+      collapsed: true,
       items: [
         {
           text: 'Confidential Vault',
