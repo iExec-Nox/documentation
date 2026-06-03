@@ -32,7 +32,7 @@
       <!-- Actions -->
       <div
         v-if="demoUrl || to || githubUrl"
-        class="mt-auto flex flex-wrap gap-3"
+        class="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2"
       >
         <a
           v-if="demoUrl"
@@ -42,7 +42,7 @@
           :class="primaryBtn"
         >
           {{ demoLabel }}
-          <Icon icon="lucide:arrow-up-right" :height="16" />
+          <Icon icon="lucide:arrow-up-right" :height="14" />
         </a>
 
         <a
@@ -51,7 +51,7 @@
           :class="demoUrl ? secondaryBtn : primaryBtn"
         >
           {{ toLabel }}
-          <Icon icon="lucide:arrow-right" :height="16" />
+          <Icon icon="lucide:arrow-right" :height="14" />
         </a>
 
         <a
@@ -61,7 +61,7 @@
           rel="noreferrer"
           :class="secondaryBtn"
         >
-          <Icon icon="mdi:github" :height="16" />
+          <Icon icon="mdi:github" :height="14" />
           {{ githubLabel }}
         </a>
       </div>
@@ -97,8 +97,8 @@ withDefaults(defineProps<Props>(), {
 });
 
 const primaryBtn =
-  'inline-flex items-center gap-1.5 rounded-lg bg-[var(--vp-button-brand-bg)] px-4 py-2 text-sm font-semibold text-[var(--vp-button-brand-text)]! no-underline! transition-all duration-200 hover:-translate-y-px hover:bg-[var(--vp-button-brand-hover-bg)]';
+  'inline-flex items-center gap-1 rounded-md bg-[var(--vp-button-brand-bg)] px-3 py-1.5 text-[13px] font-medium text-[var(--vp-button-brand-text)]! no-underline! transition-colors duration-200 hover:bg-[var(--vp-button-brand-hover-bg)]';
 
 const secondaryBtn =
-  'inline-flex items-center gap-1.5 rounded-lg border border-[var(--vp-c-border)] bg-transparent px-4 py-2 text-sm font-semibold text-[var(--vp-c-text-1)]! no-underline! transition-all duration-200 hover:-translate-y-px hover:border-[var(--vp-c-brand-1)] hover:text-[var(--vp-c-brand-1)]!';
+  'inline-flex items-center gap-1 text-[13px] font-medium text-[var(--vp-c-text-2)]! no-underline! transition-colors duration-200 hover:text-[var(--vp-c-brand-1)]!';
 </script>
