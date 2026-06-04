@@ -291,7 +291,7 @@ function hasPlaceholderFields(chain: { [key: string]: unknown }): boolean {
 }
 
 const chainNotReady = computed(() => {
-  const selected = userStore.getCurrentChainId();
+  const selected = userStore.chainId;
   const chain = selected ? getChainById(selected) : undefined;
   if (!chain || !hasPlaceholderFields(chain)) return null;
   const liveChain = getSupportedChains().find((c) => !hasPlaceholderFields(c));
@@ -326,7 +326,7 @@ async function switchToLiveChain() {
 // user switches with the selector, and a leftover handle / decryption from
 // the previous chain is no longer meaningful.
 watch(
-  () => userStore.getCurrentChainId(),
+  () => userStore.chainId,
   () => {
     error.value = '';
     status.value = '';
@@ -343,7 +343,7 @@ const chainMismatch = computed(() => {
   // tracked from the injected provider (`localWalletChainId`).
   if (!account.value) return null;
   const wallet = walletChainId.value ?? localWalletChainId.value;
-  const selected = userStore.getCurrentChainId();
+  const selected = userStore.chainId;
   if (!wallet || !selected || wallet === selected) return null;
   const selectedChain = getChainById(selected);
   if (!selectedChain) return null;
@@ -366,7 +366,7 @@ async function connect() {
       throw new Error('MetaMask not found. Please install it.');
     }
 
-    const chainId = userStore.getCurrentChainId();
+    const chainId = userStore.chainId;
     const chain = chainId ? getChainById(chainId) : undefined;
     if (!chain) {
       throw new Error(
