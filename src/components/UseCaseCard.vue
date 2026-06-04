@@ -38,7 +38,7 @@
           v-if="demoUrl"
           :href="demoUrl"
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           :class="primaryBtn"
         >
           {{ demoLabel }}
@@ -58,7 +58,7 @@
           v-if="githubUrl"
           :href="githubUrl"
           target="_blank"
-          rel="noreferrer"
+          rel="noopener noreferrer"
           :class="secondaryBtn"
         >
           <Icon icon="mdi:github" :height="14" />
