@@ -366,5 +366,5 @@ import { computed } from 'vue';
 import useUserStore from '@/stores/useUser.store';
 
 const userStore = useUserStore();
-const selectedChain = computed(() => userStore.getCurrentChainId());
+const selectedChain = computed(() => userStore.chainId);
 </script>

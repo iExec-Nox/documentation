@@ -9,7 +9,7 @@ import useUserStore from '@/stores/useUser.store';
 import { getChainById } from '@/utils/chain.utils';
 
 const userStore = useUserStore();
-const selectedChain = computed(() => userStore.getCurrentChainId());
+const selectedChain = computed(() => userStore.chainId);
 const chainData = computed(() => getChainById(selectedChain.value));
 </script>
 
