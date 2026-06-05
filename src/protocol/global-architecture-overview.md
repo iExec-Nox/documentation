@@ -141,16 +141,17 @@ A **handle** is a 32-byte identifier that references an encrypted value stored
 in the Handle Gateway. It does not contain the ciphertext itself.
 
 ```
-[0---------------------25]   [26------29]   [30]   [31]
-    prehandle (26 bytes)       Chain ID     Type   Version
+[0]      [1------4]    [5]     [6]     [7---------------------31]
+Version   Chain ID    Type   Attrs       prehandle (25 bytes)
 ```
 
-| Segment   | Size     | Description                                                                              |
-| --------- | -------- | ---------------------------------------------------------------------------------------- |
-| Prehandle | 26 bytes | Truncated keccak256 hash (deterministic for computation results, random for user inputs) |
-| Chain ID  | 4 bytes  | Binds the handle to a specific blockchain                                                |
-| Type      | 1 byte   | Solidity type of the encrypted value (uint8, bool, address, etc.)                        |
-| Version   | 1 byte   | Handle format version (currently `0x00`)                                                 |
+| Segment    | Size     | Description                                                                              |
+| ---------- | -------- | ---------------------------------------------------------------------------------------- |
+| Version    | 1 byte   | Handle format version (currently `0x00`)                                                 |
+| Chain ID   | 4 bytes  | Chain ID encoded as uint32; binds the handle to a specific blockchain                    |
+| Type       | 1 byte   | Solidity type of the encrypted value (uint8, bool, address, etc.)                        |
+| Attributes | 1 byte   | Handle attributes/properties (e.g. uniqueness)                                           |
+| Prehandle  | 25 bytes | Truncated keccak256 hash (deterministic for computation results, random for user inputs) |
 
 For computation results, the prehandle is derived from the operator, input
 handles, contract address, caller, timestamp, and output index. This makes
