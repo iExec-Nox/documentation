@@ -292,8 +292,9 @@ The full type mapping (byte 5) is described in the `NoxType` enum in
 
 ### Prehandle Construction
 
-The prehandle is a keccak256 hash truncated to 25 bytes. Its computation differs
-depending on the handle origin:
+The prehandle segment is derived from a keccak256 hash (32 bytes); only 25 bytes
+of it are stored in the handle. Its computation differs depending on the handle
+origin:
 
 **Computation result** (on-chain, e.g. add, sub, transfer):
 
