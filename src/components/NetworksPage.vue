@@ -231,8 +231,9 @@ onMounted(() => {
     providerAtAttach?.on?.('chainChanged', onChainChanged);
   } else if (typeof window !== 'undefined') {
     // Some wallet extensions inject `window.ethereum` after the page load.
-    // EIP-6963 / EIP-1193 implementations dispatch this event when they are
-    // ready — listen once so late providers don't leave the buttons stuck.
+    // `ethereum#initialized` is a legacy MetaMask-specific event (not part of
+    // EIP-1193 or EIP-6963) — listen once so late providers don't leave the
+    // buttons stuck.
     window.addEventListener('ethereum#initialized', onEthereumInitialized, {
       once: true,
     });

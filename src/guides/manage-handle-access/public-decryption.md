@@ -62,9 +62,10 @@ const provider: AbstractProvider = new BrowserProvider(
 const handle = '0xHandle';
 
 /**
- * Nox protocol contract address, depending on the network.
+ * Nox protocol contract address (Ethereum Sepolia).
+ * Arbitrum Sepolia: 0xd464B198f06756a1d00be223634b85E0a731c229
  *
- * See deployment page for more details.
+ * See the /networks page for all deployments.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
   '0x24ef36ec5b626d7dcd09a98f3083c2758f0f77bf';
@@ -115,9 +116,10 @@ const publicClient = createPublicClient({
 });
 
 /**
- * Nox protocol contract address, depending on the network.
+ * Nox protocol contract address (Ethereum Sepolia).
+ * Arbitrum Sepolia: 0xd464B198f06756a1d00be223634b85E0a731c229
  *
- * See deployment page for more details.
+ * See the /networks page for all deployments.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
   '0x24ef36ec5b626d7dcd09a98f3083c2758f0f77bf';
@@ -220,9 +222,10 @@ const signer: BrowserProvider | AbstractSigner<Provider> = new BrowserProvider(
 const handle = '0xHandle';
 
 /**
- * Nox protocol contract address, depending on the network.
+ * Nox protocol contract address (Ethereum Sepolia).
+ * Arbitrum Sepolia: 0xd464B198f06756a1d00be223634b85E0a731c229
  *
- * See deployment page for more details.
+ * See the /networks page for all deployments.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
   '0x24ef36ec5b626d7dcd09a98f3083c2758f0f77bf';
@@ -278,9 +281,10 @@ const walletClient: WalletClient = createWalletClient({
 });
 
 /**
- * Nox protocol contract address, depending on the network.
+ * Nox protocol contract address (Ethereum Sepolia).
+ * Arbitrum Sepolia: 0xd464B198f06756a1d00be223634b85E0a731c229
  *
- * See deployment page for more details.
+ * See the /networks page for all deployments.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
   '0x24ef36ec5b626d7dcd09a98f3083c2758f0f77bf';
