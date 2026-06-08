@@ -16,24 +16,26 @@
     <!-- Content -->
     <div class="flex flex-1 flex-col p-6">
       <h3 class="text-text1 mt-0! mb-2">{{ title }}</h3>
-      <p class="text-text2 mb-4 flex-1 text-sm">{{ description }}</p>
+      <p class="text-text2 mb-4 text-sm">{{ description }}</p>
 
-      <!-- Feature tags -->
-      <div v-if="features?.length" class="mb-5 flex flex-wrap gap-2">
-        <span
-          v-for="feature in features"
-          :key="feature"
-          class="bg-bg text-text2 border-border rounded-full border px-2.5 py-0.5 text-xs font-medium"
+      <!-- Footer pinned to the bottom so tags + actions align across cards -->
+      <div class="mt-auto">
+        <!-- Feature tags -->
+        <div v-if="features?.length" class="mb-5 flex flex-wrap gap-2">
+          <span
+            v-for="feature in features"
+            :key="feature"
+            class="bg-bg text-text2 border-border rounded-full border px-2.5 py-0.5 text-xs font-medium"
+          >
+            {{ feature }}
+          </span>
+        </div>
+
+        <!-- Actions -->
+        <div
+          v-if="demoUrl || to || githubUrl"
+          class="flex flex-wrap items-center gap-x-4 gap-y-2"
         >
-          {{ feature }}
-        </span>
-      </div>
-
-      <!-- Actions -->
-      <div
-        v-if="demoUrl || to || githubUrl"
-        class="mt-auto flex flex-wrap items-center gap-x-4 gap-y-2"
-      >
         <a
           v-if="demoUrl"
           :href="demoUrl"
@@ -64,6 +66,7 @@
           <Icon icon="mdi:github" :height="14" />
           {{ githubLabel }}
         </a>
+        </div>
       </div>
     </div>
   </div>

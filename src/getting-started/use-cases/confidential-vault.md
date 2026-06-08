@@ -1,16 +1,19 @@
 ---
-title: Confidential Vault
+title: 'Confidential Vault: Encrypted Positions'
 description:
-  A yield vault that encrypts balances and LP positions at the protocol level,
-  with selective read access on demand.
+  A yield vault that encrypts balances and LP positions at the protocol level
+  using Nox cTokens, with selective read access on demand.
 ---
 
-# Confidential Vault
+# Confidential Vault: Encrypted Positions
 
 Try the live demo at
 [cvault.demo.noxprotocol.io](http://cvault.demo.noxprotocol.io), or read the
 source in
 [iExec-Nox/nox-product-poc](https://github.com/iExec-Nox/nox-product-poc).
+
+> Looking to keep the *strategy* itself private, not just positions? See
+> [Confidential Vault: Encrypted Strategy](/getting-started/use-cases/confidential-vault-encrypted-strategy).
 
 ## The problem: public vaults leak alpha by design
 
@@ -57,6 +60,7 @@ exposing any individual position.
 
 ## Further reading
 
+- [Confidential Vault: Encrypted Strategy](/getting-started/use-cases/confidential-vault-encrypted-strategy)
 - [Confidential Tokens (ERC-7984)](/guides/build-confidential-tokens/intro)
 - [Access Control](/guides/manage-handle-access/intro)
 - [Architecture Overview](/protocol/global-architecture-overview)

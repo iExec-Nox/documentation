@@ -19,10 +19,18 @@ applications you can build on the protocol.
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
 
 <UseCaseCard
-  title="Confidential Vault"
-  description="A yield vault that encrypts LP positions and balances at the protocol level. The operator grants scoped read access on demand, so strategy stays private while the vault remains verifiable on-chain."
+  title="Confidential Vault: Encrypted Strategy"
+  description="Keep the vault manager's strategy encrypted end to end: allocation weights, rebalancing triggers, and per-vault intents never hit the chain. Only aggregate net orders are public, while NAV, TVL, and APY stay visible for LPs."
+  icon="ph:strategy"
+  :features="['Encrypted intent', 'Cross-vault netting', 'Public NAV']"
+  to="/getting-started/use-cases/confidential-vault-encrypted-strategy"
+/>
+
+<UseCaseCard
+  title="Confidential Vault: Encrypted Positions"
+  description="Encrypt LP balances and positions at the protocol level with Nox cTokens. The operator grants scoped read access on demand, so positions stay private while the vault remains verifiable on-chain."
   icon="ph:vault"
-  :features="['ERC-7540', 'Yield', 'TEE']"
+  :features="['ERC-7540', 'ERC-7984', 'Selective Disclosure']"
   to="/getting-started/use-cases/confidential-vault"
   demoUrl="http://cvault.demo.noxprotocol.io"
   githubUrl="https://github.com/iExec-Nox/nox-product-poc"
@@ -34,9 +42,9 @@ applications you can build on the protocol.
   icon="ph:coins"
   :features="['ERC-7984', 'Wrap', 'Selective Disclosure']"
   to="/guides/build-confidential-tokens/demo"
-  toLabel="Read the guide"
+  toLabel="Learn more"
   demoUrl="https://cdefi.iex.ec"
-  githubUrl="https://github.com/iExec-Nox/nox-confidential-contracts"
+  githubUrl="https://github.com/iExec-Nox/demo-ctoken"
 />
 
 <UseCaseCard
@@ -59,10 +67,10 @@ applications you can build on the protocol.
 
 ## What you can build with Nox
 
-The same primitives apply well beyond these demos. Some of the categories Nox is
-built for:
+The same primitives apply well beyond these demos. you can build private
+applications for:
 
-<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 my-8">
+<div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3 my-8 items-stretch">
   <div class="flex items-center gap-2.5 rounded-lg border border-border bg-soft-bg px-3 py-2.5">
     <Icon icon="ph:wallet" :height="20" class="text-primary2 shrink-0" />
     <span class="text-sm font-medium text-text1">Payments & Payroll</span>
@@ -81,7 +89,7 @@ built for:
   </div>
   <div class="flex items-center gap-2.5 rounded-lg border border-border bg-soft-bg px-3 py-2.5">
     <Icon icon="ph:gavel" :height="20" class="text-primary2 shrink-0" />
-    <span class="text-sm font-medium text-text1">Prediction Markets & Auctions</span>
+    <span class="text-sm font-medium text-text1">Prediction Markets</span>
   </div>
   <div class="flex items-center gap-2.5 rounded-lg border border-border bg-soft-bg px-3 py-2.5">
     <Icon icon="ph:buildings" :height="20" class="text-primary2 shrink-0" />
