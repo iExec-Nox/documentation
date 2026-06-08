@@ -21,51 +21,52 @@
       <!-- Footer pinned to the bottom so tags + actions align across cards -->
       <div class="mt-auto">
         <!-- Feature tags -->
-        <div v-if="features?.length" class="mb-5 flex flex-wrap gap-2">
+        <div v-if="features?.length" class="mb-5 flex flex-wrap gap-1.5">
           <span
             v-for="feature in features"
             :key="feature"
-            class="bg-bg text-text2 border-border rounded-full border px-2.5 py-0.5 text-xs font-medium"
+            class="bg-bg text-text2 border-border rounded-full border px-2 py-0.5 text-[11px] font-medium"
           >
             {{ feature }}
           </span>
         </div>
 
-        <!-- Actions -->
+        <!-- Actions: yellow demo button on top, text links below -->
         <div
           v-if="demoUrl || to || githubUrl"
-          class="flex flex-wrap items-center gap-x-4 gap-y-2"
+          class="flex flex-col items-start gap-3"
         >
-        <a
-          v-if="demoUrl"
-          :href="demoUrl"
-          target="_blank"
-          rel="noopener noreferrer"
-          :class="primaryBtn"
-        >
-          {{ demoLabel }}
-          <Icon icon="lucide:arrow-up-right" :height="14" />
-        </a>
+          <a
+            v-if="demoUrl"
+            :href="demoUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+            :class="primaryBtn"
+          >
+            {{ demoLabel }}
+            <Icon icon="lucide:arrow-up-right" :height="14" />
+          </a>
 
-        <a
-          v-if="to"
-          :href="withBase(to)"
-          :class="demoUrl ? secondaryBtn : primaryBtn"
-        >
-          {{ toLabel }}
-          <Icon icon="lucide:arrow-right" :height="14" />
-        </a>
+          <div
+            v-if="to || githubUrl"
+            class="flex flex-wrap items-center gap-x-4 gap-y-1"
+          >
+            <a v-if="to" :href="withBase(to)" :class="secondaryBtn">
+              {{ toLabel }}
+              <Icon icon="lucide:arrow-right" :height="14" />
+            </a>
 
-        <a
-          v-if="githubUrl"
-          :href="githubUrl"
-          target="_blank"
-          rel="noopener noreferrer"
-          :class="secondaryBtn"
-        >
-          <Icon icon="mdi:github" :height="14" />
-          {{ githubLabel }}
-        </a>
+            <a
+              v-if="githubUrl"
+              :href="githubUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              :class="secondaryBtn"
+            >
+              <Icon icon="mdi:github" :height="14" />
+              {{ githubLabel }}
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -81,7 +82,7 @@ interface Props {
   description: string;
   icon: string;
   features?: string[];
-  /** Internal route for the primary "Learn more" / "Read the guide" link */
+  /** Internal route for the "Learn more" text link */
   to?: string;
   toLabel?: string;
   /** External live-demo URL */
