@@ -154,8 +154,7 @@ declare global {
   }
 }
 
-// TODO: migrate to Ethereum Sepolia (sepolia) once @iexec-nox/handle supports chain 11155111.
-const ARBITRUM_SEPOLIA_HEX = '0x66eee';
+const SEPOLIA_HEX = '0xaa36a7';
 
 const contractAddress = ref('');
 const plainValue = ref('');
@@ -205,7 +204,7 @@ async function connect() {
     }
 
     const { createWalletClient, custom } = await import('viem');
-    const { arbitrumSepolia } = await import('viem/chains');
+    const { sepolia } = await import('viem/chains');
     const { createViemHandleClient } = await import('@iexec-nox/handle');
 
     const accounts: string[] = await window.ethereum.request({
@@ -216,7 +215,7 @@ async function connect() {
     try {
       await window.ethereum.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: ARBITRUM_SEPOLIA_HEX }],
+        params: [{ chainId: SEPOLIA_HEX }],
       });
     } catch (e: any) {
       if (e.code === 4902) {
@@ -224,11 +223,13 @@ async function connect() {
           method: 'wallet_addEthereumChain',
           params: [
             {
-              chainId: ARBITRUM_SEPOLIA_HEX,
-              chainName: 'Arbitrum Sepolia',
-              nativeCurrency: { name: 'ETH', symbol: 'ETH', decimals: 18 },
-              rpcUrls: ['https://sepolia-rollup.arbitrum.io/rpc'],
-              blockExplorerUrls: ['https://sepolia.arbiscan.io'],
+              chainId: SEPOLIA_HEX,
+              // Derived from viem's `sepolia` so the demo stays aligned with
+              // the /networks page (which reads the same source).
+              chainName: 'Ethereum Sepolia',
+              nativeCurrency: sepolia.nativeCurrency,
+              rpcUrls: [sepolia.rpcUrls.default.http[0]],
+              blockExplorerUrls: [sepolia.blockExplorers.default.url],
             },
           ],
         });
@@ -239,7 +240,7 @@ async function connect() {
 
     const walletClient = createWalletClient({
       account: accounts[0] as `0x${string}`,
-      chain: arbitrumSepolia,
+      chain: sepolia,
       transport: custom(window.ethereum),
     });
 
