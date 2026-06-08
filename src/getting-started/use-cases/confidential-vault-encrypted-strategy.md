@@ -34,12 +34,12 @@ APY remain visible for LPs, indexers, and compliance.
 
 Concretely, the vault gives you:
 
-| Capability                       | Description                                                                                                      |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| Encrypted allocation intents     | Allocation weights are submitted on-chain as encrypted handles, validated and aggregated, never decrypted alone. |
-| Confidential rebalancing logic   | The timing and triggers of capital movements never appear on-chain, so there is no leakage by inference.         |
-| Cross-vault netting inside a TEE | Intents from every active vault are aggregated into one batch per epoch, hiding per-vault attribution.           |
-| Public performance               | NAV, TVL, and APY are published for LPs, indexers, and analytics platforms; the strategy underneath stays hidden.|
+| Capability                       | Description                                                                                                       |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Encrypted allocation intents     | Allocation weights are submitted on-chain as encrypted handles, validated and aggregated, never decrypted alone.  |
+| Confidential rebalancing logic   | The timing and triggers of capital movements never appear on-chain, so there is no leakage by inference.          |
+| Cross-vault netting inside a TEE | Intents from every active vault are aggregated into one batch per epoch, hiding per-vault attribution.            |
+| Public performance               | NAV, TVL, and APY are published for LPs, indexers, and analytics platforms; the strategy underneath stays hidden. |
 
 ## How it works
 

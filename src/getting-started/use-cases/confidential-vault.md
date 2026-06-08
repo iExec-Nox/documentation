@@ -12,7 +12,7 @@ Try the live demo at
 source in
 [iExec-Nox/nox-product-poc](https://github.com/iExec-Nox/nox-product-poc).
 
-> Looking to keep the *strategy* itself private, not just positions? See
+> Looking to keep the _strategy_ itself private, not just positions? See
 > [Confidential Vault: Encrypted Strategy](/getting-started/use-cases/confidential-vault-encrypted-strategy).
 
 ## The problem: public vaults leak alpha by design

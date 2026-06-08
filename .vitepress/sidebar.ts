@@ -10,11 +10,11 @@ function getStartedItems(_active: boolean): DefaultTheme.SidebarItem[] {
       collapsed: true,
       items: [
         {
-          text: 'Confidential Vault: Encrypted Strategy',
+          text: 'cVault: Encrypted Strategy',
           link: '/getting-started/use-cases/confidential-vault-encrypted-strategy',
         },
         {
-          text: 'Confidential Vault: Encrypted Positions',
+          text: 'cVault: Encrypted Positions',
           link: '/getting-started/use-cases/confidential-vault',
         },
         {
