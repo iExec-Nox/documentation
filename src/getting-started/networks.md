@@ -10,14 +10,9 @@ import NetworksPage from '../components/NetworksPage.vue';
 
 # Networks
 
-Nox runs on several testnets. This page lists every supported chain with the
-data you need to wire your dApp end-to-end: the NoxCompute contract address, the
-canonical RPC URL, the block explorer, faucet links for test funds, and a
-one-click _Add to wallet_ action.
-
-Code snippets across the documentation default to **Ethereum Sepolia** and show
-the Arbitrum Sepolia alternative in a comment, so you can adapt them to
-whichever network below you target.
+This page lists the supported chain with the data you need to wire your dApp
+end-to-end: the NoxCompute contract address, the canonical RPC URL, the block
+explorer, faucet links for test funds, and a one-click _Add to wallet_ action.
 
 <ClientOnly>
   <NetworksPage />
