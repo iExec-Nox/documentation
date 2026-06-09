@@ -265,11 +265,19 @@ in the off-chain database and extracting its properties in O(1). A handle is
 same handle.
 
 ```
-[0---------------------25]   [26------29]   [30]   [31]
-    prehandle (truncated)      Chain ID     Type   Version
+[0]      [1------4]    [5]     [6]     [7---------------------31]
+Version   Chain ID    Type   Attrs       prehandle (truncated)
 ```
 
-The full type mapping (byte 30) is described in the `NoxType` enum in
+| Segment    | Size     | Description                                                           |
+| ---------- | -------- | --------------------------------------------------------------------- |
+| Version    | 1 byte   | Handle format version (currently `0x00`)                              |
+| Chain ID   | 4 bytes  | Chain ID encoded as uint32; binds the handle to a specific blockchain |
+| Type       | 1 byte   | Solidity type of the encrypted value                                  |
+| Attributes | 1 byte   | Handle attributes/properties (e.g. uniqueness)                        |
+| Prehandle  | 25 bytes | Truncated keccak256 hash that uniquely identifies the ciphertext      |
+
+The full type mapping (byte 5) is described in the `NoxType` enum in
 [TypeUtils.sol](https://github.com/iExec-Nox/nox-contracts/blob/main/contracts/shared/TypeUtils.sol#L8).
 
 ### Required Properties
@@ -284,8 +292,9 @@ The full type mapping (byte 30) is described in the `NoxType` enum in
 
 ### Prehandle Construction
 
-The prehandle is a keccak256 hash truncated to 26 bytes. Its computation differs
-depending on the handle origin:
+The prehandle segment is derived from a keccak256 hash (32 bytes); only 25 bytes
+of it are stored in the handle. Its computation differs depending on the handle
+origin:
 
 **Computation result** (on-chain, e.g. add, sub, transfer):
 
