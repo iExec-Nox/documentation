@@ -30,7 +30,9 @@ Working with confidential data on Nox follows a three-step workflow:
    - **ACL-protected handles** — Use
      [`decrypt`](/references/js-sdk/methods/decrypt). The SDK signs an EIP-712
      authorization message (no gas required). If the on-chain ACL authorizes the
-     request, the plaintext is securely returned to the caller.
+     request, the plaintext is securely returned to the caller. Note that
+     `decrypt` resolves to a `{ value, solidityType }` object, **not** a bare
+     value — destructure it to read the plaintext.
    - **Publicly decryptable handles** — Use
      [`publicDecrypt`](/references/js-sdk/methods/publicDecrypt). No ACL check
      or EIP-712 signature is needed: anyone can decrypt the value as long as the
