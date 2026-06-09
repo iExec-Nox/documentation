@@ -25,10 +25,10 @@ declare const handle: Handle<'uint256'>;
 // ---cut---
 import { createViemHandleClient } from '@iexec-nox/handle';
 import { createWalletClient, custom } from 'viem';
-import { arbitrumSepolia } from 'viem/chains';
+import { sepolia } from 'viem/chains'; // or arbitrumSepolia
 
 const walletClient = createWalletClient({
-  chain: arbitrumSepolia,
+  chain: sepolia, // or arbitrumSepolia
   transport: custom(window.ethereum),
 });
 
@@ -54,10 +54,10 @@ declare global {
 import { createViemHandleClient } from '@iexec-nox/handle';
 import type { Handle } from '@iexec-nox/handle';
 import { createWalletClient, custom } from 'viem';
-import { arbitrumSepolia } from 'viem/chains';
+import { sepolia } from 'viem/chains'; // or arbitrumSepolia
 
 const walletClient = createWalletClient({
-  chain: arbitrumSepolia,
+  chain: sepolia, // or arbitrumSepolia
   transport: custom(window.ethereum),
 });
 
@@ -113,10 +113,10 @@ declare global {
 import { createViemHandleClient } from '@iexec-nox/handle';
 import type { Handle, SolidityType } from '@iexec-nox/handle';
 import { createWalletClient, custom } from 'viem';
-import { arbitrumSepolia } from 'viem/chains';
+import { sepolia } from 'viem/chains'; // or arbitrumSepolia
 
 const walletClient = createWalletClient({
-  chain: arbitrumSepolia,
+  chain: sepolia, // or arbitrumSepolia
   transport: custom(window.ethereum),
 });
 

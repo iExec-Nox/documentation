@@ -4,6 +4,7 @@ function getStartedItems(_active: boolean): DefaultTheme.SidebarItem[] {
   return [
     { text: 'Welcome', link: '/getting-started/welcome' },
     { text: 'Hello World', link: '/getting-started/hello-world' },
+    { text: 'Networks', link: '/getting-started/networks' },
     {
       text: 'Use Cases',
       link: '/getting-started/use-cases',

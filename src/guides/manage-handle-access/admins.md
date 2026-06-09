@@ -73,12 +73,13 @@ const handle = '0xHandle';
 const account = '0xAccountAddress';
 
 /**
- * Nox protocol contract address, depending on the network.
+ * Nox protocol contract address (Ethereum Sepolia).
+ * Arbitrum Sepolia: 0xd464B198f06756a1d00be223634b85E0a731c229
  *
- * See deployment page for more details.
+ * See the /networks page for all deployments.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
+  '0x24ef36ec5b626d7dcd09a98f3083c2758f0f77bf';
 
 /**
  * `isAllowed` ABI fragment
@@ -120,23 +121,24 @@ const isAllowed: boolean = await noxContract.isAllowed(handle, account);
 
 ```ts twoslash [viem]
 import { createPublicClient, http } from 'viem';
-import { arbitrumSepolia } from 'viem/chains';
+import { sepolia } from 'viem/chains'; // or arbitrumSepolia
 
 const handle = '0xHandle';
 const account = '0xAccountAddress';
 
 const publicClient = createPublicClient({
-  chain: arbitrumSepolia,
+  chain: sepolia, // or arbitrumSepolia
   transport: http(),
 });
 
 /**
- * Nox protocol contract address, depending on the network.
+ * Nox protocol contract address (Ethereum Sepolia).
+ * Arbitrum Sepolia: 0xd464B198f06756a1d00be223634b85E0a731c229
  *
- * See deployment page for more details.
+ * See the /networks page for all deployments.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
+  '0x24ef36ec5b626d7dcd09a98f3083c2758f0f77bf';
 
 /**
  * `isAllowed` ABI fragment
@@ -247,12 +249,13 @@ const handle = '0xHandle';
 const accountToAllow = '0xAccountAddress';
 
 /**
- * Nox protocol contract address, depending on the network.
+ * Nox protocol contract address (Ethereum Sepolia).
+ * Arbitrum Sepolia: 0xd464B198f06756a1d00be223634b85E0a731c229
  *
- * See deployment page for more details.
+ * See the /networks page for all deployments.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
+  '0x24ef36ec5b626d7dcd09a98f3083c2758f0f77bf';
 
 /**
  * `allow` ABI fragment
@@ -295,12 +298,12 @@ import {
   type WalletClient,
   type Chain,
 } from 'viem';
-import { arbitrumSepolia } from 'viem/chains';
+import { sepolia } from 'viem/chains'; // or arbitrumSepolia
 
 /**
  * Current network.
  */
-const CHAIN: Chain = arbitrumSepolia as Chain;
+const CHAIN: Chain = sepolia as Chain; // or arbitrumSepolia
 
 const handle = '0xHandle';
 const accountToAllow = '0xAccountAddress';
@@ -311,12 +314,13 @@ const walletClient: WalletClient = createWalletClient({
 });
 
 /**
- * Nox protocol contract address, depending on the network.
+ * Nox protocol contract address (Ethereum Sepolia).
+ * Arbitrum Sepolia: 0xd464B198f06756a1d00be223634b85E0a731c229
  *
- * See deployment page for more details.
+ * See the /networks page for all deployments.
  */
 const NOX_CONTRACT_ADDRESS: `0x${string}` =
-  '0x5633472D35E18464CA24Ab974954fB3b1B122eA6';
+  '0x24ef36ec5b626d7dcd09a98f3083c2758f0f77bf';
 
 /**
  * `allow` ABI fragment
