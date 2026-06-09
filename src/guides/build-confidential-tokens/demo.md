@@ -119,6 +119,13 @@ access grants) with timestamps and links to the block explorer. The **Delegated
 View** page shows a two-way overview: who you've granted access to, and who has
 granted access to you.
 
+## Source code
+
+The demo application is open source at
+[iExec-Nox/demo-ctoken](https://github.com/iExec-Nox/demo-ctoken). The
+confidential token contracts it builds on (ERC-7984) live in
+[iExec-Nox/nox-confidential-contracts](https://github.com/iExec-Nox/nox-confidential-contracts).
+
 ## Next steps
 
 - [ERC-7984 Token](/guides/build-confidential-tokens/erc7984-token) Learn how to
