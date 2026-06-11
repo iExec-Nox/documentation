@@ -4,41 +4,16 @@ description:
   Build and test confidential smart contracts with the Nox Hardhat plugin
 ---
 
-# Hardhat Integration
-
-`@iexec-nox/nox-hardhat-plugin` is a [Hardhat 3](https://hardhat.org/) plugin
-that lets you write and run end-to-end tests against the full Nox protocol on
-your machine, with zero infrastructure to manage.
-
-When you run `pnpm hardhat test`, the plugin transparently:
-
-1. compiles your project (including the `NoxCompute` contract pulled from
-   `@iexec-nox/nox-protocol-contracts`),
-2. starts a local Hardhat node,
-3. injects `NoxCompute` at its well-known address and initializes it,
-4. brings up the Nox offchain stack (KMS, ingestor, runner, handle gateway,
-   NATS, S3) with Docker Compose and waits for every service to be healthy,
-5. runs your tests against the live stack,
-6. tears everything down when the run finishes (or on failure).
-
-The result: your tests can encrypt inputs, deploy confidential contracts, and
-decrypt handles exactly as they would against a real Nox deployment.
+# Hardhat Plugin
 
 ## Prerequisites
 
-- **Node.js** 22 or 24
-- **Docker** with the Compose plugin, running locally (the offchain stack runs
-  in containers)
+- **Node.js** 22 or higher
+- **Docker** installed and running locally (the offchain stack runs in
+  containers)
 - A **Hardhat 3** project using the
   [`@nomicfoundation/hardhat-toolbox-viem`](https://hardhat.org/plugins/nomicfoundation-hardhat-toolbox-viem)
   toolbox
-
-<!-- prettier-ignore -->
-::: warning
-The plugin's local stack only supports `chainId` `31337` (the Hardhat default).
-On any other network it logs a warning and skips the stack setup, leaving your
-tests to run against the configured endpoint.
-:::
 
 ## Installation
 
@@ -83,9 +58,7 @@ export default defineConfig({
 });
 ```
 
-That is all the configuration required. The plugin injects the two internal
-networks it needs (`noxHost` and `noxLocal`) automatically; you never reference
-them directly.
+That is all the configuration required.
 
 ### Plugin options
 
@@ -178,54 +151,11 @@ const { handle, handleProof } = await nox.encryptInput(
 ## The `nox` API
 
 | Member                                                   | Description                                                                                                                 |
-| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | --- |
 | `connect()`                                              | Opens a connection to the local stack and returns a Viem `NetworkConnection` augmented with a ready-to-use `handleClient`.  |
 | `encryptInput(value, solidityType, applicationContract)` | Encrypts a plaintext value for a given contract and returns a `{ handle, handleProof }` pair to forward to a contract call. |
 | `decrypt(handle)`                                        | Decrypts an ACL-protected handle and returns its cleartext `value` (signs an EIP-712 authorization, no gas).                |
-| `publicDecrypt(handle)`                                  | Decrypts a publicly decryptable handle and returns its `value` plus a `decryptionProof`.                                    |
-
-The package also exports a few constants useful in tests and helpers:
-
-| Constant              | Value                                        | Description                                                     |
-| --------------------- | -------------------------------------------- | --------------------------------------------------------------- |
-| `NOX_COMPUTE_ADDRESS` | `0x75C6AF4430cc474b1bb9b8540b7E46D6f8e1C685` | Well-known address of the `NoxCompute` proxy on the local node. |
-| `HANDLE_GATEWAY_URL`  | `http://localhost:3000`                      | Base URL of the local Handle Gateway.                           |
-| `RPC_URL`             | `http://127.0.0.1:8545`                      | JSON-RPC endpoint of the local node.                            |
-
-## How it works
-
-The plugin overrides Hardhat's built-in `test` task. Before delegating to the
-original action, it provisions a complete local environment and tears it down
-afterwards:
-
-```mermaid
-sequenceDiagram
-    participant Dev as pnpm hardhat test
-    participant Plugin as Nox plugin
-    participant Node as Hardhat node
-    participant Docker as Offchain stack
-
-    Dev->>Plugin: run test task
-    Plugin->>Node: start node on 0.0.0.0:8545
-    Plugin->>Node: setCode NoxCompute (proxy + impl)
-    Plugin->>Node: initialize(admin, kmsPublicKey, gateway)
-    Plugin->>Docker: docker compose up --wait
-    Docker-->>Plugin: all services healthy
-    Plugin->>Dev: run your tests
-    Dev-->>Plugin: results
-    Plugin->>Docker: docker compose down
-    Plugin->>Node: close server
-```
-
-`NoxCompute` is etched directly with `hardhat_setCode` rather than deployed
-through a transaction: the plugin writes the ERC-1967 proxy and implementation
-runtimes, wires the implementation slot, then calls `initialize` to set the
-owner, the KMS public key, and the gateway address. This also emits the seed
-events the offchain stack relies on.
-
-If a test run fails, the plugin writes the full logs of every offchain service
-to `offchain-services.log` in the project directory for diagnostics, while
-keeping the test report on stdout readable.
+| `publicDecrypt(handle)`                                  | Decrypts a publicly decryptable handle and returns its `value` plus a `decryptionProof`.                                    |     |
 
 ## Next steps
 
