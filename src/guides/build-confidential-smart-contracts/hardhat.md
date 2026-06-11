@@ -151,11 +151,11 @@ const { handle, handleProof } = await nox.encryptInput(
 ## The `nox` API
 
 | Member                                                   | Description                                                                                                                 |
-| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | --- |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `connect()`                                              | Opens a connection to the local stack and returns a Viem `NetworkConnection` augmented with a ready-to-use `handleClient`.  |
 | `encryptInput(value, solidityType, applicationContract)` | Encrypts a plaintext value for a given contract and returns a `{ handle, handleProof }` pair to forward to a contract call. |
 | `decrypt(handle)`                                        | Decrypts an ACL-protected handle and returns its cleartext `value` (signs an EIP-712 authorization, no gas).                |
-| `publicDecrypt(handle)`                                  | Decrypts a publicly decryptable handle and returns its `value` plus a `decryptionProof`.                                    |     |
+| `publicDecrypt(handle)`                                  | Decrypts a publicly decryptable handle and returns its `value` plus a `decryptionProof`.                                    |
 
 ## Next steps
 
