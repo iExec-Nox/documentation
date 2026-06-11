@@ -58,8 +58,8 @@ re-encrypted for each target contract that calls `fromExternal()`.
 
 :::
 
-| Pattern                                        | Result                                   |
-| ---------------------------------------------- | ---------------------------------------- |
-| EOA calls Contract A, A calls fromExternal()   | Works                                    |
-| EOA calls A, A calls B, B calls fromExternal() | Reverts InvalidProof                     |
-| Workaround                                     | Re-encrypt the input per target contract |
+| Pattern | Result |
+| --- | --- |
+| EOA calls Contract A, Contract A calls `fromExternal()` | Works |
+| EOA calls Contract A, Contract A calls Contract B, Contract B calls `fromExternal()` | Reverts with `InvalidProof` |
+| Workaround | Re-encrypt the input per target contract |
