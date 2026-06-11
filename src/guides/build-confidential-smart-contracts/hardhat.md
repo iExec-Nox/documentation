@@ -88,7 +88,7 @@ pnpm hardhat test
 ```
 
 The first run pulls the offchain service images and may take a while; later runs
-reuse the cached images.
+reuse existing images.
 
 <!-- prettier-ignore -->
 ::: tip
