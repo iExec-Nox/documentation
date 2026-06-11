@@ -49,12 +49,12 @@ function fromExternal(externalEuint256 handle, bytes calldata proof) internal re
 ::: warning
 
 The wallet that encrypts an input must be the direct external caller
-(msg.sender) of the contract that calls Nox.fromExternal(). The handle proof is
-bound to that caller at encryption time. If the call is routed through an
-intermediary contract, the on-chain msg.sender no longer matches the proof and
-the transaction reverts with InvalidProof. Trustless multi-contract routing of
+(`msg.sender`) of the contract that calls `Nox.fromExternal()`. The `handleProof`
+is bound to that caller at encryption time. If the call is routed through an
+intermediary contract, the on-chain `msg.sender` no longer matches the proof and
+the transaction reverts with `InvalidProof`. Trustless multi-contract routing of
 an externally-encrypted handle is not currently supported; the input must be
-re-encrypted for each target contract that calls fromExternal().
+re-encrypted for each target contract that calls `fromExternal()`.
 
 :::
 
