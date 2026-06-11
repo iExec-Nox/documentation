@@ -9,7 +9,7 @@ description:
 ## Prerequisites
 
 - **Node.js** 22 or higher
-- **Docker** installed and running locally (the offchain stack runs in
+- **Docker** installed and running locally (the offchain stack runs in Docker
   containers)
 - A **Hardhat 3** project using the
   [`@nomicfoundation/hardhat-toolbox-viem`](https://hardhat.org/plugins/nomicfoundation-hardhat-toolbox-viem)
