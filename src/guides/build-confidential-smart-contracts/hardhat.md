@@ -64,8 +64,8 @@ That is all the configuration required.
 
 All options live under the `nox` key in your config:
 
-| Option             | Type      | Default | Description                                                                                                                                                                                      |
-| ------------------ | --------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Option             | Type      | Default | Description                                                                                                                                                                                            |
+| ------------------ | --------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `skipTestOverride` | `boolean` | `false` | When `true`, `hardhat test` runs the original Hardhat action without booting the offchain stack or etching `NoxCompute`. Useful for tests without the Nox stack or to target an already-running stack. |
 
 ```ts
@@ -87,8 +87,8 @@ With the plugin configured, run your test suite as usual:
 pnpm hardhat test
 ```
 
-The first run pulls the offchain service images from DockerHub and may take a while; subsequent runs
-reuse existing images.
+The first run pulls the offchain service images from DockerHub and may take a
+while; subsequent runs reuse existing images.
 
 <!-- prettier-ignore -->
 ::: tip
