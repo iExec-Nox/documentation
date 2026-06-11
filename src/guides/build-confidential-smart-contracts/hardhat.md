@@ -87,7 +87,7 @@ With the plugin configured, run your test suite as usual:
 pnpm hardhat test
 ```
 
-The first run pulls the offchain service images and may take a while; later runs
+The first run pulls the offchain service images from DockerHub and may take a while; subsequent runs
 reuse existing images.
 
 <!-- prettier-ignore -->
