@@ -66,7 +66,7 @@ All options live under the `nox` key in your config:
 
 | Option             | Type      | Default | Description                                                                                                                                                                                      |
 | ------------------ | --------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `skipTestOverride` | `boolean` | `false` | When `true`, `hardhat test` runs the original Hardhat action without booting the offchain stack or etching `NoxCompute`. Useful for pure TypeScript tests or to target an already-running stack. |
+| `skipTestOverride` | `boolean` | `false` | When `true`, `hardhat test` runs the original Hardhat action without booting the offchain stack or etching `NoxCompute`. Useful for tests without the Nox stack or to target an already-running stack. |
 
 ```ts
 import { defineConfig } from 'hardhat/config';
