@@ -45,3 +45,21 @@ function deposit(externalEuint256 encryptedAmount, bytes calldata proof) externa
 ```solidity
 function fromExternal(externalEuint256 handle, bytes calldata proof) internal returns (euint256)
 ```
+
+::: warning
+
+The wallet that encrypts an input must be the direct external caller
+(msg.sender) of the contract that calls Nox.fromExternal(). The handle proof is
+bound to that caller at encryption time. If the call is routed through an
+intermediary contract, the on-chain msg.sender no longer matches the proof and
+the transaction reverts with InvalidProof. Trustless multi-contract routing of
+an externally-encrypted handle is not currently supported; the input must be
+re-encrypted for each target contract that calls fromExternal().
+
+:::
+
+| Pattern                                        | Result                                   |
+| ---------------------------------------------- | ---------------------------------------- |
+| EOA calls Contract A, A calls fromExternal()   | Works                                    |
+| EOA calls A, A calls B, B calls fromExternal() | Reverts InvalidProof                     |
+| Workaround                                     | Re-encrypt the input per target contract |
