@@ -130,24 +130,6 @@ describe('MyConfidentialToken', () => {
 });
 ```
 
-### Encrypting an input
-
-To pass an encrypted value into a contract call, encrypt it first and forward
-the resulting `handle` and `handleProof`:
-
-```ts
-import { nox } from '@iexec-nox/nox-hardhat-plugin';
-
-const { viem } = await nox.connect();
-const [walletClient] = await viem.getWalletClients();
-
-const { handle, handleProof } = await nox.encryptInput(
-  42n,
-  'uint256',
-  walletClient.account.address
-);
-```
-
 ## The `nox` API
 
 | Member                                                   | Description                                                                                                                 |
