@@ -10,8 +10,8 @@ On success, returns a typed handle ready for computation. Reverts if the proof
 is invalid, expired, or was issued for a different contract.
 
 This is the entry point for all user-provided encrypted inputs. The user
-encrypts a value with the [Handle SDK](/references/js-sdk/methods/encryptInput), and
-the contract validates the proof on-chain before using the handle.
+encrypts a value with the [Handle SDK](/references/js-sdk/methods/encryptInput),
+and the contract validates the proof on-chain before using the handle.
 
 **Supported types:** `ebool`, `euint16`, `euint256`, `eint16`, `eint256`
 
