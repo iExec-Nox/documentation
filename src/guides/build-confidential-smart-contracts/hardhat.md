@@ -6,6 +6,8 @@ description:
 
 # Hardhat Plugin
 
+![Hardhat x Nox](../../assets/images/hardhat-x-nox.png)
+
 ## Prerequisites
 
 - **Node.js** 22 or higher
