@@ -13,11 +13,11 @@ description:
 - **Node.js** 22 or higher
 - **Docker** installed and running locally (the offchain stack runs in Docker
   containers)
-- A **Hardhat 3** project using either
+- A **Hardhat 3** project using either the
   [`@nomicfoundation/hardhat-toolbox-viem`](https://hardhat.org/plugins/nomicfoundation-hardhat-toolbox-viem)
-  (Viem) or
+  toolbox (Viem) or the
   [`@nomicfoundation/hardhat-ethers`](https://hardhat.org/plugins/nomicfoundation-hardhat-ethers)
-  (Ethers). The plugin auto-detects whichever one your project enables.
+  plugin (Ethers). The plugin auto-detects whichever one your project enables.
 
 ## Installation
 
@@ -37,14 +37,15 @@ yarn add -D @iexec-nox/nox-hardhat-plugin
 
 :::
 
-`hardhat` is a required peer dependency. The two toolboxes
-(`@nomicfoundation/hardhat-toolbox-viem` and `@nomicfoundation/hardhat-ethers`)
-are **optional** peers: install the one your project uses, you don't need both.
+`hardhat` is a required peer dependency. The Viem toolbox
+(`@nomicfoundation/hardhat-toolbox-viem`) and the Ethers plugin
+(`@nomicfoundation/hardhat-ethers`) are **optional** peers: install the one your
+project uses, you don't need both.
 
 ## Configuration
 
-Register the plugin in your `hardhat.config.ts`, alongside your toolbox (Viem or
-Ethers). Your default network must use the `op` chain type:
+Register the plugin in your `hardhat.config.ts`, alongside your Viem toolbox or
+Ethers plugin. Your default network must use the `op` chain type:
 
 ::: code-group
 
@@ -128,7 +129,7 @@ The plugin exposes a `nox` helper that wraps your Viem or Ethers network
 connection together with a pre-configured
 [Handle SDK](/references/js-sdk/getting-started) client, so your tests can
 encrypt and decrypt without any manual setup. `nox.connect()` returns the
-connection for whichever toolbox you enabled (`viem` or `ethers`).
+connection for whichever integration you enabled (`viem` or `ethers`).
 
 ::: code-group
 
@@ -191,12 +192,12 @@ describe('MyConfidentialToken', () => {
 
 ## The `nox` API
 
-| Member                                                   | Description                                                                                                                                                                       |
-| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `connect()`                                              | Opens a connection to the local stack. Auto-detects the toolbox in use (Viem or Ethers) and returns the Hardhat `NetworkConnection` augmented with a ready-to-use `handleClient`. |
-| `encryptInput(value, solidityType, applicationContract)` | Encrypts a plaintext value for a given contract and returns a `{ handle, handleProof }` pair to forward to a contract call.                                                       |
-| `decrypt(handle)`                                        | Decrypts an ACL-protected handle and returns its cleartext `value` (signs an EIP-712 authorization, no gas).                                                                      |
-| `publicDecrypt(handle)`                                  | Decrypts a publicly decryptable handle and returns its `value` plus a `decryptionProof`.                                                                                          |
+| Member                                                   | Description                                                                                                                                                                            |
+| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `connect()`                                              | Opens a connection to the local stack. Auto-detects whether your project uses Viem or Ethers and returns the Hardhat `NetworkConnection` augmented with a ready-to-use `handleClient`. |
+| `encryptInput(value, solidityType, applicationContract)` | Encrypts a plaintext value for a given contract and returns a `{ handle, handleProof }` pair to forward to a contract call.                                                            |
+| `decrypt(handle)`                                        | Decrypts an ACL-protected handle and returns its cleartext `value` (signs an EIP-712 authorization, no gas).                                                                           |
+| `publicDecrypt(handle)`                                  | Decrypts a publicly decryptable handle and returns its `value` plus a `decryptionProof`.                                                                                               |
 
 ## Next steps
 
