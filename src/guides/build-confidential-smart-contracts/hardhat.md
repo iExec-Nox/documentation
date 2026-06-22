@@ -37,10 +37,11 @@ yarn add -D @iexec-nox/nox-hardhat-plugin
 
 :::
 
-`hardhat` is a required peer dependency. The Viem toolbox
-(`@nomicfoundation/hardhat-toolbox-viem`) and the Ethers plugin
-(`@nomicfoundation/hardhat-ethers`) are **optional** peers: install the one your
-project uses, you don't need both.
+`hardhat` is a required peer dependency. On top of it you must install **one**
+of the two integrations, depending on your stack: the Viem toolbox
+(`@nomicfoundation/hardhat-toolbox-viem`) or the Ethers plugin
+(`@nomicfoundation/hardhat-ethers`). Install the one your project uses, you
+don't need both.
 
 ## Configuration
 
