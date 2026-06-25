@@ -229,6 +229,49 @@ const handleClient = await createHandleClient(walletClient);
 
 :::
 
+## A complete encrypt → decrypt example
+
+Once you have a `handleClient`, the snippet below shows the full round-trip.
+Note that `encryptInput` takes **three positional arguments** (`value`,
+`solidityType`, `applicationContract` — not an options object) and that both
+`encryptInput` and `decrypt` return **objects you destructure**:
+
+```ts twoslash
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+import { createViemHandleClient } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+import { arbitrumSepolia } from 'viem/chains';
+
+const walletClient = createWalletClient({
+  chain: arbitrumSepolia,
+  transport: custom(window.ethereum),
+});
+
+const handleClient = await createViemHandleClient(walletClient);
+declare const APPLICATION_CONTRACT: `0x${string}`;
+// ---cut---
+// 1. Encrypt — positional args: (value, solidityType, applicationContract)
+const { handle, handleProof } = await handleClient.encryptInput(
+  42n,
+  'uint256', // one of: 'bool' | 'uint16' | 'uint256' | 'int16' | 'int256'
+  APPLICATION_CONTRACT
+);
+
+// 2. Compute — pass `handle` + `handleProof` to your smart contract…
+
+// 3. Decrypt — returns { value, solidityType }, NOT a bare value
+const { value, solidityType } = await handleClient.decrypt(handle);
+console.log(`${solidityType}:`, value); // e.g. "uint256: 42n"
+```
+
+See [`encryptInput`](/references/js-sdk/methods/encryptInput) for the supported
+`solidityType` values and [`decrypt`](/references/js-sdk/methods/decrypt) for
+the return shape.
+
 ## Next Steps
 
 - Learn about [encryptInput](/references/js-sdk/methods/encryptInput) — encrypt
