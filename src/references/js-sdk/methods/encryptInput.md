@@ -226,3 +226,93 @@ handle.
 An EIP-712 signed proof from the Handle Gateway attesting that the handle was
 created legitimately. Pass this proof alongside the handle when calling smart
 contract functions that verify encrypted inputs.
+
+## Encrypting multiple values concurrently
+
+You can encrypt several values at the same time by combining multiple
+`encryptInput` calls with `Promise.all` or `Promise.allSettled`.
+
+### With `Promise.all`
+
+All calls start at the same time. The result is an array of resolved values —
+simple to destructure and use directly.
+
+**Limitation:** if any single call rejects (e.g. a network error), `Promise.all`
+immediately rejects and **all results are discarded**, including the ones that
+already succeeded.
+
+```ts twoslash
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+import { createViemHandleClient } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+import { arbitrumSepolia } from 'viem/chains';
+const walletClient = createWalletClient({
+  chain: arbitrumSepolia,
+  transport: custom(window.ethereum),
+});
+const handleClient = await createViemHandleClient(walletClient);
+declare const CONTRACT_ADDRESS: `0x${string}`;
+declare const sellAmount: bigint;
+declare const minBuyAmount: bigint;
+declare const bidAmount: bigint;
+// ---cut---
+const [sell, minBuy, bid] = await Promise.all([
+  handleClient.encryptInput(sellAmount, 'uint256', CONTRACT_ADDRESS),
+  handleClient.encryptInput(minBuyAmount, 'uint256', CONTRACT_ADDRESS),
+  handleClient.encryptInput(bidAmount, 'uint256', CONTRACT_ADDRESS),
+]);
+```
+
+### With `Promise.allSettled`
+
+All calls start at the same time. Each settles independently — a rejection on
+one item never discards the others. Every result carries a `status` field
+(`'fulfilled'` or `'rejected'`) that must be checked before use.
+
+```ts twoslash
+declare global {
+  interface Window {
+    ethereum: any;
+  }
+}
+import { createViemHandleClient } from '@iexec-nox/handle';
+import { createWalletClient, custom } from 'viem';
+import { arbitrumSepolia } from 'viem/chains';
+const walletClient = createWalletClient({
+  chain: arbitrumSepolia,
+  transport: custom(window.ethereum),
+});
+const handleClient = await createViemHandleClient(walletClient);
+declare const CONTRACT_ADDRESS: `0x${string}`;
+declare const sellAmount: bigint;
+declare const minBuyAmount: bigint;
+declare const bidAmount: bigint;
+// ---cut---
+const results = await Promise.allSettled([
+  handleClient.encryptInput(sellAmount, 'uint256', CONTRACT_ADDRESS),
+  handleClient.encryptInput(minBuyAmount, 'uint256', CONTRACT_ADDRESS),
+  handleClient.encryptInput(bidAmount, 'uint256', CONTRACT_ADDRESS),
+]);
+
+for (const [i, result] of results.entries()) {
+  if (result.status === 'fulfilled') {
+    const { handle, handleProof } = result.value;
+    // use handle and handleProof in your contract call
+  } else {
+    console.error(`input[${i}] failed:`, result.reason);
+  }
+}
+```
+
+::: info Rate limit
+
+The Handle Gateway enforces a rate limit. Sending more than ~100 concurrent
+`encryptInput` calls may result in `429 Too Many Requests` errors. If your use
+case requires encrypting a large number of values simultaneously,
+[contact us](mailto:support@iex.ec).
+
+:::
