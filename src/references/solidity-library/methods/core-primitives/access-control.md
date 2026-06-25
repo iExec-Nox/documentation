@@ -15,7 +15,7 @@ For a detailed explanation of the permission model, see
 
 **Supported types:** `ebool`, `euint16`, `euint256`, `eint16`, `eint256`
 
-### Usage
+## Usage
 
 ```solidity
 euint256 newBalance = Nox.add(balance, deposit);
@@ -46,16 +46,11 @@ use the handle as input in future computations and manage its permissions.
 
 ::: warning
 
-The caller must already have access to the handle. You cannot grant access to a
-handle you do not control.
-
-:::
-
-::: warning
-
-This permission is permanent and cannot be revoked. See
-[Managing Admins](/guides/manage-handle-access/admins#isolating-access-via-a-new-handle)
-for the new-handle isolation pattern.
+- The caller must already have access to the handle. You cannot grant access to
+  a handle you do not control.
+- This permission is permanent and cannot be revoked. See
+  [Managing Admins](/guides/manage-handle-access/admins#isolating-access-via-a-new-handle)
+  for the new-handle isolation pattern.
 
 :::
 
@@ -87,6 +82,14 @@ function isAllowed(euint256 handle, address account) internal view returns (bool
 
 Returns `true` if `account` has admin access (persistent or transient) to the
 handle.
+
+::: tip
+
+Working from JavaScript? `isAllowed` is the on-chain Solidity function. From the
+JS SDK, use [`handleClient.viewACL(handle)`](/references/js-sdk/methods/viewACL)
+to read a handle's permissions instead of calling the contract directly.
+
+:::
 
 ## addViewer
 
