@@ -85,9 +85,10 @@ handle.
 
 ::: tip
 
-Working from JavaScript? `isAllowed` is the on-chain Solidity function. From the
+Working from JavaScript? `isAllowed` is the on-chain Solidity function. In the
 JS SDK, use [`handleClient.viewACL(handle)`](/references/js-sdk/methods/viewACL)
-to read a handle's permissions instead of calling the contract directly.
+to fetch the handle's **persistent** ACL from the subgraph (transient access is
+not reflected off-chain) instead of calling the contract directly.
 
 :::
 
