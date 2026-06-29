@@ -12,9 +12,9 @@ signatures, and key exchange transparently.
 
 ::: tip
 
-The complete and always up-to-date reference of the `@iexec-nox/handle` SDK
-methods (signatures, parameters, return types) lives in the SDK source
-repository: <https://github.com/iExec-Nox/nox-handle-sdk>. Key methods:
+The complete and always up-to-date reference for the `@iexec-nox/handle` SDK
+methods (signatures, parameters, return types) lives in the
+[iExec-Nox/nox-handle-sdk](https://github.com/iExec-Nox/nox-handle-sdk) source repository. Key methods:
 `createViemHandleClient`, `encryptInput`, `decrypt`, `publicDecrypt`, `viewACL`.
 
 :::
