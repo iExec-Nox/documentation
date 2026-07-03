@@ -2,6 +2,12 @@
   "cleanUrls": true,
   "redirects": [
     {
+      "source": "/(.*)",
+      "has": [{ "type": "host", "value": "demo.iex.ec" }],
+      "destination": "https://docs.noxprotocol.io/getting-started/use-cases",
+      "statusCode": 301
+    },
+    {
       "source": "/",
       "destination": "/getting-started/welcome",
       "statusCode": 308
