@@ -10,6 +10,16 @@ confidential smart contracts, without dealing directly with the Handle Gateway
 or the underlying cryptography. It manages encryption, proof generation, EIP-712
 signatures, and key exchange transparently.
 
+::: tip
+
+The complete and always up-to-date reference for the `@iexec-nox/handle` SDK
+methods (signatures, parameters, return types) lives in the
+[iExec-Nox/nox-handle-sdk](https://github.com/iExec-Nox/nox-handle-sdk) source
+repository. Key methods: `createViemHandleClient`, `encryptInput`, `decrypt`,
+`publicDecrypt`, `viewACL`.
+
+:::
+
 ## How It Works
 
 Working with confidential data on Nox follows a three-step workflow:
