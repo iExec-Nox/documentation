@@ -52,7 +52,8 @@ The wallet that encrypts an input must be the direct caller (`msg.sender`) of
 the contract that calls `Nox.fromExternal()`. The proof binds the input to that
 caller **and** to that specific contract at encryption time. If the call is
 routed through an intermediary contract, the on-chain `msg.sender` no longer
-matches the proof and the transaction reverts with `InvalidProof` (owner mismatch).
+matches the proof and the transaction reverts with `InvalidProof` (owner
+mismatch).
 
 This does **not** prevent multi-contract flows. Validate the input **once** in
 the contract the user calls directly, then share the validated handle via
