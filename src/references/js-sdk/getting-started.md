@@ -156,12 +156,12 @@ declare const PRIVATE_KEY: `0x${string}`;
 // ---cut---
 import { createViemHandleClient } from '@iexec-nox/handle';
 import { createPublicClient, http } from 'viem';
-import { arbitrumSepolia } from 'viem/chains';
+import { sepolia } from 'viem/chains'; // or arbitrumSepolia
 import { toSimple7702SmartAccount } from 'viem/account-abstraction';
 import { privateKeyToAccount } from 'viem/accounts';
 
 const publicClient = createPublicClient({
-  chain: arbitrumSepolia,
+  chain: sepolia, // or arbitrumSepolia
   transport: http(RPC_URL),
 });
 

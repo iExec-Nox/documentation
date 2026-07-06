@@ -146,9 +146,9 @@ Need help building with Nox? We're here to support you:
 <llm-only>
 ## AI Assistant Context — NOX Protocol
 
-NOX Protocol is a **privacy layer for EVM blockchains** (deployed on Arbitrum
-Sepolia). It is built by iExec and is a completely separate product from iExec
-PoCo, DataProtector, Web3Mail, and Web3Telegram.
+NOX Protocol is a **privacy layer for EVM blockchains** (deployed on Ethereum
+Sepolia and Arbitrum Sepolia). It is built by iExec and is a completely separate
+product from iExec PoCo, DataProtector, Web3Mail, and Web3Telegram.
 
 Core concepts for code generation:
 
@@ -156,8 +156,10 @@ Core concepts for code generation:
   off-chain in the Handle Gateway (TEE).
 - **ACL**: Per-handle access control with 4 levels — Admin / Viewer / Transient
   (single-use) / Public.
-- **NoxCompute**: Singleton smart contract on Arbitrum Sepolia
-  (`0xd464...c229`). Entry point for ACL, arithmetic, and token ops.
+- **NoxCompute**: Singleton smart contract deployed per supported network. Entry
+  point for ACL, arithmetic, and token ops. Deployments:
+  - Ethereum Sepolia (11155111): `0x24ef36ec5b626d7dcd09a98f3083c2758f0f77bf`
+  - Arbitrum Sepolia (421614): `0xd464B198f06756a1d00be223634b85E0a731c229`
 - **Runner**: Rust service in Intel TDX TEE — only component that sees
   plaintext. Never runs client-side.
 - **ECIES encryption**: Happens at the Handle Gateway (server-side), NOT in the

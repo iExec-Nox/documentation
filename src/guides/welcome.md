@@ -42,3 +42,5 @@ Control access to encrypted data with Nox:
 - [Admins](/guides/manage-handle-access/admins) - Manage admins for handles
 - [Public Decryption](/guides/manage-handle-access/public-decryption) - Manage
   public decryption for handles
+- [Transient Access](/guides/manage-handle-access/transient-access) - Grant
+  single-use access to handles

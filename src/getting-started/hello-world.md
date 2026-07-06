@@ -198,16 +198,7 @@ details.
 Here is the complete confidential piggy bank. Click **Open in Remix** to load
 it, then compile with Solidity `0.8.27+`. To deploy, select **WalletConnect** or
 **Browser Extension** in the Remix **Deploy** panel and make sure your wallet is
-connected to **Arbitrum Sepolia** before hitting **Deploy**.
-
-<!-- prettier-ignore -->
-::: warning Gas estimation on Arbitrum Sepolia
-Remix sometimes underestimates `maxFeePerGas` on Arbitrum Sepolia, causing
-transactions to fail with `max fee per gas less than block base fee`. If this
-happens, go to **Deploy & Run → Gas settings** in Remix and manually set
-**Max fee per gas** to at least **1.5× the current base fee** shown in the
-error, then retry.
-:::
+connected to **Ethereum Sepolia** before hitting **Deploy**.
 
 <ClientOnly>
   <RemixButton :code="piggyBankCode" />
