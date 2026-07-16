@@ -264,7 +264,7 @@ extent. The higher links build on it:
   public source code
 - **On-chain governance**: anchoring the set of authorized measurements on-chain
 
-## Further Reading
+## Learn More
 
 - [Nox Attestation portal](https://trust.noxprotocol.io/): live, re-verifiable
   attestation evidence for every component instance in the Nox fleet
