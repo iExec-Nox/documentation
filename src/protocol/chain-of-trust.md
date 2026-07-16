@@ -10,8 +10,8 @@ description:
 ::: info
 
 This page covers the **foundation** of the Nox chain of trust: the TEE layer and
-**boot-time attestation** — how each Nox off-chain service is verified before it
-is granted access to any secret.
+**boot-time attestation**. It explains how each Nox off-chain service is
+verified before it is granted access to any secret.
 
 :::
 
