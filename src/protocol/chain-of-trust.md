@@ -241,7 +241,7 @@ whitelisting ceremony, so a verifier can establish not only that a workload runs
 on genuine TDX silicon, but also that this silicon sits in a facility multiple
 independent parties have vouched for.
 
-In the current Nox fleet, this property is tracked per node. The testnets fleet
+In the current Nox fleet, this property is tracked per node. The testnet fleet
 runs two TDX nodes: `node1`, hosted at OVH, and `node2`, hosted at phoenixNAP.
 Of these two, `node1` carries a Proof-of-Cloud seal and `node2` does not. The
 distinction is meaningful for an external verifier: where present,
