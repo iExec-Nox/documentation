@@ -206,6 +206,10 @@ const protocolItems: DefaultTheme.SidebarItem[] = [
     link: '/protocol/protocol-vision',
   },
   {
+    text: 'Chain of Trust',
+    link: '/protocol/chain-of-trust',
+  },
+  {
     text: 'Nox Smart Contracts',
     link: '/protocol/nox-smart-contracts',
   },
