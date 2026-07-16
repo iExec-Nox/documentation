@@ -110,7 +110,7 @@ on which boot-time verification rests. Its main components are:
 - A **dstack-KMS CVM** that derives application keys inside the enclave and
   decides which workloads may boot by checking their measurements against a
   whitelist
-- A **dstack-Gateway CVM** that terminates public TLS (with automatic ACME
+- A **dstack-gateway CVM** that terminates public TLS (with automatic ACME
   certificates) and reverse-proxies traffic to each registered CVM over an
   encrypted WireGuard overlay, load-balancing natively between CVMs that share
   the same application identifier (`app_id`)
