@@ -10,9 +10,8 @@ description:
 ::: info
 
 This page covers the **foundation** of the Nox chain of trust: the TEE layer and
-**boot-time attestation**. Upcoming parts will cover runtime attestation
-surfaced to end users, source-code binding, and on-chain governance of
-authorized measurements.
+**boot-time attestation** — how each Nox off-chain service is verified before it
+is granted access to any secret.
 
 :::
 
@@ -253,11 +252,10 @@ attestation, not a replacement: TDX attests the integrity and identity of the
 execution environment, while Proof-of-Cloud attests the integrity of its hosting
 context.
 
-## What's Next
+## Beyond Boot-Time Attestation
 
-This page established the foundation of the chain of trust: hardware-isolated
-CVMs whose boot is gated on verified measurements. Upcoming parts of this series
-will cover the higher links:
+Boot-time verification is the foundation of the chain of trust, but not its full
+extent. The higher links build on it:
 
 - **Runtime attestation**: surfacing live attestation evidence to end users
   (already explorable today on the
@@ -270,7 +268,7 @@ will cover the higher links:
 
 - [Nox Attestation portal](https://trust.noxprotocol.io/): live, re-verifiable
   attestation evidence for every component instance in the Nox fleet
-- [Chain of Trust for Nox - Part 1](https://x.com/iex_ec/status/2077021734453019059):
-  the original iExec publication of this article
+- [Chain of Trust for Nox](https://x.com/iex_ec/status/2077021734453019059): the
+  original iExec publication of this article
 - [How iExec Uses dstack For OnChain Finance](https://phala.com/posts/iexec-dstack-nox-chain-of-trust):
   Phala's perspective on the dstack integration and runtime quote generation
