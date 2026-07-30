@@ -90,10 +90,10 @@ That is all the configuration required.
 
 ### Plugin options
 
-By default the plugin boots a local offchain stack for whichever network you
-connect to. If you'd rather point it at an already-running stack (for example a
-shared staging deployment), add a `nox` block to that network's entry under
-`networks` in your config:
+By default, calling `nox.connect(connection)` boots a local offchain stack for
+whichever network the connection targets. If you'd rather point it at an
+already-running stack (for example a shared staging deployment), add a `nox`
+block to that network's entry under `networks` in your config:
 
 ```ts
 import { defineConfig } from 'hardhat/config';
@@ -154,10 +154,11 @@ before running your tests, otherwise the stack setup will fail.
 
 The plugin exposes a `nox` helper. Call `nox.connect(connection)` with a Hardhat
 `NetworkConnection` to boot (or attach to) the offchain stack; it resolves to an
-object exposing a pre-configured
-[Handle SDK](/references/js-sdk/getting-started) client so your tests can
-encrypt and decrypt without any manual setup. Get `viem`/`ethers` from the
-`connection` you passed in, not from `nox.connect()`'s return value.
+object with `encryptInput`, `decrypt`, and `publicDecrypt` methods (backed by
+the [Handle SDK](/references/js-sdk/getting-started)), plus `noxComputeAddress`
+and `handleGatewayUrl`, so your tests can encrypt and decrypt without any manual
+setup. Get `viem`/`ethers` from the `connection` you passed in, not from
+`nox.connect()`'s return value.
 
 ::: code-group
 
@@ -168,11 +169,16 @@ import { network } from 'hardhat';
 import { nox } from '@iexec-nox/nox-hardhat-plugin';
 
 describe('MyConfidentialToken', () => {
-  it('resolves a publicly decryptable total supply', async () => {
-    const connection = await network.getOrCreate('default');
-    const { viem } = connection;
-    const { publicDecrypt } = await nox.connect(connection);
+  let viem: Awaited<ReturnType<typeof network.getOrCreate>>['viem'];
+  let publicDecrypt: Awaited<ReturnType<typeof nox.connect>>['publicDecrypt'];
 
+  before(async () => {
+    const connection = await network.getOrCreate('default');
+    ({ viem } = connection);
+    ({ publicDecrypt } = await nox.connect(connection));
+  });
+
+  it('resolves a publicly decryptable total supply', async () => {
     // Deploy a confidential contract with the standard Viem helpers.
     const token = await viem.deployContract('MyConfidentialToken', [
       'My Confidential Token',
@@ -199,11 +205,16 @@ import { network } from 'hardhat';
 import { nox } from '@iexec-nox/nox-hardhat-plugin';
 
 describe('MyConfidentialToken', () => {
-  it('resolves a publicly decryptable total supply', async () => {
-    const connection = await network.getOrCreate('default');
-    const { ethers } = connection;
-    const { publicDecrypt } = await nox.connect(connection);
+  let ethers: Awaited<ReturnType<typeof network.getOrCreate>>['ethers'];
+  let publicDecrypt: Awaited<ReturnType<typeof nox.connect>>['publicDecrypt'];
 
+  before(async () => {
+    const connection = await network.getOrCreate('default');
+    ({ ethers } = connection);
+    ({ publicDecrypt } = await nox.connect(connection));
+  });
+
+  it('resolves a publicly decryptable total supply', async () => {
     // Deploy a confidential contract with the standard Ethers helpers.
     const token = await ethers.deployContract('MyConfidentialToken', [
       'My Confidential Token',
