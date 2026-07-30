@@ -24,21 +24,22 @@ description:
 ::: code-group
 
 ```sh [pnpm]
-pnpm add -D @iexec-nox/nox-hardhat-plugin
+pnpm add -D @iexec-nox/nox-hardhat-plugin @iexec-nox/nox-protocol-contracts
 ```
 
 ```sh [npm]
-npm install --save-dev @iexec-nox/nox-hardhat-plugin
+npm install --save-dev @iexec-nox/nox-hardhat-plugin @iexec-nox/nox-protocol-contracts
 ```
 
 ```sh [yarn]
-yarn add -D @iexec-nox/nox-hardhat-plugin
+yarn add -D @iexec-nox/nox-hardhat-plugin @iexec-nox/nox-protocol-contracts
 ```
 
 :::
 
-`hardhat` is a required peer dependency. On top of it you must install **one**
-of the two integrations, depending on your stack: the Viem toolbox
+`hardhat` and `@iexec-nox/nox-protocol-contracts` are required peer
+dependencies. On top of them you must install **one** of the two integrations,
+depending on your stack: the Viem toolbox
 (`@nomicfoundation/hardhat-toolbox-viem`) or the Ethers plugin
 (`@nomicfoundation/hardhat-ethers`). Install the one your project uses, you
 don't need both.
@@ -46,7 +47,7 @@ don't need both.
 ## Configuration
 
 Register the plugin in your `hardhat.config.ts`, alongside your Viem toolbox or
-Ethers plugin. Your default network must use the `op` chain type:
+Ethers plugin:
 
 ::: code-group
 
@@ -61,7 +62,6 @@ export default defineConfig({
   networks: {
     default: {
       type: 'edr-simulated',
-      chainType: 'op',
     },
   },
 });
@@ -78,7 +78,6 @@ export default defineConfig({
   networks: {
     default: {
       type: 'edr-simulated',
-      chainType: 'op',
     },
   },
 });
@@ -88,12 +87,13 @@ export default defineConfig({
 
 That is all the configuration required.
 
-### Plugin options
+### Connecting to an http network
 
-By default, calling `nox.connect(connection)` boots a local offchain stack for
-whichever network the connection targets. If you'd rather point it at an
-already-running stack (for example a shared staging deployment), add a `nox`
-block to that network's entry under `networks` in your config:
+The plugin only boots the local offchain stack automatically when connecting on
+an `edr-simulated` network. When you call `nox.connect(connection)` on an `http`
+network — for example a shared staging deployment — the plugin instead reads
+that network's `nox` config to configure the returned object. Add a `nox` block
+to that network's entry under `networks` in your config:
 
 ```ts
 import { defineConfig } from 'hardhat/config';
@@ -113,16 +113,15 @@ export default defineConfig({
 });
 ```
 
-The `nox` block is only valid on `http`-type network entries. When it's present,
-`nox.connect()` skips booting a local stack and talks to the
-`noxComputeAddress`/`handleGatewayUrl` you provided instead.
+The `nox` block is only valid on `http`-type network entries, and
+`nox.connect()` rejects if no `nox` config is present for an `http` network.
 
-## Running tests
+## Running hardhat scripts
 
-The plugin no longer overrides the built-in `test` task, so `hardhat test` runs
-your test suite as-is: it won't boot the offchain stack on its own. Call
-`nox.connect(connection)` yourself in a setup step before your tests run, using
-a `NetworkConnection` obtained from Hardhat:
+Any Hardhat script can use the `nox` plugin — not just tests. Call
+`nox.connect(connection)` with a `NetworkConnection` obtained from Hardhat to
+boot (or attach to) the offchain stack wherever you need it. In a test file,
+this typically happens in a setup step:
 
 ```ts
 import { before, describe, it } from 'node:test';
@@ -141,13 +140,15 @@ describe('MyConfidentialToken', () => {
 });
 ```
 
-The first call to `nox.connect()` pulls the offchain service images from
-DockerHub and may take a while; subsequent runs reuse existing images.
+The first connection to an `edr-simulated` network pulls the offchain service
+images from DockerHub and may take a while; subsequent runs reuse existing
+images.
 
 <!-- prettier-ignore -->
 ::: tip
 The offchain services run in Docker. Make sure the Docker daemon is started
-before running your tests, otherwise the stack setup will fail.
+before running a script that connects to an `edr-simulated` network, otherwise
+the stack setup will fail.
 :::
 
 ## Writing a test
@@ -157,8 +158,7 @@ The plugin exposes a `nox` helper. Call `nox.connect(connection)` with a Hardhat
 object with `encryptInput`, `decrypt`, and `publicDecrypt` methods (backed by
 the [Handle SDK](/references/js-sdk/getting-started)), plus `noxComputeAddress`
 and `handleGatewayUrl`, so your tests can encrypt and decrypt without any manual
-setup. Get `viem`/`ethers` from the `connection` you passed in, not from
-`nox.connect()`'s return value.
+setup.
 
 ::: code-group
 
@@ -169,18 +169,17 @@ import { network } from 'hardhat';
 import { nox } from '@iexec-nox/nox-hardhat-plugin';
 
 describe('MyConfidentialToken', () => {
-  let viem: Awaited<ReturnType<typeof network.getOrCreate>>['viem'];
-  let publicDecrypt: Awaited<ReturnType<typeof nox.connect>>['publicDecrypt'];
+  let connection: Awaited<ReturnType<typeof network.getOrCreate>>;
+  let noxClient: Awaited<ReturnType<typeof nox.connect>>;
 
   before(async () => {
-    const connection = await network.getOrCreate('default');
-    ({ viem } = connection);
-    ({ publicDecrypt } = await nox.connect(connection));
+    connection = await network.getOrCreate('default');
+    noxClient = await nox.connect(connection);
   });
 
   it('resolves a publicly decryptable total supply', async () => {
     // Deploy a confidential contract with the standard Viem helpers.
-    const token = await viem.deployContract('MyConfidentialToken', [
+    const token = await connection.viem.deployContract('MyConfidentialToken', [
       'My Confidential Token',
       'MCT',
       'ipfs://example',
@@ -192,7 +191,7 @@ describe('MyConfidentialToken', () => {
       (await token.read.confidentialTotalSupply()) as `0x${string}`;
 
     // Ask the Nox stack to decrypt it and assert on the cleartext value.
-    const { value } = await publicDecrypt(handle);
+    const { value } = await noxClient.publicDecrypt(handle);
     assert.equal(value, 1000n);
   });
 });
@@ -205,29 +204,26 @@ import { network } from 'hardhat';
 import { nox } from '@iexec-nox/nox-hardhat-plugin';
 
 describe('MyConfidentialToken', () => {
-  let ethers: Awaited<ReturnType<typeof network.getOrCreate>>['ethers'];
-  let publicDecrypt: Awaited<ReturnType<typeof nox.connect>>['publicDecrypt'];
+  let connection: Awaited<ReturnType<typeof network.getOrCreate>>;
+  let noxClient: Awaited<ReturnType<typeof nox.connect>>;
 
   before(async () => {
-    const connection = await network.getOrCreate('default');
-    ({ ethers } = connection);
-    ({ publicDecrypt } = await nox.connect(connection));
+    connection = await network.getOrCreate('default');
+    noxClient = await nox.connect(connection);
   });
 
   it('resolves a publicly decryptable total supply', async () => {
     // Deploy a confidential contract with the standard Ethers helpers.
-    const token = await ethers.deployContract('MyConfidentialToken', [
-      'My Confidential Token',
-      'MCT',
-      'ipfs://example',
-      1000n,
-    ]);
+    const token = await connection.ethers.deployContract(
+      'MyConfidentialToken',
+      ['My Confidential Token', 'MCT', 'ipfs://example', 1000n]
+    );
 
     // Read an encrypted handle from the contract.
     const handle = (await token.confidentialTotalSupply()) as `0x${string}`;
 
     // Ask the Nox stack to decrypt it and assert on the cleartext value.
-    const { value } = await publicDecrypt(handle);
+    const { value } = await noxClient.publicDecrypt(handle);
     assert.equal(value, 1000n);
   });
 });
