@@ -24,15 +24,18 @@ description:
 ::: code-group
 
 ```sh [pnpm]
-pnpm add -D @iexec-nox/nox-hardhat-plugin @iexec-nox/nox-protocol-contracts
+pnpm add -D @iexec-nox/nox-hardhat-plugin
+pnpm add @iexec-nox/nox-protocol-contracts
 ```
 
 ```sh [npm]
-npm install --save-dev @iexec-nox/nox-hardhat-plugin @iexec-nox/nox-protocol-contracts
+npm install --save-dev @iexec-nox/nox-hardhat-plugin
+npm install @iexec-nox/nox-protocol-contracts
 ```
 
 ```sh [yarn]
-yarn add -D @iexec-nox/nox-hardhat-plugin @iexec-nox/nox-protocol-contracts
+yarn add -D @iexec-nox/nox-hardhat-plugin
+yarn add @iexec-nox/nox-protocol-contracts
 ```
 
 :::
@@ -59,11 +62,6 @@ import noxPlugin from '@iexec-nox/nox-hardhat-plugin';
 export default defineConfig({
   plugins: [hardhatToolboxViemPlugin, noxPlugin],
   solidity: '0.8.35',
-  networks: {
-    default: {
-      type: 'edr-simulated',
-    },
-  },
 });
 ```
 
@@ -75,6 +73,23 @@ import noxPlugin from '@iexec-nox/nox-hardhat-plugin';
 export default defineConfig({
   plugins: [hardhatEthersPlugin, noxPlugin],
   solidity: '0.8.35',
+});
+```
+
+:::
+
+That is all the configuration required.
+
+### Connecting to an edr-simulated network
+
+The plugin boots the local offchain stack automatically when connecting on an
+`edr-simulated` network.
+
+```ts
+import { defineConfig } from 'hardhat/config';
+
+export default defineConfig({
+  // ...
   networks: {
     default: {
       type: 'edr-simulated',
@@ -83,17 +98,23 @@ export default defineConfig({
 });
 ```
 
-:::
+The first connection to an `edr-simulated` network pulls the offchain service
+images from DockerHub and may take a while; subsequent runs reuse existing
+images.
 
-That is all the configuration required.
+<!-- prettier-ignore -->
+::: tip
+The offchain services run in Docker. Make sure the Docker daemon is started
+before running a script that connects to an `edr-simulated` network, otherwise
+the stack setup will fail.
+:::
 
 ### Connecting to an http network
 
-The plugin only boots the local offchain stack automatically when connecting on
-an `edr-simulated` network. When you call `nox.connect(connection)` on an `http`
-network — for example a shared staging deployment — the plugin instead reads
-that network's `nox` config to configure the returned object. Add a `nox` block
-to that network's entry under `networks` in your config:
+When you call `nox.connect(connection)` on an `http` network — for example a
+shared staging deployment — the plugin reads that network's `nox` config to
+configure the returned object. Add a `nox` block to that network's entry under
+`networks` in your config:
 
 ```ts
 import { defineConfig } from 'hardhat/config';
@@ -118,38 +139,22 @@ The `nox` block is only valid on `http`-type network entries, and
 
 ## Running hardhat scripts
 
-Any Hardhat script can use the `nox` plugin — not just tests. Call
-`nox.connect(connection)` with a `NetworkConnection` obtained from Hardhat to
-boot (or attach to) the offchain stack wherever you need it. In a test file,
-this typically happens in a setup step:
+Any Hardhat script can use the `nox` plugin. Call `nox.connect(connection)` with
+a `NetworkConnection` obtained from Hardhat to boot (or attach to) the offchain
+stack wherever you need it.
 
 ```ts
-import { before, describe, it } from 'node:test';
 import { network } from 'hardhat';
 import { nox } from '@iexec-nox/nox-hardhat-plugin';
 
-describe('MyConfidentialToken', () => {
-  before(async () => {
-    const connection = await network.getOrCreate('default');
-    await nox.connect(connection);
-  });
-
-  it('resolves a publicly decryptable total supply', async () => {
-    // ...
-  });
-});
+const connection = await network.getOrCreate();
+const noxClient = await nox.connect(connection);
 ```
 
-The first connection to an `edr-simulated` network pulls the offchain service
-images from DockerHub and may take a while; subsequent runs reuse existing
-images.
-
-<!-- prettier-ignore -->
-::: tip
-The offchain services run in Docker. Make sure the Docker daemon is started
-before running a script that connects to an `edr-simulated` network, otherwise
-the stack setup will fail.
-:::
+We use `network.getOrCreate()` rather than `network.create()`: `getOrCreate()`
+reuses the same connection and ephemeral Nox stack across repeated calls,
+whereas spinning up isolated Nox stacks on isolated connections isn't currently
+supported.
 
 ## Writing a test
 
@@ -173,7 +178,7 @@ describe('MyConfidentialToken', () => {
   let noxClient: Awaited<ReturnType<typeof nox.connect>>;
 
   before(async () => {
-    connection = await network.getOrCreate('default');
+    connection = await network.getOrCreate();
     noxClient = await nox.connect(connection);
   });
 
@@ -208,7 +213,7 @@ describe('MyConfidentialToken', () => {
   let noxClient: Awaited<ReturnType<typeof nox.connect>>;
 
   before(async () => {
-    connection = await network.getOrCreate('default');
+    connection = await network.getOrCreate();
     noxClient = await nox.connect(connection);
   });
 
@@ -244,10 +249,6 @@ resolves to a `NoxConnection` object with the following members:
 | `encryptInput(value, solidityType, applicationContract)` | Encrypts a plaintext value for a given contract and returns a `{ handle, handleProof }` pair to forward to a contract call. |
 | `decrypt(handle)`                                        | Decrypts an ACL-protected handle and returns its cleartext `value` (signs an EIP-712 authorization, no gas).                |
 | `publicDecrypt(handle)`                                  | Decrypts a publicly decryptable handle and returns its `value` plus a `decryptionProof`.                                    |
-
-`connection.viem`/`connection.ethers`, along with `connection.provider` and
-`connection.close()`, remain on the `NetworkConnection` you passed in — they are
-not part of the `NoxConnection` returned by `nox.connect()`.
 
 ## Next steps
 
