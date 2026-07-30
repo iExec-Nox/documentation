@@ -90,33 +90,59 @@ That is all the configuration required.
 
 ### Plugin options
 
-All options live under the `nox` key in your config:
-
-| Option             | Type      | Default | Description                                                                                                                                                                                            |
-| ------------------ | --------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `skipTestOverride` | `boolean` | `false` | When `true`, `hardhat test` runs the original Hardhat action without booting the offchain stack or etching `NoxCompute`. Useful for tests without the Nox stack or to target an already-running stack. |
+By default the plugin boots a local offchain stack for whichever network you
+connect to. If you'd rather point it at an already-running stack (for example a
+shared staging deployment), add a `nox` block to that network's entry under
+`networks` in your config:
 
 ```ts
 import { defineConfig } from 'hardhat/config';
 
 export default defineConfig({
   // ...
-  nox: {
-    skipTestOverride: true,
+  networks: {
+    staging: {
+      type: 'http',
+      url: 'https://staging.example.com',
+      nox: {
+        noxComputeAddress: '0x...',
+        handleGatewayUrl: 'https://staging-gateway.example.com',
+      },
+    },
   },
 });
 ```
 
+The `nox` block is only valid on `http`-type network entries. When it's present,
+`nox.connect()` skips booting a local stack and talks to the
+`noxComputeAddress`/`handleGatewayUrl` you provided instead.
+
 ## Running tests
 
-With the plugin configured, run your test suite as usual:
+The plugin no longer overrides the built-in `test` task, so `hardhat test` runs
+your test suite as-is: it won't boot the offchain stack on its own. Call
+`nox.connect(connection)` yourself in a setup step before your tests run, using
+a `NetworkConnection` obtained from Hardhat:
 
-```sh
-pnpm hardhat test
+```ts
+import { before, describe, it } from 'node:test';
+import { network } from 'hardhat';
+import { nox } from '@iexec-nox/nox-hardhat-plugin';
+
+describe('MyConfidentialToken', () => {
+  before(async () => {
+    const connection = await network.getOrCreate('default');
+    await nox.connect(connection);
+  });
+
+  it('resolves a publicly decryptable total supply', async () => {
+    // ...
+  });
+});
 ```
 
-The first run pulls the offchain service images from DockerHub and may take a
-while; subsequent runs reuse existing images.
+The first call to `nox.connect()` pulls the offchain service images from
+DockerHub and may take a while; subsequent runs reuse existing images.
 
 <!-- prettier-ignore -->
 ::: tip
@@ -126,22 +152,26 @@ before running your tests, otherwise the stack setup will fail.
 
 ## Writing a test
 
-The plugin exposes a `nox` helper that wraps your Viem or Ethers network
-connection together with a pre-configured
-[Handle SDK](/references/js-sdk/getting-started) client, so your tests can
-encrypt and decrypt without any manual setup. `nox.connect()` returns the
-connection for whichever integration you enabled (`viem` or `ethers`).
+The plugin exposes a `nox` helper. Call `nox.connect(connection)` with a Hardhat
+`NetworkConnection` to boot (or attach to) the offchain stack; it resolves to an
+object exposing a pre-configured
+[Handle SDK](/references/js-sdk/getting-started) client so your tests can
+encrypt and decrypt without any manual setup. Get `viem`/`ethers` from the
+`connection` you passed in, not from `nox.connect()`'s return value.
 
 ::: code-group
 
 ```ts [Viem]
 import { strict as assert } from 'node:assert';
-import { describe, it } from 'node:test';
+import { before, describe, it } from 'node:test';
+import { network } from 'hardhat';
 import { nox } from '@iexec-nox/nox-hardhat-plugin';
 
 describe('MyConfidentialToken', () => {
   it('resolves a publicly decryptable total supply', async () => {
-    const { viem } = await nox.connect();
+    const connection = await network.getOrCreate('default');
+    const { viem } = connection;
+    const { publicDecrypt } = await nox.connect(connection);
 
     // Deploy a confidential contract with the standard Viem helpers.
     const token = await viem.deployContract('MyConfidentialToken', [
@@ -156,7 +186,7 @@ describe('MyConfidentialToken', () => {
       (await token.read.confidentialTotalSupply()) as `0x${string}`;
 
     // Ask the Nox stack to decrypt it and assert on the cleartext value.
-    const { value } = await nox.publicDecrypt(handle);
+    const { value } = await publicDecrypt(handle);
     assert.equal(value, 1000n);
   });
 });
@@ -164,12 +194,15 @@ describe('MyConfidentialToken', () => {
 
 ```ts [Ethers]
 import { strict as assert } from 'node:assert';
-import { describe, it } from 'node:test';
+import { before, describe, it } from 'node:test';
+import { network } from 'hardhat';
 import { nox } from '@iexec-nox/nox-hardhat-plugin';
 
 describe('MyConfidentialToken', () => {
   it('resolves a publicly decryptable total supply', async () => {
-    const { ethers } = await nox.connect();
+    const connection = await network.getOrCreate('default');
+    const { ethers } = connection;
+    const { publicDecrypt } = await nox.connect(connection);
 
     // Deploy a confidential contract with the standard Ethers helpers.
     const token = await ethers.deployContract('MyConfidentialToken', [
@@ -183,7 +216,7 @@ describe('MyConfidentialToken', () => {
     const handle = (await token.confidentialTotalSupply()) as `0x${string}`;
 
     // Ask the Nox stack to decrypt it and assert on the cleartext value.
-    const { value } = await nox.publicDecrypt(handle);
+    const { value } = await publicDecrypt(handle);
     assert.equal(value, 1000n);
   });
 });
@@ -193,12 +226,21 @@ describe('MyConfidentialToken', () => {
 
 ## The `nox` API
 
-| Member                                                   | Description                                                                                                                                                                            |
-| -------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `connect()`                                              | Opens a connection to the local stack. Auto-detects whether your project uses Viem or Ethers and returns the Hardhat `NetworkConnection` augmented with a ready-to-use `handleClient`. |
-| `encryptInput(value, solidityType, applicationContract)` | Encrypts a plaintext value for a given contract and returns a `{ handle, handleProof }` pair to forward to a contract call.                                                            |
-| `decrypt(handle)`                                        | Decrypts an ACL-protected handle and returns its cleartext `value` (signs an EIP-712 authorization, no gas).                                                                           |
-| `publicDecrypt(handle)`                                  | Decrypts a publicly decryptable handle and returns its `value` plus a `decryptionProof`.                                                                                               |
+`nox.connect(connection: NetworkConnection): Promise<NoxConnection>` boots (or
+attaches to) the offchain stack for the given Hardhat `NetworkConnection` and
+resolves to a `NoxConnection` object with the following members:
+
+| Member                                                   | Description                                                                                                                 |
+| -------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `noxComputeAddress`                                      | The address of the `NoxCompute` contract for this connection.                                                               |
+| `handleGatewayUrl`                                       | The URL of the Handle Gateway backing this connection.                                                                      |
+| `encryptInput(value, solidityType, applicationContract)` | Encrypts a plaintext value for a given contract and returns a `{ handle, handleProof }` pair to forward to a contract call. |
+| `decrypt(handle)`                                        | Decrypts an ACL-protected handle and returns its cleartext `value` (signs an EIP-712 authorization, no gas).                |
+| `publicDecrypt(handle)`                                  | Decrypts a publicly decryptable handle and returns its `value` plus a `decryptionProof`.                                    |
+
+`connection.viem`/`connection.ethers`, along with `connection.provider` and
+`connection.close()`, remain on the `NetworkConnection` you passed in — they are
+not part of the `NoxConnection` returned by `nox.connect()`.
 
 ## Next steps
 
