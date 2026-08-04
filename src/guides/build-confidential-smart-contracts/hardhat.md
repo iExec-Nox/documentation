@@ -87,8 +87,14 @@ The plugin boots the local offchain stack automatically when connecting on an
 
 ```ts twoslash
 import { defineConfig } from 'hardhat/config';
+import noxPlugin from '@iexec-nox/nox-hardhat-plugin';
 
 export default defineConfig({
+  plugins: [
+    noxPlugin,
+    // ...
+  ],
+  solidity: '0.8.35',
   // ...
   networks: {
     default: {
