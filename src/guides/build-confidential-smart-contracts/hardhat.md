@@ -117,11 +117,15 @@ configure the returned object. Add a `nox` block to that network's entry under
 `networks` in your config:
 
 ```ts twoslash
-import '@iexec-nox/nox-hardhat-plugin';
-// ---cut---
 import { defineConfig } from 'hardhat/config';
+import noxPlugin from '@iexec-nox/nox-hardhat-plugin';
 
 export default defineConfig({
+  plugins: [
+    noxPlugin,
+    // ...
+  ],
+  solidity: '0.8.35',
   // ...
   networks: {
     staging: {
