@@ -54,7 +54,7 @@ Ethers plugin:
 
 ::: code-group
 
-```ts [Viem]
+```ts twoslash [Viem]
 import hardhatToolboxViemPlugin from '@nomicfoundation/hardhat-toolbox-viem';
 import { defineConfig } from 'hardhat/config';
 import noxPlugin from '@iexec-nox/nox-hardhat-plugin';
@@ -65,7 +65,7 @@ export default defineConfig({
 });
 ```
 
-```ts [Ethers]
+```ts twoslash [Ethers]
 import hardhatEthersPlugin from '@nomicfoundation/hardhat-ethers';
 import { defineConfig } from 'hardhat/config';
 import noxPlugin from '@iexec-nox/nox-hardhat-plugin';
@@ -85,7 +85,7 @@ That is all the configuration required.
 The plugin boots the local offchain stack automatically when connecting on an
 `edr-simulated` network.
 
-```ts
+```ts twoslash
 import { defineConfig } from 'hardhat/config';
 
 export default defineConfig({
@@ -116,7 +116,9 @@ shared staging deployment — the plugin reads that network's `nox` config to
 configure the returned object. Add a `nox` block to that network's entry under
 `networks` in your config:
 
-```ts
+```ts twoslash
+import '@iexec-nox/nox-hardhat-plugin';
+// ---cut---
 import { defineConfig } from 'hardhat/config';
 
 export default defineConfig({
@@ -143,7 +145,7 @@ Any Hardhat script can use the `nox` plugin. Call `nox.connect(connection)` with
 a `NetworkConnection` obtained from Hardhat to boot (or attach to) the offchain
 stack wherever you need it.
 
-```ts
+```ts twoslash
 import { network } from 'hardhat';
 import { nox } from '@iexec-nox/nox-hardhat-plugin';
 
@@ -167,7 +169,9 @@ setup.
 
 ::: code-group
 
-```ts [Viem]
+```ts twoslash [Viem]
+import '@nomicfoundation/hardhat-toolbox-viem';
+// ---cut---
 import { strict as assert } from 'node:assert';
 import { before, describe, it } from 'node:test';
 import { network } from 'hardhat';
@@ -202,7 +206,9 @@ describe('MyConfidentialToken', () => {
 });
 ```
 
-```ts [Ethers]
+```ts twoslash [Ethers]
+import '@nomicfoundation/hardhat-ethers';
+// ---cut---
 import { strict as assert } from 'node:assert';
 import { before, describe, it } from 'node:test';
 import { network } from 'hardhat';
